@@ -58,19 +58,11 @@ export const additionalBeds = [
   },
 ];
 
-export interface IHotelSelectedOptions {
-  [key: number]: {
-    hotelType: string;
-    hotel: string;
-    quantity: string;
-    additionalBeds: string;
-  }[];
-}
-
 export interface IHotelRowData {
   [key: number]: {
     hotelType: string;
     hotel: string;
     quantity: string;
+    additionalBeds: string;
   }[];
 }

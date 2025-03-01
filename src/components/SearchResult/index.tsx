@@ -4,24 +4,21 @@ import useRoomState from "@/store/useRoomState";
 import { useState } from "react";
 import { HoltelRow } from "./components/Hotel";
 import { TransportationRow } from "./components/Transportation";
+import { IHotelRowData } from "./components/Hotel/defination";
+import { ITransportationRowData } from "./components/Transportation/defination";
 
 const SearchResult = () => {
   const { numberOfDays } = useRoomState();
 
-  const [transportationSelectedOptions, setTransportationSelectedOptions] =
-    useState<any>({});
-
-  const [hotelRowData, setHotelRowData] = useState<any>({});
-  const [transportationRowData, setTransportationRowData] = useState<{
-    [key: number]: any[];
-  }>({});
-
-  console.log("hotelRowData :>> ", hotelRowData);
+  const [hotelRowData, setHotelRowData] = useState<IHotelRowData>({});
+  const [transportationRowData, setTransportationRowData] =
+    useState<ITransportationRowData>({});
 
   // Hàm để xử lý submit và in ra lựa chọn của người dùng
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log({ transportationSelectedOptions });
+    console.log("hotelRowData :>> ", hotelRowData);
+    console.log("transportationRowData :>> ", transportationRowData);
   };
 
   return (

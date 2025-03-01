@@ -1,31 +1,32 @@
 "use client";
 
 import Dropdown from "@/components/Dropdown";
-import { useEffect } from "react";
+import { Dispatch, SetStateAction, useEffect } from "react";
+import { ITransportationRowData } from "./defination";
 
 interface IProps {
   numberOfDays: number;
-  rowData: any;
-  setRowData: any;
-  rows: any;
+  setRowData: Dispatch<SetStateAction<ITransportationRowData>>;
+  rowData: ITransportationRowData;
+  rows: ITransportationRowData[];
   dayIndex: number;
 }
 
 export const TransportationRow = ({
   numberOfDays,
-  rowData,
   setRowData,
   rows,
   dayIndex,
+  rowData,
 }: IProps) => {
   const transportationTypes = [
     {
       name: "Xe khách",
-      value: 1,
+      value: "xe_khach",
     },
     {
       name: "Xe tải",
-      value: 2,
+      value: "xe_tai",
     },
   ];
 
@@ -48,7 +49,7 @@ export const TransportationRow = ({
     dayIndex: number,
     rowIndex: number,
     field: string,
-    value: any
+    value: string
   ) => {
     setRowData((prevState) => {
       const dayData = prevState[dayIndex] || [];
@@ -68,7 +69,10 @@ export const TransportationRow = ({
   const handleAddRow = (dayIndex: number) => {
     setRowData((prevState) => {
       const newRowData = [...(prevState[dayIndex] || [])];
-      newRowData.push({}); // Thêm một object mới vào mảng của row
+      newRowData.push({
+        transportationType: "",
+        quantity: "",
+      }); // Thêm một object mới vào mảng của row
       return {
         ...prevState,
         [dayIndex]: newRowData,
@@ -77,9 +81,14 @@ export const TransportationRow = ({
   };
 
   const initialRowData = () => {
-    const rowData: { [key: number]: any[] } = {};
+    const rowData: ITransportationRowData = {};
     for (let i = 0; i < numberOfDays; i++) {
-      rowData[i] = [{}];
+      rowData[i] = [
+        {
+          transportationType: "",
+          quantity: "",
+        },
+      ];
     }
     return rowData;
   };
@@ -111,8 +120,6 @@ export const TransportationRow = ({
               handleChange(dayIndex, rowIndex, "quantity", value)
             }
           />
-
-          <p className="text-2xl">+</p>
         </div>
       ))}
 

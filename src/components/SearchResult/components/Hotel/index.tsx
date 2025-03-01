@@ -1,14 +1,20 @@
 "use client";
 
 import Dropdown from "@/components/Dropdown";
-import { useEffect } from "react";
-import { additionalBeds, hotels, hotelTypes, quantities } from "./defination";
+import { Dispatch, SetStateAction, useEffect } from "react";
+import {
+  additionalBeds,
+  hotels,
+  hotelTypes,
+  IHotelRowData,
+  quantities,
+} from "./defination";
 
 interface IProps {
   numberOfDays: number;
-  setRowData: any;
-  rowData: any;
-  rows: any;
+  setRowData: Dispatch<SetStateAction<IHotelRowData>>;
+  rowData: IHotelRowData;
+  rows: IHotelRowData[];
   dayIndex: number;
 }
 
@@ -24,7 +30,7 @@ export const HoltelRow = ({
     dayIndex: number,
     rowIndex: number,
     field: string,
-    value: any
+    value: string
   ) => {
     setRowData((prevState) => {
       const dayData = prevState[dayIndex] || [];
@@ -44,7 +50,12 @@ export const HoltelRow = ({
   const handleAddRow = (dayIndex: number) => {
     setRowData((prevState) => {
       const newRowData = [...(prevState[dayIndex] || [])];
-      newRowData.push({}); // Thêm một object mới vào mảng của row
+      newRowData.push({
+        additionalBeds: "",
+        hotel: "",
+        hotelType: "",
+        quantity: "",
+      }); // Thêm một object mới vào mảng của row
       return {
         ...prevState,
         [dayIndex]: newRowData,
@@ -53,9 +64,11 @@ export const HoltelRow = ({
   };
 
   const initialRowData = () => {
-    const rowData: { [key: number]: any[] } = {};
+    const rowData: IHotelRowData = {};
     for (let i = 0; i < numberOfDays; i++) {
-      rowData[i] = [{}];
+      rowData[i] = [
+        { additionalBeds: "", hotel: "", hotelType: "", quantity: "" },
+      ];
     }
     return rowData;
   };
