@@ -1,0 +1,23 @@
+import useRoomState from "@/store/useRoomState";
+import DatePicker from "react-datepicker";
+import "../Checkin/checkin.css";
+
+const CheckOut = () => {
+  const { setDateCheckOut, dateCheckOut } = useRoomState();
+
+  return (
+    <div className="flex items-center justify-end h-full w-full">
+      <div className="w-[200px] pl-[35px]">
+        <p className="text-accent">Ngày đi</p>
+      </div>
+
+      <DatePicker
+        className="w-full h-full"
+        selected={dateCheckOut}
+        onChange={(date) => date && setDateCheckOut(date)}
+      />
+    </div>
+  );
+};
+
+export default CheckOut;

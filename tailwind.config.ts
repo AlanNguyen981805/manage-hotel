@@ -7,10 +7,32 @@ export default {
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
+    fontFamily: {
+      primary: "Gilda Display",
+      secondary: "Barlow",
+      tertiary: "Barlow Condensed",
+    },
+    container: {
+      padding: {
+        DEFAULT: "15px",
+      },
+    },
+    screens: {
+      sm: "640px",
+      md: "768px",
+      lg: "960px",
+      xl: "1140px",
+    },
     extend: {
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        primary: "#0a0a0a",
+        accent: {
+          DEFAULT: "#DBAE6B",
+          hover: "#967142",
+        },
+      },
+      backgroundImage: {
+        room: "url('/src/assets/img/room.jpg')",
       },
     },
   },
