@@ -26,9 +26,9 @@ const useRoomState = create<RoomState>((set) => ({
 
   numberOfPeople: 1,
 
-  dateCheckIn: null,
+  dateCheckIn: new Date(),
 
-  dateCheckOut: null,
+  dateCheckOut: new Date(),
 
   getNumberOfDays: () =>
     set((state) => ({

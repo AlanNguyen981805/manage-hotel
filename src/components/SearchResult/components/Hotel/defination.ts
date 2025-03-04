@@ -66,3 +66,9 @@ export interface IHotelRowData {
     additionalBeds: string;
   }[];
 }
+
+export interface ICityRowData {
+  [key: number]: {
+    city: string;
+  };
+}

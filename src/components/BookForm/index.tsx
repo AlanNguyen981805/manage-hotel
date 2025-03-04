@@ -2,9 +2,19 @@ import useRoomState from "@/store/useRoomState";
 import CheckIn from "../Checkin";
 import CheckOut from "../Checkout";
 import NumberOfPeople from "../NumberPeople";
+import useDialogStore from "@/store/useDialog";
 
 const BookForm = () => {
   const { getNumberOfDays } = useRoomState();
+  const { setOpenDialog } = useDialogStore();
+
+  const handleCheckNow = () => {
+    if (getNumberOfDays) {
+      getNumberOfDays();
+    }
+
+    setOpenDialog(true);
+  };
 
   return (
     <div className="h-[260px] flex flex-col justify-center items-center ">
@@ -27,7 +37,7 @@ const BookForm = () => {
           <button
             type="button"
             className="btn btn-primary"
-            onClick={() => getNumberOfDays && getNumberOfDays()}
+            onClick={handleCheckNow}
           >
             Check Now
           </button>

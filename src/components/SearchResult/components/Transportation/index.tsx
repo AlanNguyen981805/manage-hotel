@@ -98,42 +98,39 @@ export const TransportationRow = ({
   }, [numberOfDays]);
 
   return (
-    <div className="bg-red-400 w-full border-b-2 flex flex-col justify-between px-2 indexs-center">
-      {rows.map((_, rowIndex) => (
-        <div key={rowIndex} className="flex mb-3">
-          <p>Loại phương tiện</p>
-          <Dropdown
-            options={transportationTypes}
-            name={`transportation-type-${dayIndex}-${rowIndex}`}
-            value={rowData[dayIndex]?.[rowIndex]?.transportationType || ""}
-            onChange={(value) =>
-              handleChange(dayIndex, rowIndex, "transportationType", value)
-            }
-          />
-
-          <p>Số lượng phương tiện</p>
-          <Dropdown
-            options={quantities}
-            name={`quantity-${dayIndex}-${rowIndex}`}
-            value={rowData[dayIndex]?.[rowIndex]?.quantity || ""}
-            onChange={(value) =>
-              handleChange(dayIndex, rowIndex, "quantity", value)
-            }
-          />
-        </div>
-      ))}
-
-      <div className="flex justify-center mt-2">
-        <button
-          type="button"
-          onClick={() => handleAddRow(dayIndex)}
-          className="bg-blue-500 text-white px-4 py-2 rounded"
-        >
-          Add Row
-        </button>
+    <div>
+      <div className="flex justify-between items-center bg-accent">
+        <h1 className="text-lg p-2">TRANSPORTATION</h1>
       </div>
+      <div className=" w-full border-b-2 flex flex-col justify-between p-2 indexs-center">
+        {rows.map((_, rowIndex) => (
+          <div key={rowIndex} className="flex mb- gap-4">
+            <div className="flex flex-col gap-2 items-center justify-center">
+              <p>Loại phương tiện</p>
+              <Dropdown
+                options={transportationTypes}
+                name={`transportation-type-${dayIndex}-${rowIndex}`}
+                value={rowData[dayIndex]?.[rowIndex]?.transportationType || ""}
+                onChange={(value) =>
+                  handleChange(dayIndex, rowIndex, "transportationType", value)
+                }
+              />
+            </div>
 
-      <hr />
+            <div className="flex flex-col gap-2 items-center justify-center">
+              <p>Số lượng phương tiện</p>
+              <Dropdown
+                options={quantities}
+                name={`quantity-${dayIndex}-${rowIndex}`}
+                value={rowData[dayIndex]?.[rowIndex]?.quantity || ""}
+                onChange={(value) =>
+                  handleChange(dayIndex, rowIndex, "quantity", value)
+                }
+              />
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

@@ -2,17 +2,17 @@
 
 import Dropdown from "@/components/Dropdown";
 import { Dispatch, SetStateAction, useEffect } from "react";
-import { services, IServicesRowData } from "./defiantion";
+import { additionalCosts, IAdditionalCostsRowData } from "./defiantion";
 
 interface IProps {
   numberOfDays: number;
-  setRowData: Dispatch<SetStateAction<IServicesRowData>>;
-  rowData: IServicesRowData;
-  rows: IServicesRowData[];
+  setRowData: Dispatch<SetStateAction<IAdditionalCostsRowData>>;
+  rowData: IAdditionalCostsRowData;
+  rows: IAdditionalCostsRowData[];
   dayIndex: number;
 }
 
-export const ServicesRow = ({
+export const AdditionalCostsRow = ({
   numberOfDays,
   setRowData,
   rows,
@@ -20,8 +20,8 @@ export const ServicesRow = ({
   rowData,
 }: IProps) => {
   const initialData = {
-    serviceType: "",
-    serviceQuantity: "",
+    additionalCostType: "",
+    additionalCostQuantity: "",
   };
 
   const handleChange = (
@@ -57,7 +57,7 @@ export const ServicesRow = ({
   };
 
   const initialRowData = () => {
-    const rowData: IServicesRowData = {};
+    const rowData: IAdditionalCostsRowData = {};
     for (let i = 0; i < numberOfDays; i++) {
       rowData[i] = [initialData];
     }
@@ -71,7 +71,7 @@ export const ServicesRow = ({
   return (
     <div>
       <div className="flex justify-between items-center bg-accent">
-        <h1 className="text-lg p-2">SERVICES</h1>
+        <h1 className="text-lg p-2">CHI PHÍ PHÁT SINH</h1>
         <button
           className="bg-accent text-white px-4 rounded-md h-[40px]"
           onClick={() => handleAddRow(dayIndex)}
@@ -83,19 +83,19 @@ export const ServicesRow = ({
         {rows.map((_, rowIndex) => (
           <div key={rowIndex} className="flex mb-3 gap-4">
             <div className="flex flex-col gap-2 items-center justify-center">
-              <p>Loại dịch vụ</p>
+              <p>Loại chi phí</p>
               <Dropdown
-                options={services}
-                name={`service-type-${dayIndex}-${rowIndex}`}
-                value={rowData[dayIndex]?.[rowIndex]?.serviceType || ""}
+                options={additionalCosts}
+                name={`additional-cost-type-${dayIndex}-${rowIndex}`}
+                value={rowData[dayIndex]?.[rowIndex]?.additionalCostType || ""}
                 onChange={(value) =>
-                  handleChange(dayIndex, rowIndex, "serviceType", value)
+                  handleChange(dayIndex, rowIndex, "additionalCostType", value)
                 }
               />
             </div>
 
             <div className="flex flex-col gap-2 items-center justify-center">
-              <p>Số lượng</p>
+              <p>Số tiền</p>
               <div>
                 <input
                   type="number"
