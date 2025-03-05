@@ -1,6 +1,6 @@
 import useRoomState from "@/store/useRoomState";
 import DatePicker from "react-datepicker";
-import "../Checkin/checkin.css";
+import "./checkout.css";
 
 const CheckOut = () => {
   const { setDateCheckOut, dateCheckOut } = useRoomState();

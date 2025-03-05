@@ -1,10 +1,10 @@
 "use client";
 
-import Dropdown from "@/components/Dropdown";
-import { IPropRowSearch } from "../../defination";
-import useFormSearchResult from "../../hooks/useSearchResult";
+import Dropdown from "@/components/ui/dropdown";
 import { quantities, transportationTypes } from "./defination";
-import { BtnAddRow } from "../BtnAddRow";
+import useFormSearchResult from "@/hooks/use-search-result";
+import { IPropRowSearch } from "../result-search-booking/defination";
+import { BtnAddRow } from "../add-row";
 
 export const TransportationRow = ({
   dayIndex,
@@ -16,12 +16,12 @@ export const TransportationRow = ({
     quantity: "",
   };
 
-  const { handleChange, handleAddRow } = useFormSearchResult({ 
-    dayIndex, 
-    setForm, 
-    type: "transportation", 
-    initialData 
-  })
+  const { handleChange, handleAddRow } = useFormSearchResult({
+    dayIndex,
+    setForm,
+    type: "transportation",
+    initialData,
+  });
 
   return (
     <div>
@@ -34,7 +34,10 @@ export const TransportationRow = ({
               <Dropdown
                 options={transportationTypes}
                 name={`transportation-type-${dayIndex}-${rowIndex}`}
-                value={formSearchResult[dayIndex].transportation?.[rowIndex].transportationType || ""}
+                value={
+                  formSearchResult[dayIndex].transportation?.[rowIndex]
+                    .transportationType || ""
+                }
                 onChange={(value) =>
                   handleChange(dayIndex, rowIndex, "transportationType", value)
                 }
@@ -46,7 +49,10 @@ export const TransportationRow = ({
               <Dropdown
                 options={quantities}
                 name={`quantity-${dayIndex}-${rowIndex}`}
-                value={formSearchResult[dayIndex].transportation?.[rowIndex]?.quantity || ""}
+                value={
+                  formSearchResult[dayIndex].transportation?.[rowIndex]
+                    ?.quantity || ""
+                }
                 onChange={(value) =>
                   handleChange(dayIndex, rowIndex, "quantity", value)
                 }

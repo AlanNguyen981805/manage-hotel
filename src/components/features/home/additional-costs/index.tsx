@@ -1,10 +1,10 @@
 "use client";
 
-import Dropdown from "@/components/Dropdown";
-import { IPropRowSearch } from "../../defination";
-import useFormSearchResult from "../../hooks/useSearchResult";
-import { BtnAddRow } from "../BtnAddRow";
+import Dropdown from "@/components/ui/dropdown";
 import { additionalCosts } from "./defiantion";
+import useFormSearchResult from "@/hooks/use-search-result";
+import { IPropRowSearch } from "../result-search-booking/defination";
+import { BtnAddRow } from "../add-row";
 
 export const AdditionalCostsRow = ({
   dayIndex,
@@ -16,12 +16,12 @@ export const AdditionalCostsRow = ({
     quantity: "",
   };
 
-  const { handleChange, handleAddRow } = useFormSearchResult({ 
-    dayIndex, 
-    setForm, 
-    type: "additionalCosts", 
-    initialData 
-  })
+  const { handleChange, handleAddRow } = useFormSearchResult({
+    dayIndex,
+    setForm,
+    type: "additionalCosts",
+    initialData,
+  });
 
   return (
     <div>
@@ -35,7 +35,10 @@ export const AdditionalCostsRow = ({
               <Dropdown
                 options={additionalCosts}
                 name={`additional-cost-type-${dayIndex}-${rowIndex}`}
-                value={formSearchResult[dayIndex].additionalCosts?.[rowIndex]?.additionalCostType || ""}
+                value={
+                  formSearchResult[dayIndex].additionalCosts?.[rowIndex]
+                    ?.additionalCostType || ""
+                }
                 onChange={(value) =>
                   handleChange(dayIndex, rowIndex, "additionalCostType", value)
                 }

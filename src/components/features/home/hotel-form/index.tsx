@@ -1,15 +1,10 @@
 "use client";
 
-import Dropdown from "@/components/Dropdown";
-import { IPropRowSearch } from "../../defination";
-import useFormSearchResult from "../../hooks/useSearchResult";
-import { BtnAddRow } from "../BtnAddRow";
-import {
-  additionalBeds,
-  hotels,
-  hotelTypes,
-  quantities
-} from "./defination";
+import Dropdown from "@/components/ui/dropdown";
+import { additionalBeds, hotels, hotelTypes, quantities } from "./defination";
+import { IPropRowSearch } from "../result-search-booking/defination";
+import { BtnAddRow } from "../add-row";
+import useFormSearchResult from "@/hooks/use-search-result";
 
 export const HoltelRow = ({
   dayIndex,
@@ -23,13 +18,12 @@ export const HoltelRow = ({
     additionalBeds: "",
   };
 
-  const { handleAddRow, handleChange } = 
-  useFormSearchResult({ 
-    dayIndex, 
-    setForm, 
-    type: "hotel", 
-    initialData 
-  })
+  const { handleAddRow, handleChange } = useFormSearchResult({
+    dayIndex,
+    setForm,
+    type: "hotel",
+    initialData,
+  });
 
   return (
     <div>
@@ -43,7 +37,9 @@ export const HoltelRow = ({
               <Dropdown
                 options={hotelTypes}
                 name={`hotel-type-${dayIndex}-${rowIndex}`}
-                value={formSearchResult[dayIndex].hotel?.[rowIndex]?.hotelType || ""}
+                value={
+                  formSearchResult[dayIndex].hotel?.[rowIndex]?.hotelType || ""
+                }
                 onChange={(value) =>
                   handleChange(dayIndex, rowIndex, "hotelType", value)
                 }
@@ -55,7 +51,9 @@ export const HoltelRow = ({
               <Dropdown
                 options={hotels}
                 name={`hotel-${dayIndex}-${rowIndex}`}
-                value={formSearchResult[dayIndex].hotel?.[rowIndex]?.hotel || ""}
+                value={
+                  formSearchResult[dayIndex].hotel?.[rowIndex]?.hotel || ""
+                }
                 onChange={(value) =>
                   handleChange(dayIndex, rowIndex, "hotel", value)
                 }
@@ -67,7 +65,9 @@ export const HoltelRow = ({
               <Dropdown
                 options={quantities}
                 name={`quantity-${dayIndex}-${rowIndex}`}
-                value={formSearchResult[dayIndex].hotel?.[rowIndex]?.quantity || ""}
+                value={
+                  formSearchResult[dayIndex].hotel?.[rowIndex]?.quantity || ""
+                }
                 onChange={(value) =>
                   handleChange(dayIndex, rowIndex, "quantity", value)
                 }
@@ -79,7 +79,9 @@ export const HoltelRow = ({
               <Dropdown
                 options={quantities}
                 name={`quantity-${dayIndex}-${rowIndex}`}
-                value={formSearchResult[dayIndex].hotel?.[rowIndex]?.quantity || ""}
+                value={
+                  formSearchResult[dayIndex].hotel?.[rowIndex]?.quantity || ""
+                }
                 onChange={(value) =>
                   handleChange(dayIndex, rowIndex, "quantity", value)
                 }
@@ -91,7 +93,9 @@ export const HoltelRow = ({
               <Dropdown
                 options={quantities}
                 name={`quantity-${dayIndex}-${rowIndex}`}
-                value={formSearchResult[dayIndex].hotel?.[rowIndex]?.quantity || ""}
+                value={
+                  formSearchResult[dayIndex].hotel?.[rowIndex]?.quantity || ""
+                }
                 onChange={(value) =>
                   handleChange(dayIndex, rowIndex, "quantity", value)
                 }
@@ -103,7 +107,10 @@ export const HoltelRow = ({
               <Dropdown
                 options={additionalBeds}
                 name={`additional-beds-${dayIndex}-${rowIndex}`}
-                value={formSearchResult[dayIndex].hotel?.[rowIndex]?.additionalBeds || ""}
+                value={
+                  formSearchResult[dayIndex].hotel?.[rowIndex]
+                    ?.additionalBeds || ""
+                }
                 onChange={(value) =>
                   handleChange(dayIndex, rowIndex, "quantity", value)
                 }

@@ -1,9 +1,9 @@
 "use client";
 
-import Dropdown from "@/components/Dropdown";
-import { IPropRowSearch } from "../../defination";
-import useFormSearchResult from "../../hooks/useSearchResult";
-import { BtnAddRow } from "../BtnAddRow";
+import Dropdown from "@/components/ui/dropdown";
+import useFormSearchResult from "@/hooks/use-search-result";
+import { IPropRowSearch } from "../result-search-booking/defination";
+import { BtnAddRow } from "../add-row";
 import { services } from "./defiantion";
 
 export const ServicesRow = ({
@@ -16,13 +16,12 @@ export const ServicesRow = ({
     serviceQuantity: "",
   };
 
-  const { handleChange, handleAddRow } = useFormSearchResult({ 
-    dayIndex, 
-    setForm, 
-    type: "services", 
-    initialData 
-  })
-
+  const { handleChange, handleAddRow } = useFormSearchResult({
+    dayIndex,
+    setForm,
+    type: "services",
+    initialData,
+  });
 
   return (
     <div>
@@ -36,7 +35,10 @@ export const ServicesRow = ({
               <Dropdown
                 options={services}
                 name={`service-type-${dayIndex}-${rowIndex}`}
-                value={formSearchResult[dayIndex].services?.[rowIndex]?.serviceType || ""}
+                value={
+                  formSearchResult[dayIndex].services?.[rowIndex]
+                    ?.serviceType || ""
+                }
                 onChange={(value) =>
                   handleChange(dayIndex, rowIndex, "serviceType", value)
                 }

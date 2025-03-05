@@ -1,10 +1,10 @@
 import useRoomState from "@/store/useRoomState";
-import CheckIn from "../Checkin";
-import CheckOut from "../Checkout";
-import NumberOfPeople from "../NumberPeople";
+import CheckIn from "../../ui/input/checkin";
+import CheckOut from "../../ui/input/checkout";
+import NumberOfPeople from "../../features/home/number-of-people";
 import useDialogStore from "@/store/useDialog";
 
-const BookForm = () => {
+const BookRoomForm = () => {
   const { getNumberOfDays } = useRoomState();
   const { setOpenDialog } = useDialogStore();
 
@@ -47,4 +47,4 @@ const BookForm = () => {
   );
 };
 
-export default BookForm;
+export default BookRoomForm;

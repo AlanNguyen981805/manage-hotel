@@ -18,7 +18,7 @@ const Header = () => {
 
   return (
     <header
-      className={`fixed z-50 w-full transition-all duration-300  bg-transparent py-8`}
+      className={` w-full transition-all duration-300  bg-transparent py-8`}
     >
       <div className="container mx-auto flex flex-col lg:flex-row items-center lg:justify-between gap-y-6 lg:gap-y-0">
         <Link href="/">
