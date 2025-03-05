@@ -1,6 +1,5 @@
 import useBookingState from "@/store/useRoomState";
-import CheckIn from "../../ui/input/checkin";
-import CheckOut from "../../ui/input/checkout";
+import CheckInAndOut from "../../ui/input/checkin-and-out";
 import NumberOfPeople from "../../features/home/number-of-people";
 import useDialogStore from "@/store/useDialog";
 
@@ -23,11 +22,7 @@ const BookRoomForm = () => {
       <form className="h-[300px] lg:h-[70px] w-full px-44">
         <div className="flex flex-col w-full h-full lg:flex-row">
           <div className="flex-1 border-r bg-white">
-            <CheckIn />
-          </div>
-
-          <div className="flex-1 border-r bg-white">
-            <CheckOut />
+            <CheckInAndOut />
           </div>
 
           <div className="flex-1 border-r bg-white">

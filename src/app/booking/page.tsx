@@ -1,12 +1,23 @@
 "use client";
 
-import { AdditionalCostsInfo, HotelInfo, ServicesInfo, SummaryBooking, TransportationInfo } from "@/components/features/booking";
+import {
+  AdditionalCostsInfo,
+  HotelInfo,
+  ServicesInfo,
+  SummaryBooking,
+  TransportationInfo,
+} from "@/components/features/booking";
 import useBookingState from "@/store/useRoomState";
+import {
+  Disclosure,
+  DisclosureButton,
+  DisclosurePanel,
+} from "@headlessui/react";
+import { ArrowDown } from "@/assets/svgs/ArrowDown";
 
 export default function Booking() {
   const { resultSearchBooking } = useBookingState();
 
-  console.log('resultSearchBooking :>> ', resultSearchBooking);
   return (
     <div className="w-full h-full">
       <div className="container mx-auto flex gap-8 py-8">
@@ -17,19 +28,38 @@ export default function Booking() {
               <div>
                 <h3 className="text-xl font-semibold mb-4">Booking Details</h3>
                 {Object.keys(resultSearchBooking).map((keyName, i) => (
-                  <div className="border-b pb-4 mb-4" key={i}>
-                    <h4 className="font-medium text-lg mb-3">Day {i + 1} - {resultSearchBooking[keyName].city.name}</h4>
+                  <Disclosure key={i} as="div" defaultOpen={false}>
+                    <DisclosureButton className="group flex w-full items-center justify-between border-b py-4">
+                      <h4 className="font-medium text-lg">
+                        Day {i + 1} - {resultSearchBooking[keyName].city.name}
+                      </h4>
+                      <ArrowDown />
+                    </DisclosureButton>
+                    <DisclosurePanel className="mt-2 text-sm/5">
+                      <div className="border-b">
+                        <HotelInfo
+                          hotels={resultSearchBooking[keyName].hotels || []}
+                        />
 
-                    <HotelInfo hotels={resultSearchBooking[keyName].hotels || []} />
+                        <TransportationInfo
+                          transportation={
+                            resultSearchBooking[keyName].transportation || []
+                          }
+                        />
 
-                    <TransportationInfo transportation={resultSearchBooking[keyName].transportation || []} />
+                        <ServicesInfo
+                          services={resultSearchBooking[keyName].services || []}
+                        />
 
-                    <ServicesInfo services={resultSearchBooking[keyName].services || []} />
-
-                    <AdditionalCostsInfo additionalCosts={resultSearchBooking[keyName].additionalCosts || []} />
-                  </div>
+                        <AdditionalCostsInfo
+                          additionalCosts={
+                            resultSearchBooking[keyName].additionalCosts || []
+                          }
+                        />
+                      </div>
+                    </DisclosurePanel>
+                  </Disclosure>
                 ))}
-
               </div>
             </div>
           </div>

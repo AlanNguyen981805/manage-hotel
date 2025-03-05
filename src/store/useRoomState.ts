@@ -15,8 +15,8 @@ interface RoomState {
 
   setLoading: (status: boolean) => void;
   searchRoom: () => void;
-  setDateCheckIn: (date: Date) => void;
-  setDateCheckOut: (date: Date) => void;
+  setDateCheckIn: (date: Date | null) => void;
+  setDateCheckOut: (date: Date |  null) => void;
   setNumberOfPeople: (count: number) => void;
   setResultSearchBooking: (result: IFormSearchResult) => void;
   reset: () => void;

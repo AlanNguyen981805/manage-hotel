@@ -1,22 +1,22 @@
 .react-datepicker {
-  background   : white;
-  border       : none;
+  background: white;
+  border: none;
   border-radius: 0;
-  font-family  : 'Barlow';
-  border       : 1px solid #aa8453;
-  font-size    : 0.9rem;
+  font-family: 'Barlow';
+  border: 1px solid #aa8453;
+  font-size: 0.9rem;
 }
 
 .react-datepicker__header {
-  border : #aa8453;
-  color  : #fff;
+  border: #aa8453;
+  color: #fff;
   padding: 0;
 }
 
 .react-datepicker-wrapper {
-  padding   : 0 2rem;
-  height    : 100%;
-  display   : flex;
+  padding: 0 2rem;
+  height: 100%;
+  display: flex;
   background: white;
 }
 
@@ -34,8 +34,8 @@
 
 .react-datepicker__current-month {
   background: #aa8453;
-  color     : white;
-  padding   : 0.3rem 0;
+  color: white;
+  padding: 0.3rem 0;
 }
 
 .react-datepicker__navigation {
@@ -47,18 +47,22 @@
 }
 
 .react-datepicker__input-container input {
-  outline   : none;
+  outline: none;
   background: none;
 }
 
 .react-datepicker__day--selected,
-.react-datepicker__day--keyboard-selected {
-  background   : #aa8453;
+.react-datepicker__day--keyboard-selected,
+.react-datepicker__day--in-range {
+  background: #aa8453;
   border-radius: 0;
+  color: #fff;
 }
 
-.react-datepicker__day--selected:hover {
-  background: #906d40;
+.react-datepicker__day--selected:hover,
+.react-datepicker__day--keyboard-selected:hover,
+.react-datepicker__day--in-range:hover {
+  background: #906d40 !important;
 }
 
 h2.react-datepicker__current-month {
@@ -68,4 +72,8 @@ h2.react-datepicker__current-month {
 
 .react-datepicker__day:hover {
   border-radius: 0;
+}
+
+.react-datepicker__close-icon::after {
+  background-color: #aa8453;
 }
