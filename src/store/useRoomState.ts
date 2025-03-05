@@ -1,5 +1,5 @@
 // stores/counterStore.ts
-import { calculateDaysBetweenDates } from "@/helpers/dateHelper";
+import { calculateDaysBetweenDates } from "@/helpers/date-helper";
 import { create } from "zustand";
 
 interface RoomState {
