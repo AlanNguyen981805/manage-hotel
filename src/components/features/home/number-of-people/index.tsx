@@ -1,9 +1,9 @@
 "use client";
 
-import useRoomState from "@/store/useRoomState";
+import useBookingState from "@/store/useRoomState";
 
 const NumberOfPeople = () => {
-  const { setNumberOfPeople, numberOfPeople } = useRoomState();
+  const { setNumberOfPeople, numberOfPeople } = useBookingState();
 
   return (
     <div className="flex items-center justify-end h-full w-full">

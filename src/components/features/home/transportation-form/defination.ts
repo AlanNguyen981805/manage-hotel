@@ -23,3 +23,12 @@ export const quantities = [
     value: 3,
   },
 ];
+
+export const initialTransportationRowData = {
+  transportationType: {
+    id: "",
+    name: "",
+  },
+  quantity: "",
+  price: "",
+};

@@ -1,4 +1,5 @@
 // stores/counterStore.ts
+import { IFormSearchResult } from "@/components/features/home/result-search-booking/defination";
 import { calculateDaysBetweenDates } from "@/helpers/date-helper";
 import { create } from "zustand";
 
@@ -8,6 +9,7 @@ interface RoomState {
   dateCheckIn: Date | null;
   dateCheckOut: Date | null;
   numberOfDays: number;
+  resultSearchBooking: IFormSearchResult
 
   getNumberOfDays?: () => void;
 
@@ -16,10 +18,11 @@ interface RoomState {
   setDateCheckIn: (date: Date) => void;
   setDateCheckOut: (date: Date) => void;
   setNumberOfPeople: (count: number) => void;
+  setResultSearchBooking: (result: IFormSearchResult) => void;
   reset: () => void;
 }
 
-const useRoomState = create<RoomState>((set) => ({
+const useBookingState = create<RoomState>((set) => ({
   loading: false,
 
   numberOfDays: 0,
@@ -29,6 +32,10 @@ const useRoomState = create<RoomState>((set) => ({
   dateCheckIn: new Date(),
 
   dateCheckOut: new Date(),
+
+  resultSearchBooking: {},
+
+  setResultSearchBooking: (resultSearchBooking) => set(() => ({ resultSearchBooking })),
 
   getNumberOfDays: () =>
     set((state) => ({
@@ -53,4 +60,4 @@ const useRoomState = create<RoomState>((set) => ({
   reset: () => set({ numberOfPeople: 0 }),
 }));
 
-export default useRoomState;
+export default useBookingState;

@@ -55,6 +55,7 @@
 // };
 
 import { Dispatch, SetStateAction } from "react";
+import { initialHotelRowData } from "../hotel-form/defination";
 
 export const cities = [
   { value: "Hà Nội", name: "Hà Nội" },
@@ -62,31 +63,82 @@ export const cities = [
   { value: "Đà Nẵng", name: "Đà Nẵng" },
 ]; 
 
+export const initialRowData = (numberOfDays: number) => {
+  const rowData: IFormSearchResult = {};
+  for (let i = 0; i < numberOfDays; i++) {
+    rowData[`day${i + 1}`] = {
+      city: {
+        id: "",
+        name: "",
+      },
+      hotels: [initialHotelRowData],
+      transportation: [],
+      services: [],
+      additionalCosts: [],
+    };
+  }
+  return rowData;
+};
+
+
 export interface IHotel {
-  hotelType: string;
-  hotel: string;
-  quantity: string;
-  additionalBeds: string;
+  hotelType: {
+    id: string;
+    name: string;
+  };
+  hotelName: {
+    id: string;
+    name: string;
+  };
+  roomType: {
+    id: string;
+    name: string;
+  };
+  quantityRoom: {
+    id: string; 
+    name: string;
+  };
+  additionalBeds: {
+    id: string;
+    name: string;
+  };
+  timeAvailable: string;
+  price: string;
 }
 
 export interface ITransportation {
-  transportationType: string;
+  transportationType: {
+    id: string;
+    name: string;
+  };
   quantity: string;
+  price: string;
 }
 
 export interface IService {
-  serviceType: string,
+  serviceType: {
+    id: string;
+    name: string;
+  },
   serviceQuantity: string,
+  servicePrice: string,
 }
 
 export interface IAdditionalCosts {
-  additionalCostType: string;
+  additionalCostType: {
+    id: string;
+    name: string;
+  },
   quantity: string;
+  price: string;
 }
 export interface IFormSearchResult {
   [key: string]: {
-    city: string;
-    hotel?: IHotel[];
+    city: {
+      id: string;
+      name: string;
+    };
+    hotels?: IHotel[];
     transportation?: ITransportation[];
     services?: IService[];
     additionalCosts?: IAdditionalCosts[];

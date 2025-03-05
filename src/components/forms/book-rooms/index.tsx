@@ -1,11 +1,11 @@
-import useRoomState from "@/store/useRoomState";
+import useBookingState from "@/store/useRoomState";
 import CheckIn from "../../ui/input/checkin";
 import CheckOut from "../../ui/input/checkout";
 import NumberOfPeople from "../../features/home/number-of-people";
 import useDialogStore from "@/store/useDialog";
 
 const BookRoomForm = () => {
-  const { getNumberOfDays } = useRoomState();
+  const { getNumberOfDays } = useBookingState();
   const { setOpenDialog } = useDialogStore();
 
   const handleCheckNow = () => {

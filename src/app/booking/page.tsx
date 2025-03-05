@@ -1,8 +1,12 @@
 "use client";
 
-import { HotelInfo, ServicesInfo, SummaryBooking, TransportationInfo } from "@/components/features/booking";
+import { AdditionalCostsInfo, HotelInfo, ServicesInfo, SummaryBooking, TransportationInfo } from "@/components/features/booking";
+import useBookingState from "@/store/useRoomState";
 
 export default function Booking() {
+  const { resultSearchBooking } = useBookingState();
+
+  console.log('resultSearchBooking :>> ', resultSearchBooking);
   return (
     <div className="w-full h-full">
       <div className="container mx-auto flex gap-8 py-8">
@@ -12,16 +16,20 @@ export default function Booking() {
               {/* Days Information */}
               <div>
                 <h3 className="text-xl font-semibold mb-4">Booking Details</h3>
+                {Object.keys(resultSearchBooking).map((keyName, i) => (
+                  <div className="border-b pb-4 mb-4" key={i}>
+                    <h4 className="font-medium text-lg mb-3">Day {i + 1} - {resultSearchBooking[keyName].city.name}</h4>
 
-                <div className="border-b pb-4 mb-4">
-                  <h4 className="font-medium text-lg mb-3">Day 1</h4>
+                    <HotelInfo hotels={resultSearchBooking[keyName].hotels || []} />
 
-                  <HotelInfo />
+                    <TransportationInfo transportation={resultSearchBooking[keyName].transportation || []} />
 
-                  <TransportationInfo />
+                    <ServicesInfo services={resultSearchBooking[keyName].services || []} />
 
-                  <ServicesInfo />
-                </div>
+                    <AdditionalCostsInfo additionalCosts={resultSearchBooking[keyName].additionalCosts || []} />
+                  </div>
+                ))}
+
               </div>
             </div>
           </div>

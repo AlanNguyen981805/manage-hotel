@@ -2,7 +2,7 @@
 
 import { ArrowDown } from "@/assets/svgs/ArrowDown";
 import useDialogStore from "@/store/useDialog";
-import useRoomState from "@/store/useRoomState";
+import useBookingState from "@/store/useRoomState";
 import {
   Dialog,
   DialogPanel,
@@ -13,12 +13,13 @@ import {
 import { useEffect, useState } from "react";
 import Dropdown from "../../../ui/dropdown";
 import { AdditinalCosts, Hotel, Service, Transportation } from "..";
-import { cities, IFormSearchResult } from "./defination";
+import { cities, IFormSearchResult, initialRowData } from "./defination";
 import { useRouter } from "next/navigation";
 import { ROUTES } from "@/constants/routes";
+
 const ResultSearchBooking = () => {
   const router = useRouter();
-  const { numberOfDays } = useRoomState();
+  const { numberOfDays, setResultSearchBooking } = useBookingState();
   const { dialogStatus, setOpenDialog } = useDialogStore();
   const [formSearchResult, setFormSearchResult] = useState<IFormSearchResult>(
     {}
@@ -26,49 +27,35 @@ const ResultSearchBooking = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("formSearchResult :>> ", formSearchResult);
+
+    setResultSearchBooking(formSearchResult)
+
+    setOpenDialog(false);
+    
     router.push(ROUTES.BOOKING);
   };
 
   function close() {
     setOpenDialog(false);
   }
-
-  const initialRowData = () => {
-    const rowData: IFormSearchResult = {};
-    for (let i = 0; i < numberOfDays; i++) {
-      rowData[`day${i + 1}`] = {
-        city: "",
-        hotel: [
-          {
-            additionalBeds: "",
-            hotel: "",
-            hotelType: "",
-            quantity: "",
-          },
-        ],
-        transportation: [],
-        services: [],
-        additionalCosts: [],
-      };
-    }
-    return rowData;
-  };
-
-  const handleSelectCityByDay = (city: string, dayIndex: string) => {
+  
+  const setArea = (city: string, name: string, dayIndex: string) => {
     setFormSearchResult((prevState) => {
       return {
         ...prevState,
-        dayIndex: {
+        [dayIndex]: {
           ...prevState[dayIndex],
-          city,
+          city: {
+            id: city,
+            name: name,
+          },
         },
       };
     });
   };
 
   useEffect(() => {
-    setFormSearchResult(initialRowData());
+    setFormSearchResult(initialRowData(numberOfDays));
   }, [numberOfDays]);
 
   return (
@@ -94,7 +81,7 @@ const ResultSearchBooking = () => {
                     const dayIndex = `day${index + 1}`;
 
                     return (
-                      <Disclosure as="div" className="p-2" key={dayIndex}>
+                      <Disclosure as="div" className="p-2" key={index}>
                         <DisclosureButton className="group flex w-full items-center justify-between">
                           <div className="flex items-center gap-2">
                             <span className="text-sm/6 font-medium text-black group-data-[hover]:text-black/80">
@@ -105,9 +92,9 @@ const ResultSearchBooking = () => {
                             <Dropdown
                               options={cities}
                               name={`city-${dayIndex}`}
-                              value={formSearchResult[dayIndex]?.city || ""}
-                              onChange={(value) =>
-                                handleSelectCityByDay(value, dayIndex)
+                              value={formSearchResult[dayIndex]?.city.id || ""}
+                              onChange={(value, name) =>
+                                setArea(value, name, dayIndex)
                               }
                             />
                           </div>

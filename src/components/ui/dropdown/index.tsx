@@ -1,7 +1,7 @@
 interface IProps<T> {
   options: T[];
   name: string;
-  onChange: (value: string) => void;
+  onChange: (value: string, name: string) => void;
   value: string;
 }
 const Dropdown = <T extends { value: string | number; name: string }>({
@@ -17,7 +17,10 @@ const Dropdown = <T extends { value: string | number; name: string }>({
       id={name}
       onChange={(e) => {
         e.stopPropagation();
-        onChange(e.target.value);
+        const selectedOption = options.find(
+          (option) => option.value.toString() === e.target.value
+        );
+        onChange(e.target.value, selectedOption?.name || '');
       }}
       onClick={(e) => {
         e.stopPropagation();

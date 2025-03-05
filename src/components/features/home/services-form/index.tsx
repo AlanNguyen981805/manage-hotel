@@ -12,8 +12,12 @@ export const ServicesRow = ({
   formSearchResult,
 }: IPropRowSearch) => {
   const initialData = {
-    serviceType: "",
+    serviceType: {
+      id: "",
+      name: "",
+    },
     serviceQuantity: "",
+    servicePrice: "",
   };
 
   const { handleChange, handleAddRow } = useFormSearchResult({
@@ -37,10 +41,10 @@ export const ServicesRow = ({
                 name={`service-type-${dayIndex}-${rowIndex}`}
                 value={
                   formSearchResult[dayIndex].services?.[rowIndex]
-                    ?.serviceType || ""
+                    ?.serviceType.id || ""
                 }
-                onChange={(value) =>
-                  handleChange(dayIndex, rowIndex, "serviceType", value)
+                onChange={(value, name) =>
+                  handleChange(dayIndex, rowIndex, "serviceType", value, name)
                 }
               />
             </div>

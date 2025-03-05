@@ -9,7 +9,7 @@ import {
 
 interface IProps {
   setForm: Dispatch<SetStateAction<IFormSearchResult>>;
-  type: "hotel" | "transportation" | "services" | "additionalCosts";
+  type: "hotels" | "transportation" | "services" | "additionalCosts";
   dayIndex: string;
   initialData: IHotel | ITransportation | IService | IAdditionalCosts;
 }
@@ -41,7 +41,8 @@ const useFormSearchResult = ({
     dayIndex: string,
     rowIndex: number,
     field: string,
-    value: string
+    value: string,
+    name?: string
   ) => {
     setForm((prevState) => {
       const hotelData = prevState[dayIndex][type] || [];
@@ -49,7 +50,12 @@ const useFormSearchResult = ({
 
       updatedData[rowIndex] = {
         ...updatedData[rowIndex],
-        [field]: value,
+        [field]: name 
+          ? {
+              id: value,
+              name: name,
+            }
+          : value,
       };
 
       return {

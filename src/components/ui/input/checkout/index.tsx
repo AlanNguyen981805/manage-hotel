@@ -1,9 +1,9 @@
-import useRoomState from "@/store/useRoomState";
+import useBookingState from "@/store/useRoomState";
 import DatePicker from "react-datepicker";
 import "./checkout.css";
 
 const CheckOut = () => {
-  const { setDateCheckOut, dateCheckOut } = useRoomState();
+  const { setDateCheckOut, dateCheckOut } = useBookingState();
 
   return (
     <div className="flex items-center justify-end h-full w-full">

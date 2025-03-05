@@ -58,6 +58,31 @@ export const additionalBeds = [
   },
 ];
 
+export const initialHotelRowData = {
+  hotelType: {
+    id: "",
+    name: "",
+  },
+  hotelName: {
+    id: "",
+    name: "",
+  },
+  roomType: {
+    id: "",
+    name: "",
+  },
+  quantityRoom: {
+    id: "",
+    name: "",
+  },
+  additionalBeds: {
+    id: "",
+    name: "",
+  },
+  timeAvailable: "",
+  price: "",
+};
+
 export interface IHotelRowData {
   [key: number]: {
     hotelType: string;

@@ -12,8 +12,12 @@ export const AdditionalCostsRow = ({
   formSearchResult,
 }: IPropRowSearch) => {
   const initialData = {
-    additionalCostType: "",
+    additionalCostType: {
+      id: "",
+      name: "",
+    },
     quantity: "",
+    price: "",
   };
 
   const { handleChange, handleAddRow } = useFormSearchResult({
@@ -25,7 +29,7 @@ export const AdditionalCostsRow = ({
 
   return (
     <div>
-      <BtnAddRow name="Transportation" onAddRow={handleAddRow} />
+      <BtnAddRow name="Additional Costs" onAddRow={handleAddRow} />
 
       <div className=" w-full border-b-2 flex flex-col justify-between px-2 indexs-center">
         {formSearchResult[dayIndex].additionalCosts?.map((_, rowIndex) => (
@@ -37,10 +41,10 @@ export const AdditionalCostsRow = ({
                 name={`additional-cost-type-${dayIndex}-${rowIndex}`}
                 value={
                   formSearchResult[dayIndex].additionalCosts?.[rowIndex]
-                    ?.additionalCostType || ""
+                    ?.additionalCostType.id || ""
                 }
-                onChange={(value) =>
-                  handleChange(dayIndex, rowIndex, "additionalCostType", value)
+                onChange={(value, name) =>
+                  handleChange(dayIndex, rowIndex, "additionalCostType", value, name)
                 }
               />
             </div>
