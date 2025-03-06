@@ -2,14 +2,17 @@ export const services = [
   {
     value: 1,
     name: "Dịch vụ 1",
+    price: 1000000,
   },
   {
     value: 2,
     name: "Dịch vụ 2",
+    price: 2000000,
   },
   {
     value: 3,
     name: "Dịch vụ 3",
+    price: 3000000,
   },
 ];
 

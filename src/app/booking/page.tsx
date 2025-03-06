@@ -18,6 +18,8 @@ import { ArrowDown } from "@/assets/svgs/ArrowDown";
 export default function Booking() {
   const { resultSearchBooking } = useBookingState();
 
+  console.log("resultSearchBooking :>> ", resultSearchBooking);
+
   return (
     <div className="w-full h-full">
       <div className="container mx-auto flex gap-8 py-8">

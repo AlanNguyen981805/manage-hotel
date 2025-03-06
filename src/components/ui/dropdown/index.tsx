@@ -1,10 +1,10 @@
 interface IProps<T> {
   options: T[];
   name: string;
-  onChange: (value: string, name: string) => void;
+  onChange: (option: any) => void;
   value: string;
 }
-const Dropdown = <T extends { value: string | number; name: string }>({
+const Dropdown = <T extends { id: string | number; name: string }>({
   options,
   name,
   onChange,
@@ -18,9 +18,9 @@ const Dropdown = <T extends { value: string | number; name: string }>({
       onChange={(e) => {
         e.stopPropagation();
         const selectedOption = options.find(
-          (option) => option.value.toString() === e.target.value
+          (option) => option?.id?.toString() === e.target.value
         );
-        onChange(e.target.value, selectedOption?.name || '');
+        onChange(selectedOption || {});
       }}
       onClick={(e) => {
         e.stopPropagation();
@@ -28,7 +28,7 @@ const Dropdown = <T extends { value: string | number; name: string }>({
       value={value}
     >
       {options.map((option, index) => (
-        <option key={index} value={option.value}>
+        <option key={index} value={option.id}>
           {option.name}
         </option>
       ))}

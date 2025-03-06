@@ -1,26 +1,28 @@
 export const transportationTypes = [
   {
     name: "Xe khách",
-    value: "xe_khach",
+    id: "xe_khach",
+    price: 1000000,
   },
   {
     name: "Xe tải",
-    value: "xe_tai",
+    id: "xe_tai",
+    price: 2000000,
   },
 ];
 
 export const quantities = [
   {
     name: "1 phương tiện",
-    value: 1,
+    id: 1,
   },
   {
     name: "2 phương tiện",
-    value: 2,
+    id: 2,
   },
   {
     name: "3 phương tiện",
-    value: 3,
+    id: 3,
   },
 ];
 
@@ -30,5 +32,5 @@ export const initialTransportationRowData = {
     name: "",
   },
   quantity: "",
-  price: "",
+  price: 0,
 };

@@ -1,15 +1,18 @@
 export const additionalCosts = [
   {
-    value: 1,
+    id: 1,
     name: "Chi phí phát sinh 1",
+    price: 1000000,
   },
   {
-    value: 2,
+    id: 2,
     name: "Chi phí phát sinh 2",
+    price: 2000000,
   },
   {
-    value: 3,
+    id: 3,
     name: "Chi phí phát sinh 3",
+    price: 3000000,
   },
 ];
 export interface IAdditionalCostsRowData {

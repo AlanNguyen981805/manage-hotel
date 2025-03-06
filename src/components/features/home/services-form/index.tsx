@@ -40,11 +40,11 @@ export const ServicesRow = ({
                 options={services}
                 name={`service-type-${dayIndex}-${rowIndex}`}
                 value={
-                  formSearchResult[dayIndex].services?.[rowIndex]
-                    ?.serviceType.id || ""
+                  formSearchResult[dayIndex].services?.[rowIndex]?.serviceType
+                    .id || ""
                 }
-                onChange={(value, name) =>
-                  handleChange(dayIndex, rowIndex, "serviceType", value, name)
+                onChange={(option) =>
+                  handleChange(dayIndex, rowIndex, "serviceType", option)
                 }
               />
             </div>

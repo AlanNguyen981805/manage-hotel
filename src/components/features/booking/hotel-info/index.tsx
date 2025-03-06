@@ -1,14 +1,14 @@
 "use client";
 
 import { IHotel } from "../../home/result-search-booking/defination";
-
+import { formatCurrency } from "@/helpers/currency-helper";
 interface HotelInfoProps {
-  hotels: IHotel[]
+  hotels: IHotel[];
 }
 export const HotelInfo = ({ hotels }: HotelInfoProps) => {
   return (
     <>
-      {hotels && (
+      {hotels.length > 0 && (
         <div className="mb-4">
           <h5 className="font-medium text-gray-700 mb-2">Hotel</h5>
           {hotels.map((hotel, index) => (
@@ -16,27 +16,27 @@ export const HotelInfo = ({ hotels }: HotelInfoProps) => {
               <div key={index} className="flex flex-col gap-2 pl-4 mb-4">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Hotel Name:</span>
-                  <span>{hotel.hotelName.name || 'Grand Hotel'}</span>
+                  <span>{hotel.hotelName.name || ""}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Room Quantity:</span>
-                  <span>{hotel.quantityRoom.name || '2'} Rooms</span>
+                  <span>{hotel.quantityRoom.name || ""} Rooms</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Room Type:</span>
-                  <span>{hotel.roomType.name || 'Deluxe Room'}</span>
+                  <span>{hotel.roomType.name || ""}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Time Available:</span>
-                  <span>{hotel.timeAvailable || '01/01/2024'}</span>
+                  <span>{hotel.timeAvailable || ""}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Additional Beds:</span>
-                  <span>{hotel.additionalBeds.name || '1'} Bed</span>
+                  <span>{hotel.additionalBeds.name || ""} Bed</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Price:</span>
-                  <span>{hotel.price || '150.000đ'}</span>
+                  <span>{formatCurrency(hotel.price)}</span>
                 </div>
               </div>
               {index < (hotels.length || 0) - 1 && (
@@ -48,4 +48,4 @@ export const HotelInfo = ({ hotels }: HotelInfoProps) => {
       )}
     </>
   );
-}
+};

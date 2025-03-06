@@ -58,10 +58,10 @@ import { Dispatch, SetStateAction } from "react";
 import { initialHotelRowData } from "../hotel-form/defination";
 
 export const cities = [
-  { value: "Hà Nội", name: "Hà Nội" },
-  { value: "Hồ Chí Minh", name: "Hồ Chí Minh" },
-  { value: "Đà Nẵng", name: "Đà Nẵng" },
-]; 
+  { id: "Hà Nội", name: "Hà Nội" },
+  { id: "Hồ Chí Minh", name: "Hồ Chí Minh" },
+  { id: "Đà Nẵng", name: "Đà Nẵng" },
+];
 
 export const initialRowData = (numberOfDays: number) => {
   const rowData: IFormSearchResult = {};
@@ -80,7 +80,6 @@ export const initialRowData = (numberOfDays: number) => {
   return rowData;
 };
 
-
 export interface IHotel {
   hotelType: {
     id: string;
@@ -93,17 +92,22 @@ export interface IHotel {
   roomType: {
     id: string;
     name: string;
+    price: number;
   };
   quantityRoom: {
-    id: string; 
+    id: string;
     name: string;
+    price: number;
+    quantity: number;
   };
   additionalBeds: {
     id: string;
     name: string;
+    price: number;
+    quantity: number;
   };
   timeAvailable: string;
-  price: string;
+  price: number;
 }
 
 export interface ITransportation {
@@ -112,25 +116,25 @@ export interface ITransportation {
     name: string;
   };
   quantity: string;
-  price: string;
+  price: number;
 }
 
 export interface IService {
   serviceType: {
     id: string;
     name: string;
-  },
-  serviceQuantity: string,
-  servicePrice: string,
+  };
+  serviceQuantity: string;
+  servicePrice: number;
 }
 
 export interface IAdditionalCosts {
   additionalCostType: {
     id: string;
     name: string;
-  },
+  };
   quantity: string;
-  price: string;
+  price: number;
 }
 export interface IFormSearchResult {
   [key: string]: {
@@ -150,5 +154,3 @@ export interface IPropRowSearch {
   setForm: Dispatch<SetStateAction<IFormSearchResult>>;
   formSearchResult: IFormSearchResult;
 }
-
-

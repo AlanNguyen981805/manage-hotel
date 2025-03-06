@@ -17,7 +17,7 @@ export const AdditionalCostsRow = ({
       name: "",
     },
     quantity: "",
-    price: "",
+    price: 0,
   };
 
   const { handleChange, handleAddRow } = useFormSearchResult({
@@ -43,8 +43,8 @@ export const AdditionalCostsRow = ({
                   formSearchResult[dayIndex].additionalCosts?.[rowIndex]
                     ?.additionalCostType.id || ""
                 }
-                onChange={(value, name) =>
-                  handleChange(dayIndex, rowIndex, "additionalCostType", value, name)
+                onChange={(option) =>
+                  handleChange(dayIndex, rowIndex, "additionalCostType", option)
                 }
               />
             </div>

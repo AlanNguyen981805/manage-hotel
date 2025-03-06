@@ -28,26 +28,26 @@ const ResultSearchBooking = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    setResultSearchBooking(formSearchResult)
+    setResultSearchBooking(formSearchResult);
 
     setOpenDialog(false);
-    
+
     router.push(ROUTES.BOOKING);
   };
 
   function close() {
     setOpenDialog(false);
   }
-  
-  const setArea = (city: string, name: string, dayIndex: string) => {
+
+  const setArea = (option: object, dayIndex: string) => {
     setFormSearchResult((prevState) => {
       return {
         ...prevState,
         [dayIndex]: {
           ...prevState[dayIndex],
           city: {
-            id: city,
-            name: name,
+            id: option.value,
+            name: option.name,
           },
         },
       };
@@ -93,9 +93,7 @@ const ResultSearchBooking = () => {
                               options={cities}
                               name={`city-${dayIndex}`}
                               value={formSearchResult[dayIndex]?.city.id || ""}
-                              onChange={(value, name) =>
-                                setArea(value, name, dayIndex)
-                              }
+                              onChange={(option) => setArea(option, dayIndex)}
                             />
                           </div>
                           <ArrowDown />
