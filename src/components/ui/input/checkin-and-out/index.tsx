@@ -4,7 +4,8 @@ import "react-datepicker/dist/react-datepicker.css";
 import "./checkin-and-out.css";
 
 const CheckInAndOut = () => {
-  const { setDateCheckIn, dateCheckIn, setDateCheckOut, dateCheckOut } = useBookingState();
+  const { setDateCheckIn, dateCheckIn, setDateCheckOut, dateCheckOut } =
+    useBookingState();
 
   return (
     <div className="flex items-center justify-end h-full w-full">
@@ -22,7 +23,6 @@ const CheckInAndOut = () => {
           setDateCheckIn(start);
           setDateCheckOut(end);
         }}
-        minDate={new Date()}
         isClearable
       />
     </div>

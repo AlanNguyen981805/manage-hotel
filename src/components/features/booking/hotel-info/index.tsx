@@ -2,9 +2,12 @@
 
 import { IHotel } from "../../home/result-search-booking/defination";
 import { formatCurrency } from "@/helpers/currency-helper";
+import { Price } from "@/components/ui/price";
+
 interface HotelInfoProps {
   hotels: IHotel[];
 }
+
 export const HotelInfo = ({ hotels }: HotelInfoProps) => {
   return (
     <>
@@ -36,7 +39,7 @@ export const HotelInfo = ({ hotels }: HotelInfoProps) => {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Price:</span>
-                  <span>{formatCurrency(hotel.price)}</span>
+                  <Price value={hotel.price || 0} size="md" align="left" />
                 </div>
               </div>
               {index < (hotels.length || 0) - 1 && (

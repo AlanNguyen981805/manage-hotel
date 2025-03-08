@@ -114,6 +114,7 @@ export interface ITransportation {
   transportationType: {
     id: string;
     name: string;
+    price: number;
   };
   quantity: string;
   price: number;
@@ -124,8 +125,8 @@ export interface IService {
     id: string;
     name: string;
   };
-  serviceQuantity: string;
-  servicePrice: number;
+  serviceQuantity: number;
+  price: number;
 }
 
 export interface IAdditionalCosts {

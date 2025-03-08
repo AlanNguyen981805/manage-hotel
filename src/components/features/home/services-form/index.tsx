@@ -5,6 +5,7 @@ import useFormSearchResult from "@/hooks/use-search-result";
 import { IPropRowSearch } from "../result-search-booking/defination";
 import { BtnAddRow } from "../add-row";
 import { services } from "./defiantion";
+import { Price } from "@/components/ui/price";
 
 export const ServicesRow = ({
   dayIndex,
@@ -16,16 +17,43 @@ export const ServicesRow = ({
       id: "",
       name: "",
     },
-    serviceQuantity: "",
-    servicePrice: "",
+    serviceQuantity: 1,
+    price: 0,
   };
 
-  const { handleChange, handleAddRow } = useFormSearchResult({
+  const { handleChange, handleAddRow, handleRemoveRow } = useFormSearchResult({
     dayIndex,
     setForm,
     type: "services",
     initialData,
   });
+
+  const calculatePrice = (
+    serviceTypePrice: number,
+    serviceQuantity: number = 1
+  ) => {
+    return serviceTypePrice * serviceQuantity;
+  };
+
+  const handleChangeService = (
+    option: any,
+    rowIndex: number,
+    quantity: number
+  ) => {
+    const price = calculatePrice(option.price, quantity);
+
+    handleChange(dayIndex, rowIndex, "serviceType", option);
+    handleChange(dayIndex, rowIndex, "price", price);
+  };
+
+  const handleChangeQuantiy = (e: any, rowIndex: number) => {
+    const serviceTypePrice =
+      formSearchResult[dayIndex].services?.[rowIndex]?.serviceType.price;
+    const price = calculatePrice(serviceTypePrice, e.target.value);
+
+    handleChange(dayIndex, rowIndex, "serviceQuantity", e.target.value);
+    handleChange(dayIndex, rowIndex, "price", price);
+  };
 
   return (
     <div>
@@ -44,7 +72,12 @@ export const ServicesRow = ({
                     .id || ""
                 }
                 onChange={(option) =>
-                  handleChange(dayIndex, rowIndex, "serviceType", option)
+                  handleChangeService(
+                    option,
+                    rowIndex,
+                    formSearchResult[dayIndex].services?.[rowIndex]
+                      ?.serviceQuantity ?? 1
+                  )
                 }
               />
             </div>
@@ -57,9 +90,24 @@ export const ServicesRow = ({
                   id="quantity"
                   className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-accent  focus:border-accent block w-full p-2.5  dark:focus:ring-accent dark:focus:border-accent"
                   required
+                  defaultValue={
+                    formSearchResult[dayIndex].services?.[rowIndex]
+                      ?.serviceQuantity ?? 1
+                  }
+                  onChange={(e) => handleChangeQuantiy(e, rowIndex)}
                 />
               </div>
             </div>
+            <div className="flex flex-col gap-2 items-center justify-center">
+              <Price
+                value={
+                  formSearchResult[dayIndex].services?.[rowIndex]?.price || 0
+                }
+                className="md:w-3/12 pr-2"
+                size="lg"
+              />
+            </div>
+            <button onClick={() => handleRemoveRow(rowIndex)}>Remove</button>
           </div>
         ))}
       </div>

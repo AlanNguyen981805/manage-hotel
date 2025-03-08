@@ -40,13 +40,14 @@ const ResultSearchBooking = () => {
   }
 
   const setArea = (option: object, dayIndex: string) => {
+    console.log("option :>> ", option);
     setFormSearchResult((prevState) => {
       return {
         ...prevState,
         [dayIndex]: {
           ...prevState[dayIndex],
           city: {
-            id: option.value,
+            id: option.id,
             name: option.name,
           },
         },

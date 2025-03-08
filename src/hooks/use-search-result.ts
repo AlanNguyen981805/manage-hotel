@@ -62,9 +62,26 @@ const useFormSearchResult = ({
     });
   };
 
+  const handleRemoveRow = (rowIndex: number) => {
+    setForm((prevState) => {
+      const hotelData = prevState[dayIndex][type] || [];
+      const updatedData = [...hotelData];
+      updatedData.splice(rowIndex, 1);
+
+      return {
+        ...prevState,
+        [dayIndex]: {
+          ...prevState[dayIndex],
+          [type]: updatedData,
+        },
+      };
+    });
+  };
+
   return {
     handleAddRow,
     handleChange,
+    handleRemoveRow,
   };
 };
 

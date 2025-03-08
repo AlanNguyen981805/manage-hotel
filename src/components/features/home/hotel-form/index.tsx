@@ -15,6 +15,7 @@ import {
 import { formatCurrency } from "@/helpers/currency-helper";
 import { caculatePriceByRow } from "@/helpers/calc-room-helper";
 import { useState } from "react";
+import { Price } from "@/components/ui/price";
 
 export const HoltelRow = ({
   dayIndex,
@@ -23,7 +24,7 @@ export const HoltelRow = ({
 }: IPropRowSearch) => {
   const [hotelTypeOptions] = useState(hotelTypes);
 
-  const { handleAddRow, handleChange } = useFormSearchResult({
+  const { handleAddRow, handleChange, handleRemoveRow } = useFormSearchResult({
     dayIndex,
     setForm,
     type: "hotels",
@@ -88,13 +89,17 @@ export const HoltelRow = ({
 
   const handleChangeHotelType = (option: any, rowIndex: number) => {
     handleChange(dayIndex, rowIndex, "hotelType", option);
-    handleChange(dayIndex, rowIndex, "hotelName", { id: "", name: "" });
+    // handleChange(dayIndex, rowIndex, "hotelName", { id: "", name: "" });
   };
 
   const getHotelOptions = (hotelType: any) => {
     if (!hotelType?.id) return [];
     return hotels.filter((hotel) => hotel.hotelType === hotelType.id);
   };
+
+  const isShowRemoveButton =
+    formSearchResult[dayIndex].hotels &&
+    formSearchResult[dayIndex].hotels?.length > 1;
 
   return (
     <div>
@@ -124,6 +129,7 @@ export const HoltelRow = ({
                   name={`hotel-${dayIndex}-${rowIndex}`}
                   value={hotelRow?.hotelName.id || ""}
                   onChange={(option) => {
+                    console.log("option :>> ", option);
                     handleChange(dayIndex, rowIndex, "hotelName", option);
                   }}
                 />
@@ -171,12 +177,17 @@ export const HoltelRow = ({
                   }}
                 />
               </div>
-              <div className="flex flex-col gap-2 md:w-3/12 pr-2">
-                <p className="text-right">Giá</p>
-                <p className="text-right text-lg font-bold">
-                  {formatCurrency(hotelRow?.price || 0)}
-                </p>
-              </div>
+              <Price
+                value={hotelRow?.price || 0}
+                className="md:w-3/12 pr-2"
+                size="lg"
+              />
+
+              {isShowRemoveButton && (
+                <button onClick={() => handleRemoveRow(rowIndex)}>
+                  Remove
+                </button>
+              )}
             </div>
           );
         })}
