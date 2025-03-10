@@ -332,3 +332,4 @@ export interface ICityRowData {
     city: string;
   };
 }
+

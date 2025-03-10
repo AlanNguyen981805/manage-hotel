@@ -1,45 +1,47 @@
 "use client";
 
-import { IHotel } from "../../home/result-search-booking/defination";
-import { formatCurrency } from "@/helpers/currency-helper";
 import { Price } from "@/components/ui/price";
+import { IHotel } from "../../home/result-search-booking/defination";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface HotelInfoProps {
   hotels: IHotel[];
 }
 
 export const HotelInfo = ({ hotels }: HotelInfoProps) => {
+  const { t } = useTranslation();
+
   return (
     <>
       {hotels.length > 0 && (
         <div className="mb-4">
-          <h5 className="font-medium text-gray-700 mb-2">Hotel</h5>
+          <h5 className="font-medium text-gray-700 mb-2">{t('booking.hotel')}</h5>
           {hotels.map((hotel, index) => (
             <>
               <div key={index} className="flex flex-col gap-2 pl-4 mb-4">
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Hotel Name:</span>
+                  <span className="text-gray-600">{t('booking.hotelName')}:</span>
                   <span>{hotel.hotelName.name || ""}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Room Quantity:</span>
-                  <span>{hotel.quantityRoom.name || ""} Rooms</span>
+                  <span className="text-gray-600">{t('booking.roomQuantity')}:</span>
+                  <span>{hotel.quantityRoom.name || ""}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Room Type:</span>
+                  <span className="text-gray-600">{t('booking.roomType')}:</span>
                   <span>{hotel.roomType.name || ""}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Time Available:</span>
+                  <span className="text-gray-600">{t('booking.timeAvailable')}:</span>
                   <span>{hotel.timeAvailable || ""}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Additional Beds:</span>
-                  <span>{hotel.additionalBeds.name || ""} Bed</span>
+                  <span className="text-gray-600">{t('booking.additionalBeds')}:</span>
+                  <span>{hotel.additionalBeds.name || ""}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Price:</span>
-                  <Price value={hotel.price || 0} size="md" align="left" />
+                  <span className="text-gray-600">{t('booking.price')}:</span>
+                  <Price value={hotel.price || 0} size="md" align="left" label="" />
                 </div>
               </div>
               {index < (hotels.length || 0) - 1 && (

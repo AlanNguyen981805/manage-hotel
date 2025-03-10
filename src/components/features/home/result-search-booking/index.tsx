@@ -13,7 +13,7 @@ import {
 import { useEffect, useState } from "react";
 import Dropdown from "../../../ui/dropdown";
 import { AdditinalCosts, Hotel, Service, Transportation } from "..";
-import { cities, IFormSearchResult, initialRowData } from "./defination";
+import { cities, IFormSearchResult, initialRowData, ICity } from "./defination";
 import { useRouter } from "next/navigation";
 import { ROUTES } from "@/constants/routes";
 
@@ -39,17 +39,13 @@ const ResultSearchBooking = () => {
     setOpenDialog(false);
   }
 
-  const setArea = (option: object, dayIndex: string) => {
-    console.log("option :>> ", option);
+  const setArea = (option: ICity, dayIndex: string) => {
     setFormSearchResult((prevState) => {
       return {
         ...prevState,
         [dayIndex]: {
           ...prevState[dayIndex],
-          city: {
-            id: option.id,
-            name: option.name,
-          },
+          city: option,
         },
       };
     });

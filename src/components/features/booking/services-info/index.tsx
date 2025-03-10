@@ -1,5 +1,6 @@
 "use client";
 
+import { Price } from "@/components/ui/price";
 import { IService } from "../../home/result-search-booking/defination";
 
 interface ServicesInfoProps { 
@@ -13,16 +14,16 @@ export const ServicesInfo = ({ services }: ServicesInfoProps) => {
         <>
         <div className="flex flex-col gap-2 pl-4" key={index}>
           <div className="flex justify-between">
-            <span className="text-gray-600">Type:</span>
+            <span className="text-gray-600">Tên dịch vụ:</span>
             <span>{service.serviceType.name}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-gray-600">Request:</span>
+            <span className="text-gray-600">Số lượng:</span>
             <span>{service.serviceQuantity}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-gray-600">Price:</span>
-            <span>${service.servicePrice}</span>
+            <span className="text-gray-600">Giá tiền:</span>
+            <Price value={service.price || 0} size="md" align="left" label="" />
           </div>
         </div>
           {index < (services.length || 0) - 1 && (

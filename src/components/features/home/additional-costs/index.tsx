@@ -15,7 +15,7 @@ export const AdditionalCostsRow = ({
       id: "",
       name: "",
     },
-    quantity: "",
+    quantity: 0,
     price: 0,
   };
 

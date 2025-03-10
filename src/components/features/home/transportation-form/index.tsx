@@ -9,15 +9,16 @@ import { BtnAddRow } from "../add-row";
 import {
   IPropRowSearch,
   ITransportation,
+  ITransportationMode,
 } from "../result-search-booking/defination";
 import {
   initialTransportationRowData,
   transportationTypes,
 } from "./defination";
 
-const plans = [
-  { name: "1 chiều", id: 1, price: 100000 },
-  { name: "2 chiều", id: 2, price: 200000 },
+const plans: ITransportationMode[] = [
+  { name: "1 chiều", id: "1", price: 100000 },
+  { name: "2 chiều", id: "2", price: 200000 },
 ];
 
 export const TransportationRow = ({
@@ -64,12 +65,12 @@ export const TransportationRow = ({
   };
 
   const handelChangeTransportation = (
-    e: any,
+    e: ITransportationMode,
     rowIndex: number,
     transportationTypePrice: number
   ) => {
     setSelected(e);
-    handleChange(dayIndex, rowIndex, "isOneWay", e.id === 1);
+    handleChange(dayIndex, rowIndex, "transportationMode", e);
     handleChange(
       dayIndex,
       rowIndex,

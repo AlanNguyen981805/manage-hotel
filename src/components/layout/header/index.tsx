@@ -3,9 +3,12 @@
 import { Logo } from "@/assets/svgs/Logo";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { LanguageSwitcher } from "@/components/ui/language-switcher";
+import { useTranslation } from "@/hooks/useTranslation";
 
 const Header = () => {
   const [header, setHeader] = useState(true);
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (!window) return;
@@ -14,7 +17,13 @@ const Header = () => {
     );
   });
 
-  const navLinks = ["Home", "Rooms", "Restaurant", "Spa", "Contact"];
+  const navLinks = [
+    { key: 'nav.home', path: '/' },
+    { key: 'nav.rooms', path: '/' },
+    { key: 'nav.restaurant', path: '/' },
+    { key: 'nav.spa', path: '/' },
+    { key: 'nav.contact', path: '/' }
+  ];
 
   return (
     <header
@@ -25,16 +34,20 @@ const Header = () => {
           <Logo />
         </Link>
 
-        <nav
-          className={`${header ? "text-primary" : "text-white"}
-        flex gap-x-4 lg:gap-x-8 font-tertiary tracking-[3px] text-[15px] items-center uppercase`}
-        >
-          {navLinks.map((link) => (
-            <Link href="/" className="transition hover:text-accent" key={link}>
-              {link}
-            </Link>
-          ))}
-        </nav>
+        <div className="flex items-center gap-4">
+          <nav
+            className={`${header ? "text-primary" : "text-white"}
+            flex gap-x-4 lg:gap-x-8 font-tertiary tracking-[3px] text-[15px] items-center uppercase`}
+          >
+            {navLinks.map((link) => (
+              <Link href={link.path} className="transition hover:text-accent" key={link.key}>
+                {t(link.key)}
+              </Link>
+            ))}
+          </nav>
+          
+          <LanguageSwitcher />
+        </div>
       </div>
     </header>
   );

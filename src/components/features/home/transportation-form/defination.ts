@@ -54,7 +54,11 @@ export const initialTransportationRowData = {
     name: "",
     price: 0,
   },
-  quantity: "",
+  transportationMode: {
+    id: "",
+    name: "",
+    price: 0,
+  },
+  quantity: 0,
   price: 0,
-  isOneWay: false,
 };

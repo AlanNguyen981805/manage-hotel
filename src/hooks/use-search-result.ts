@@ -41,7 +41,7 @@ const useFormSearchResult = ({
     dayIndex: string,
     rowIndex: number,
     field: string,
-    option?: any
+    option?: unknown
   ) => {
     setForm((prevState) => {
       const hotelData = prevState[dayIndex][type] || [];

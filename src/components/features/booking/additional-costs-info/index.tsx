@@ -1,10 +1,11 @@
 "use client";
 
 import { IAdditionalCosts } from "../../home/result-search-booking/defination";
-
+import { Price } from "@/components/ui/price";
 interface AdditionalCostsInfoProps {
   additionalCosts: IAdditionalCosts[]
 }
+
 export const AdditionalCostsInfo = ({ additionalCosts }: AdditionalCostsInfoProps) => {
   return (
     <div className="mb-4">
@@ -15,16 +16,12 @@ export const AdditionalCostsInfo = ({ additionalCosts }: AdditionalCostsInfoProp
         <>
         <div className="flex flex-col gap-2 pl-4" key={index}>
           <div className="flex justify-between">
-            <span className="text-gray-600">Type:</span>
+            <span className="text-gray-600">Tên yêu cầu:</span>
             <span>{additionalCost.additionalCostType.name}</span>
         </div>
-        <div className="flex justify-between">
-            <span className="text-gray-600">Quantity:</span>
-            <span>{additionalCost.quantity}</span>
-          </div>
           <div className="flex justify-between">
-            <span className="text-gray-600">Price:</span>
-            <span>${additionalCost.price}</span>
+            <span className="text-gray-600">Giá tiền:</span>
+            <Price value={additionalCost.price || 0} size="md" align="left" label="" />
           </div>
         </div>
         {index < (additionalCosts.length || 0) - 1 && (
