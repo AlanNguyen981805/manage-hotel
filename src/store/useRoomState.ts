@@ -4,25 +4,30 @@ import { calculateDaysBetweenDates } from "@/helpers/date-helper";
 import { create } from "zustand";
 
 interface RoomState {
+  isOpenHistory: boolean;
   loading: boolean;
   numberOfPeople: number;
   dateCheckIn: Date | null;
   dateCheckOut: Date | null;
   numberOfDays: number;
-  resultSearchBooking: IFormSearchResult
+  resultSearchBooking: IFormSearchResult;
 
   getNumberOfDays?: () => void;
 
   setLoading: (status: boolean) => void;
   searchRoom: () => void;
   setDateCheckIn: (date: Date | null) => void;
-  setDateCheckOut: (date: Date |  null) => void;
+  setDateCheckOut: (date: Date | null) => void;
   setNumberOfPeople: (count: number) => void;
   setResultSearchBooking: (result: IFormSearchResult) => void;
   reset: () => void;
+  setNumberOfdays: (count: number) => void;
+  setOpenHistory: (open: boolean) => void;
 }
 
 const useBookingState = create<RoomState>((set) => ({
+  isOpenHistory: false,
+
   loading: false,
 
   numberOfDays: 0,
@@ -35,7 +40,8 @@ const useBookingState = create<RoomState>((set) => ({
 
   resultSearchBooking: {},
 
-  setResultSearchBooking: (resultSearchBooking) => set(() => ({ resultSearchBooking })),
+  setResultSearchBooking: (resultSearchBooking) =>
+    set(() => ({ resultSearchBooking })),
 
   getNumberOfDays: () =>
     set((state) => ({
@@ -58,6 +64,10 @@ const useBookingState = create<RoomState>((set) => ({
   setLoading: (loading) => set(() => ({ loading })),
 
   reset: () => set({ numberOfPeople: 0 }),
+
+  setNumberOfdays: (count) => set(() => ({ numberOfDays: count })),
+
+  setOpenHistory: (open) => set(() => ({ isOpenHistory: open })),
 }));
 
 export default useBookingState;

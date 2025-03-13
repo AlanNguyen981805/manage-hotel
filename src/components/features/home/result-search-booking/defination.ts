@@ -171,3 +171,11 @@ export interface ICity {
   name: string;
 }
 
+export interface IHistoryInfo {
+  days: IFormSearchResult;
+  numberOfDays: number;
+  numberOfPeople: number;
+  created: string;
+  dateCheckIn: Date | null;
+  dateCheckOut: Date | null;
+}

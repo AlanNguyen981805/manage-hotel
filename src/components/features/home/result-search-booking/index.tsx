@@ -19,16 +19,42 @@ import { ROUTES } from "@/constants/routes";
 
 const ResultSearchBooking = () => {
   const router = useRouter();
-  const { numberOfDays, setResultSearchBooking } = useBookingState();
+  const {
+    numberOfDays,
+    setResultSearchBooking,
+    dateCheckIn,
+    dateCheckOut,
+    numberOfPeople,
+    resultSearchBooking,
+  } = useBookingState();
   const { dialogStatus, setOpenDialog } = useDialogStore();
   const [formSearchResult, setFormSearchResult] = useState<IFormSearchResult>(
     {}
   );
 
+  const bookingHistory = localStorage.getItem("bookingHistory");
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
+    const object = {
+      days: formSearchResult,
+      created: new Date(),
+      numberOfDays,
+      dateCheckIn,
+      dateCheckOut,
+      numberOfPeople,
+    };
+
     setResultSearchBooking(formSearchResult);
+    if (!bookingHistory) {
+      const arr = [object];
+      localStorage.setItem("bookingHistory", JSON.stringify(arr));
+    } else {
+      const preBookingHistory = JSON.parse(bookingHistory);
+      const newArr = [object, ...preBookingHistory];
+      localStorage.setItem("bookingHistory", JSON.stringify(newArr));
+    }
 
     setOpenDialog(false);
 
@@ -53,7 +79,10 @@ const ResultSearchBooking = () => {
 
   useEffect(() => {
     setFormSearchResult(initialRowData(numberOfDays));
-  }, [numberOfDays]);
+    if (resultSearchBooking.day1) {
+      setFormSearchResult(resultSearchBooking);
+    }
+  }, [numberOfDays, resultSearchBooking]);
 
   return (
     <div className="flex-col flex items-center justify-center w-full m-2">
