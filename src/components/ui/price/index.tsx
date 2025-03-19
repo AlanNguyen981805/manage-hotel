@@ -1,3 +1,5 @@
+"use client";
+
 import { formatCurrency } from "@/helpers/currency-helper";
 
 interface PriceProps {

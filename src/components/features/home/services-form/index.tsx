@@ -2,7 +2,7 @@
 
 import Dropdown from "@/components/ui/dropdown";
 import useFormSearchResult from "@/hooks/use-search-result";
-import { IPropRowSearch } from "../result-search-booking/defination";
+import { IPropRowSearch, IService } from "../result-search-booking/defination";
 import { BtnAddRow } from "../add-row";
 import { services } from "./defiantion";
 import { Price } from "@/components/ui/price";
@@ -12,10 +12,11 @@ export const ServicesRow = ({
   setForm,
   formSearchResult,
 }: IPropRowSearch) => {
-  const initialData = {
+  const initialData: IService = {
     serviceType: {
       id: "",
       name: "",
+      price: 0,
     },
     serviceQuantity: 1,
     price: 0,
@@ -29,14 +30,14 @@ export const ServicesRow = ({
   });
 
   const calculatePrice = (
-    serviceTypePrice: number,
+    serviceTypePrice: number | undefined,
     serviceQuantity: number = 1
   ) => {
-    return serviceTypePrice * serviceQuantity;
+    return serviceTypePrice ? serviceTypePrice * serviceQuantity : 0;
   };
 
   const handleChangeService = (
-    option: any,
+    option: IService,
     rowIndex: number,
     quantity: number
   ) => {
@@ -46,10 +47,10 @@ export const ServicesRow = ({
     handleChange(dayIndex, rowIndex, "price", price);
   };
 
-  const handleChangeQuantiy = (e: any, rowIndex: number) => {
+  const handleChangeQuantiy = (e: React.ChangeEvent<HTMLInputElement>, rowIndex: number) => {
     const serviceTypePrice =
       formSearchResult[dayIndex].services?.[rowIndex]?.serviceType.price;
-    const price = calculatePrice(serviceTypePrice, e.target.value);
+    const price = calculatePrice(serviceTypePrice, Number(e.target.value));
 
     handleChange(dayIndex, rowIndex, "serviceQuantity", e.target.value);
     handleChange(dayIndex, rowIndex, "price", price);
@@ -94,7 +95,7 @@ export const ServicesRow = ({
                     formSearchResult[dayIndex].services?.[rowIndex]
                       ?.serviceQuantity ?? 1
                   }
-                  onChange={(e) => handleChangeQuantiy(e, rowIndex)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChangeQuantiy(e, rowIndex)}
                 />
               </div>
             </div>

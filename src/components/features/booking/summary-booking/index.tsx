@@ -1,34 +1,89 @@
 "use client";
 
-export const SummaryBooking = () => {
+import { IFormSearchResult } from "@/components/features/home/result-search-booking/defination";
+import { Price } from "@/components/ui/price";
+import { useTranslation } from "@/hooks/useTranslation";
+
+interface SummaryBookingProps {
+  resultSearchBooking: IFormSearchResult;
+}
+
+export const SummaryBooking = ({ resultSearchBooking }: SummaryBookingProps) => {
+  const { t } = useTranslation();
+
+  const calculateTotals = () => {
+    let hotelTotal = 0;
+    let transportationTotal = 0; 
+    let servicesTotal = 0;
+    let additionalCostsTotal = 0;
+
+    Object.values(resultSearchBooking).forEach((dayBooking) => {
+      // Sum hotels
+      dayBooking.hotels?.forEach((hotel) => {
+        hotelTotal += hotel.price;
+      });
+
+      // Sum transportation
+      dayBooking.transportation?.forEach((transport) => {
+        transportationTotal += transport.price;
+      });
+
+      // Sum services
+      dayBooking.services?.forEach((service) => {
+        servicesTotal += service.price;
+      });
+
+      // Sum additional costs
+      dayBooking.additionalCosts?.forEach((cost) => {
+        additionalCostsTotal += cost.price;
+      });
+    });
+
+    const total = hotelTotal + transportationTotal + servicesTotal + additionalCostsTotal;
+
+    return {
+      hotelTotal,
+      transportationTotal,
+      servicesTotal,
+      additionalCostsTotal,
+      total
+    };
+  };
+
+  const totals = calculateTotals();
+
   return (
     <div className="bg-white rounded-lg shadow p-6">
       <div className="flex flex-col gap-6">
-        <h3 className="text-xl font-semibold">Price Summary</h3>
+        <h3 className="text-xl font-semibold">{t('summary.title')}</h3>
 
         <div className="flex flex-col gap-3">
           <div className="flex justify-between">
-            <span className="text-gray-600">Room Rate (3 nights)</span>
-            <span>$450</span>
+            <span className="text-gray-600">{t('summary.hotel')}</span>
+            <Price value={totals.hotelTotal} label="" />
           </div>
           <div className="flex justify-between">
-            <span className="text-gray-600">Service Charges</span>
-            <span>$150</span>
+            <span className="text-gray-600">{t('summary.transportation')}</span>
+            <Price value={totals.transportationTotal} label="" />
           </div>
           <div className="flex justify-between">
-            <span className="text-gray-600">Taxes & Fees</span>
-            <span>$60</span>
+            <span className="text-gray-600">{t('summary.service')}</span>
+            <Price value={totals.servicesTotal} label="" />
+          </div>
+          <div className="flex justify-between">
+            <span className="text-gray-600">{t('summary.additional')}</span>
+            <Price value={totals.additionalCostsTotal} label="" />
           </div>
           <div className="flex justify-between font-semibold text-lg pt-3 border-t">
-            <span>Total</span>
-            <span>$660</span>
+            <span>{t('summary.total')}</span>
+            <Price value={totals.total} label="" size="lg" />
           </div>
         </div>
 
         <div className="flex flex-col gap-2 text-sm text-gray-600">
-          <p>• Full payment will be charged at check-in</p>
-          <p>• Rates are subject to change without prior notice</p>
-          <p>• All charges are in USD</p>
+          <p>{t('summary.paymentNotice1')}</p>
+          <p>{t('summary.paymentNotice2')}</p>
+          <p>{t('summary.paymentNotice3')}</p>
         </div>
 
         <button
@@ -38,10 +93,11 @@ export const SummaryBooking = () => {
             const content = `
                     Booking Details
                     
-                    Room Rate (3 nights): $450
-                    Service Charges: $150 
-                    Taxes & Fees: $60
-                    Total: $660
+                    Hotel: $${totals.hotelTotal}
+                    Transportation: $${totals.transportationTotal}
+                    Service: $${totals.servicesTotal}
+                    Additional: $${totals.additionalCostsTotal}
+                    Total: $${totals.total}
                     
                     Additional Information:
                     - Free WiFi available throughout the property

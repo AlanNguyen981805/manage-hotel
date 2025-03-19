@@ -80,11 +80,13 @@ export const initialRowData = (numberOfDays: number) => {
   return rowData;
 };
 
+export interface IHotelType {
+  id: string;
+  name: string;
+}
+
 export interface IHotel {
-  hotelType: {
-    id: string;
-    name: string;
-  };
+  hotelType: IHotelType;
   hotelName: {
     id: string;
     name: string;
@@ -110,13 +112,20 @@ export interface IHotel {
   price: number;
 }
 
+export interface ITransportationMode {
+  id: string;
+  name: string;
+  price: number;
+}
+
 export interface ITransportation {
   transportationType: {
     id: string;
     name: string;
     price: number;
   };
-  quantity: string;
+  transportationMode: ITransportationMode;
+  quantity: number;
   price: number;
 }
 
@@ -124,6 +133,7 @@ export interface IService {
   serviceType: {
     id: string;
     name: string;
+    price: number;
   };
   serviceQuantity: number;
   price: number;
@@ -134,7 +144,7 @@ export interface IAdditionalCosts {
     id: string;
     name: string;
   };
-  quantity: string;
+  quantity: number;
   price: number;
 }
 export interface IFormSearchResult {
@@ -155,3 +165,9 @@ export interface IPropRowSearch {
   setForm: Dispatch<SetStateAction<IFormSearchResult>>;
   formSearchResult: IFormSearchResult;
 }
+
+export interface ICity {
+  id: string;
+  name: string;
+}
+

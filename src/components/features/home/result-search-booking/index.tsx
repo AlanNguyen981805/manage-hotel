@@ -41,17 +41,13 @@ const ResultSearchBooking = memo(() => {
     setOpenDialog(false);
   }
 
-  const setArea = (option: object, dayIndex: string) => {
-    console.log("option :>> ", option);
+  const setArea = (option: ICity, dayIndex: string) => {
     setFormSearchResult((prevState) => {
       return {
         ...prevState,
         [dayIndex]: {
           ...prevState[dayIndex],
-          city: {
-            id: option.id,
-            name: option.name,
-          },
+          city: option,
         },
       };
     });

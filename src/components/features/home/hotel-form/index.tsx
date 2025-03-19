@@ -7,7 +7,8 @@ import useFormSearchResult from "@/hooks/use-search-result";
 import { useState } from "react";
 import { BtnAddRow } from "../add-row";
 import {
-  IFormSearchResult,
+  IHotel,
+  IHotelType,
   IPropRowSearch,
 } from "../result-search-booking/defination";
 import {
@@ -20,7 +21,7 @@ import {
 } from "./defination";
 import useRoutesStore from "@/store/useRoutesStore";
 import useBookingState from "@/store/useRoomState";
-import { Hotel } from "@/types/route";
+import { Hotel, HotelType } from "@/types/route";
 
 export const HoltelRow = ({
   dayIndex,
@@ -29,9 +30,11 @@ export const HoltelRow = ({
 }: IPropRowSearch) => {
   const { data } = useRoutesStore();
 
-  const [hotelTypeOptions] = useState(hotelTypes);
+  // const [hotelTypeOptions] = useState(hotelTypes);
 
   const [hotelsByRank, setHotelsByRank] = useState<Hotel[]>([]);
+
+  const [hotelTypesOptions, setHotelTypesOptions] = useState<HotelType[]>([]);
 
   const { resultSearchBooking } = useBookingState();
 
@@ -43,11 +46,14 @@ export const HoltelRow = ({
   });
 
   const handleChangeRoomType = (
-    option: any,
-    hotelRow: any,
+    option: { name: string; id: string; price: number },
+    hotelRow: IHotel,
     rowIndex: number
   ) => {
-    const rowTypePrice = option.price;
+    console.log("option :>> ", option);
+    const rowTypePrice = option.price_hotels[0].price;
+
+    // const rowTypePrice = option.price;
     const numberOfRooms = hotelRow?.quantityRoom.quantity;
     const additionalBedsPrice = hotelRow?.additionalBeds.price;
     const additionalBedsQuantity = hotelRow?.additionalBeds.quantity;
@@ -65,8 +71,8 @@ export const HoltelRow = ({
   };
 
   const handleChangeNumberOfRooms = (
-    option: any,
-    hotelRow: any,
+    option: { name: string; id: string; price: number; quantity: number },
+    hotelRow: IHotel,
     rowIndex: number
   ) => {
     handleChange(dayIndex, rowIndex, "quantityRoom", option);
@@ -83,8 +89,8 @@ export const HoltelRow = ({
   };
 
   const handleChangeAdditionalBeds = (
-    option: any,
-    hotelRow: any,
+    option: { name: string; id: string; price: number; quantity: number },
+    hotelRow: IHotel,
     rowIndex: number
   ) => {
     const result = caculatePriceByRow(
@@ -112,9 +118,10 @@ export const HoltelRow = ({
     handleChange(dayIndex, rowIndex, "hotelType", option);
   };
 
-  const getHotelOptions = (hotelType: any) => {
+  const getHotelOptions = (hotelType: IHotelType) => {
     if (!hotelType?.id) return [];
-    return hotels.filter((hotel) => hotel.hotelType === hotelType.id);
+
+    return hotels.filter((hotel) => hotel.hotelType === Number(hotelType.id));
   };
 
   const isShowRemoveButton =
@@ -128,14 +135,14 @@ export const HoltelRow = ({
       <div className="flex flex-col justify-between w-full px-2 border-b-2 indexs-center">
         {formSearchResult[dayIndex].hotels?.map((hotel, rowIndex) => {
           const hotelRow = formSearchResult[dayIndex].hotels?.[rowIndex];
-          const filteredHotels = getHotelOptions(hotelRow?.hotelType);
+          if (!hotelRow) return null;
 
           return (
             <div key={rowIndex} className="flex w-full gap-4 my-3">
               <div className="flex flex-col items-start justify-center gap-2 md:w-3/12">
                 <p>Loại khách sạn</p>
                 <Dropdown
-                  options={hotelTypeOptions}
+                  options={hotelTypes}
                   name={`hotel-type-${dayIndex}-${rowIndex}`}
                   value={hotelRow?.hotelType.id || ""}
                   onChange={(option) => handleChangeHotelType(option, rowIndex)}
@@ -145,14 +152,21 @@ export const HoltelRow = ({
               <div className="flex flex-col gap-2 md:w-3/12">
                 <p>Khách sạn</p>
                 <Dropdown
-                  options={hotelsByRank.map((hotel) => ({
-                    id: hotel.id,
-                    name: hotel.hotel_name,
-                  }))}
+                  options={[
+                    { id: 0, name: "Vui lòng chọn" },
+                    ...hotelsByRank.map((hotel) => ({
+                      ...hotel,
+                      id: hotel.id,
+                      name: hotel.hotel_name,
+                    })),
+                  ]}
                   name={`hotel-${dayIndex}-${rowIndex}`}
                   value={hotelRow?.hotelName.id || ""}
                   onChange={(option) => {
                     console.log("option :>> ", option);
+
+                    setHotelTypesOptions(option.hotel_types || []);
+
                     handleChange(dayIndex, rowIndex, "hotelName", option);
                   }}
                 />
@@ -161,7 +175,7 @@ export const HoltelRow = ({
               <div className="flex flex-col gap-2 md:w-3/12">
                 <p>Loại phòng</p>
                 <Dropdown
-                  options={roomTypes}
+                  options={hotelTypesOptions}
                   name={`room-type-${dayIndex}-${rowIndex}`}
                   value={hotelRow?.roomType.id || ""}
                   onChange={(option) =>

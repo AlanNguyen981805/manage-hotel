@@ -42,7 +42,7 @@ const BookRoomForm = () => {
 
   return (
     <div className="h-[260px] flex flex-col justify-center items-center ">
-      <h1 className="text-4xl font-medium mb-9 text-accent">BOOK ROOM NOW</h1>
+      <h1 className="text-4xl font-medium mb-9 text-accent">ĐẶT PHÒNG NGAY</h1>
 
       <form className="h-[300px] lg:h-[70px] w-full px-44">
         <div className="flex flex-col w-full h-full lg:flex-row">

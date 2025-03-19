@@ -9,3 +9,4 @@ export const caculatePriceByRow = (
   const price = roomTypePrice * numberOfRooms + bedsPrice;
   return price;
 };
+

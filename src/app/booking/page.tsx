@@ -14,9 +14,11 @@ import {
   DisclosurePanel,
 } from "@headlessui/react";
 import { ArrowDown } from "@/assets/svgs/ArrowDown";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export default function Booking() {
   const { resultSearchBooking } = useBookingState();
+  const { t } = useTranslation();
 
   console.log("resultSearchBooking :>> ", resultSearchBooking);
 
@@ -26,49 +28,46 @@ export default function Booking() {
         <div className="w-[70%]">
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex flex-col gap-6">
-              {/* Days Information */}
-              <div>
-                <h3 className="text-xl font-semibold mb-4">Booking Details</h3>
-                {Object.keys(resultSearchBooking).map((keyName, i) => (
-                  <Disclosure key={i} as="div" defaultOpen={false}>
-                    <DisclosureButton className="group flex w-full items-center justify-between border-b py-4">
-                      <h4 className="font-medium text-lg">
-                        Day {i + 1} - {resultSearchBooking[keyName].city.name}
-                      </h4>
-                      <ArrowDown />
-                    </DisclosureButton>
-                    <DisclosurePanel className="mt-2 text-sm/5">
-                      <div className="border-b">
-                        <HotelInfo
-                          hotels={resultSearchBooking[keyName].hotels || []}
-                        />
+              <h3 className="text-xl font-semibold mb-4">{t('booking.details')}</h3>
+              {Object.keys(resultSearchBooking).map((keyName, i) => (
+                <Disclosure key={i} as="div" defaultOpen={false}>
+                  <DisclosureButton className={`group flex w-full items-center justify-between py-4 ${i < Object.keys(resultSearchBooking).length - 1 ? 'border-b' : ''}`}>
+                    <h4 className="font-medium text-lg">
+                      {t('booking.day')} {i + 1} - {resultSearchBooking[keyName].city.name}
+                    </h4>
+                    <ArrowDown />
+                  </DisclosureButton>
+                  <DisclosurePanel className="mt-2 text-sm/5">
+                    <div className="border-b">
+                      <HotelInfo
+                        hotels={resultSearchBooking[keyName].hotels || []}
+                      />
 
-                        <TransportationInfo
-                          transportation={
-                            resultSearchBooking[keyName].transportation || []
-                          }
-                        />
+                      <TransportationInfo
+                        transportation={
+                          resultSearchBooking[keyName].transportation || []
+                        }
+                      />
 
-                        <ServicesInfo
-                          services={resultSearchBooking[keyName].services || []}
-                        />
+                      <ServicesInfo
+                        services={resultSearchBooking[keyName].services || []}
+                      />
 
-                        <AdditionalCostsInfo
-                          additionalCosts={
-                            resultSearchBooking[keyName].additionalCosts || []
-                          }
-                        />
-                      </div>
-                    </DisclosurePanel>
-                  </Disclosure>
-                ))}
-              </div>
+                      <AdditionalCostsInfo
+                        additionalCosts={
+                          resultSearchBooking[keyName].additionalCosts || []
+                        }
+                      />
+                    </div>
+                  </DisclosurePanel>
+                </Disclosure>
+              ))}
             </div>
           </div>
         </div>
 
         <div className="w-[30%]">
-          <SummaryBooking />
+          <SummaryBooking resultSearchBooking={resultSearchBooking} />
         </div>
       </div>
     </div>
