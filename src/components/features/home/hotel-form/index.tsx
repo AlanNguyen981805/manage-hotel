@@ -1,9 +1,15 @@
 "use client";
 
 import Dropdown from "@/components/ui/dropdown";
+import { Price } from "@/components/ui/price";
+import { caculatePriceByRow } from "@/helpers/calc-room-helper";
 import useFormSearchResult from "@/hooks/use-search-result";
+import { useState } from "react";
 import { BtnAddRow } from "../add-row";
-import { IPropRowSearch } from "../result-search-booking/defination";
+import {
+  IFormSearchResult,
+  IPropRowSearch,
+} from "../result-search-booking/defination";
 import {
   additionalBeds,
   hotels,
@@ -12,17 +18,22 @@ import {
   numberOfRooms,
   roomTypes,
 } from "./defination";
-import { formatCurrency } from "@/helpers/currency-helper";
-import { caculatePriceByRow } from "@/helpers/calc-room-helper";
-import { useState } from "react";
-import { Price } from "@/components/ui/price";
+import useRoutesStore from "@/store/useRoutesStore";
+import useBookingState from "@/store/useRoomState";
+import { Hotel } from "@/types/route";
 
 export const HoltelRow = ({
   dayIndex,
   setForm,
   formSearchResult,
 }: IPropRowSearch) => {
+  const { data } = useRoutesStore();
+
   const [hotelTypeOptions] = useState(hotelTypes);
+
+  const [hotelsByRank, setHotelsByRank] = useState<Hotel[]>([]);
+
+  const { resultSearchBooking } = useBookingState();
 
   const { handleAddRow, handleChange, handleRemoveRow } = useFormSearchResult({
     dayIndex,
@@ -88,8 +99,17 @@ export const HoltelRow = ({
   };
 
   const handleChangeHotelType = (option: any, rowIndex: number) => {
+    const getLocation = data?.find(
+      (route) => route.id === Number(formSearchResult[dayIndex].city.id)
+    );
+
+    const hotels = getLocation?.location?.hotels ?? [];
+
+    const hotelsByRank = hotels.filter((hotel) => hotel.rank === option.id);
+
+    setHotelsByRank(hotelsByRank);
+
     handleChange(dayIndex, rowIndex, "hotelType", option);
-    // handleChange(dayIndex, rowIndex, "hotelName", { id: "", name: "" });
   };
 
   const getHotelOptions = (hotelType: any) => {
@@ -105,14 +125,14 @@ export const HoltelRow = ({
     <div>
       <BtnAddRow name="Hotel" onAddRow={handleAddRow} />
 
-      <div className=" w-full border-b-2 flex flex-col justify-between px-2 indexs-center">
+      <div className="flex flex-col justify-between w-full px-2 border-b-2 indexs-center">
         {formSearchResult[dayIndex].hotels?.map((hotel, rowIndex) => {
           const hotelRow = formSearchResult[dayIndex].hotels?.[rowIndex];
           const filteredHotels = getHotelOptions(hotelRow?.hotelType);
 
           return (
-            <div key={rowIndex} className="flex my-3 gap-4 w-full">
-              <div className="flex flex-col gap-2 items-start justify-center md:w-3/12">
+            <div key={rowIndex} className="flex w-full gap-4 my-3">
+              <div className="flex flex-col items-start justify-center gap-2 md:w-3/12">
                 <p>Loại khách sạn</p>
                 <Dropdown
                   options={hotelTypeOptions}
@@ -125,7 +145,10 @@ export const HoltelRow = ({
               <div className="flex flex-col gap-2 md:w-3/12">
                 <p>Khách sạn</p>
                 <Dropdown
-                  options={filteredHotels}
+                  options={hotelsByRank.map((hotel) => ({
+                    id: hotel.id,
+                    name: hotel.hotel_name,
+                  }))}
                   name={`hotel-${dayIndex}-${rowIndex}`}
                   value={hotelRow?.hotelName.id || ""}
                   onChange={(option) => {
@@ -179,7 +202,7 @@ export const HoltelRow = ({
               </div>
               <Price
                 value={hotelRow?.price || 0}
-                className="md:w-3/12 pr-2"
+                className="pr-2 md:w-3/12"
                 size="lg"
               />
 

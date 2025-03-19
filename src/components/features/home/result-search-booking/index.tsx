@@ -1,8 +1,10 @@
 "use client";
 
 import { ArrowDown } from "@/assets/svgs/ArrowDown";
+import { ROUTES } from "@/constants/routes";
 import useDialogStore from "@/store/useDialog";
 import useBookingState from "@/store/useRoomState";
+import useRoutesStore from "@/store/useRoutesStore";
 import {
   Dialog,
   DialogPanel,
@@ -10,20 +12,20 @@ import {
   DisclosureButton,
   DisclosurePanel,
 } from "@headlessui/react";
-import { useEffect, useState } from "react";
-import Dropdown from "../../../ui/dropdown";
-import { AdditinalCosts, Hotel, Service, Transportation } from "..";
-import { cities, IFormSearchResult, initialRowData } from "./defination";
 import { useRouter } from "next/navigation";
-import { ROUTES } from "@/constants/routes";
+import { memo, useEffect, useState } from "react";
+import { AdditinalCosts, Hotel, Service, Transportation } from "..";
+import Dropdown from "../../../ui/dropdown";
+import { IFormSearchResult, initialRowData } from "./defination";
 
-const ResultSearchBooking = () => {
+const ResultSearchBooking = memo(() => {
   const router = useRouter();
   const { numberOfDays, setResultSearchBooking } = useBookingState();
   const { dialogStatus, setOpenDialog } = useDialogStore();
   const [formSearchResult, setFormSearchResult] = useState<IFormSearchResult>(
     {}
   );
+  const { data, loading } = useRoutesStore();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,12 +57,21 @@ const ResultSearchBooking = () => {
     });
   };
 
+  const transformTopOptions = () => {
+    if (!data) return [];
+
+    return data.map((route) => ({
+      id: route.id,
+      name: route.name,
+    }));
+  };
+
   useEffect(() => {
     setFormSearchResult(initialRowData(numberOfDays));
   }, [numberOfDays]);
 
   return (
-    <div className="flex-col flex items-center justify-center w-full m-2">
+    <div className="flex flex-col items-center justify-center w-full m-2">
       <Dialog
         open={dialogStatus}
         as="div"
@@ -71,19 +82,19 @@ const ResultSearchBooking = () => {
         <div className="fixed inset-0 bg-black/70" aria-hidden="true" />
 
         <div className="fixed inset-0 z-50 w-screen overflow-y-auto">
-          <div className="flex min-h-full overflow-y-auto items-center justify-center p-4">
+          <div className="flex items-center justify-center min-h-full p-4 overflow-y-auto">
             <DialogPanel
               transition
               className="w-full max-w-4xl max-h-[700px] overflow-y-auto rounded-xl bg-white backdrop-blur-2xl duration-300 ease-out data-[closed]:transform-[scale(95%)] data-[closed]:opacity-0"
             >
-              <div className="w-full px-4 items-center flex flex-col ">
-                <div className="mx-auto w-full max-w-4xl divide-y divide-black/5 rounded-xl">
+              <div className="flex flex-col items-center w-full px-4 ">
+                <div className="w-full max-w-4xl mx-auto divide-y divide-black/5 rounded-xl">
                   {Array.from({ length: numberOfDays }, (_, index: number) => {
                     const dayIndex = `day${index + 1}`;
 
                     return (
                       <Disclosure as="div" className="p-2" key={index}>
-                        <DisclosureButton className="group flex w-full items-center justify-between">
+                        <DisclosureButton className="flex items-center justify-between w-full group">
                           <div className="flex items-center gap-2">
                             <span className="text-sm/6 font-medium text-black group-data-[hover]:text-black/80">
                               <h1 className="text-2xl font-bold w-[100px]">
@@ -91,7 +102,7 @@ const ResultSearchBooking = () => {
                               </h1>
                             </span>
                             <Dropdown
-                              options={cities}
+                              options={transformTopOptions()}
                               name={`city-${dayIndex}`}
                               value={formSearchResult[dayIndex]?.city.id || ""}
                               onChange={(option) => setArea(option, dayIndex)}
@@ -142,6 +153,8 @@ const ResultSearchBooking = () => {
       </Dialog>
     </div>
   );
-};
+});
+
+ResultSearchBooking.displayName = "ResultSearchBooking";
 
 export default ResultSearchBooking;
