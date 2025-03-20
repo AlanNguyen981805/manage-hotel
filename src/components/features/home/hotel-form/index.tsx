@@ -4,16 +4,19 @@ import Dropdown from "@/components/ui/dropdown";
 import { Price } from "@/components/ui/price";
 import { caculatePriceByRow } from "@/helpers/calc-room-helper";
 import useFormSearchResult from "@/hooks/use-search-result";
+import useRoutesStore from "@/store/useRoutesStore";
+import { Hotel, HotelType } from "@/types/route";
 import { useState } from "react";
 import { BtnAddRow } from "../add-row";
-import { IHotel, IHotelType, IPropRowSearch } from "../result-search-booking/defination";
+import {
+  IHotel,
+  IPropRowSearch
+} from "../result-search-booking/defination";
 import {
   additionalBeds,
-  hotels,
   hotelTypes,
   initialHotelRowData,
-  numberOfRooms,
-  roomTypes,
+  numberOfRooms
 } from "./defination";
 
 export const HoltelRow = ({
@@ -21,7 +24,11 @@ export const HoltelRow = ({
   setForm,
   formSearchResult,
 }: IPropRowSearch) => {
-  const [hotelTypeOptions] = useState(hotelTypes);
+  const { data } = useRoutesStore();
+
+  const [hotelsByRank, setHotelsByRank] = useState<Hotel[]>([]);
+
+  const [hotelTypesOptions, setHotelTypesOptions] = useState<HotelType[]>([]);
 
   const { handleAddRow, handleChange, handleRemoveRow } = useFormSearchResult({
     dayIndex,
@@ -31,11 +38,13 @@ export const HoltelRow = ({
   });
 
   const handleChangeRoomType = (
-    option: {name: string, id: string, price: number},
+    option: { name: string; id: string; price: number },
     hotelRow: IHotel,
     rowIndex: number
   ) => {
-    const rowTypePrice = option.price;
+    const rowTypePrice = option.price_hotels[0].price;
+
+    // const rowTypePrice = option.price;
     const numberOfRooms = hotelRow?.quantityRoom.quantity;
     const additionalBedsPrice = hotelRow?.additionalBeds.price;
     const additionalBedsQuantity = hotelRow?.additionalBeds.quantity;
@@ -53,7 +62,7 @@ export const HoltelRow = ({
   };
 
   const handleChangeNumberOfRooms = (
-    option: {name: string, id: string, price: number, quantity: number},
+    option: { name: string; id: string; price: number; quantity: number },
     hotelRow: IHotel,
     rowIndex: number
   ) => {
@@ -71,7 +80,7 @@ export const HoltelRow = ({
   };
 
   const handleChangeAdditionalBeds = (
-    option: {name: string, id: string, price: number, quantity: number},
+    option: { name: string; id: string; price: number; quantity: number },
     hotelRow: IHotel,
     rowIndex: number
   ) => {
@@ -86,14 +95,18 @@ export const HoltelRow = ({
     handleChange(dayIndex, rowIndex, "price", result);
   };
 
-  const handleChangeHotelType = (option: IHotelType, rowIndex: number) => {
-    handleChange(dayIndex, rowIndex, "hotelType", option);
-  };
+  const handleChangeHotelType = (option: any, rowIndex: number) => {
+    const getLocation = data?.find(
+      (route) => route.id === Number(formSearchResult[dayIndex].city.id)
+    );
 
-  const getHotelOptions = (hotelType: IHotelType) => {
-    if (!hotelType?.id) return [];
-    
-    return hotels.filter((hotel) => hotel.hotelType === Number(hotelType.id));
+    const hotels = getLocation?.location?.hotels ?? [];
+
+    const hotelsByRank = hotels.filter((hotel) => hotel.rank === option.id);
+
+    setHotelsByRank(hotelsByRank);
+
+    handleChange(dayIndex, rowIndex, "hotelType", option);
   };
 
   const isShowRemoveButton =
@@ -104,19 +117,17 @@ export const HoltelRow = ({
     <div>
       <BtnAddRow name="Hotel" onAddRow={handleAddRow} />
 
-      <div className=" w-full border-b-2 flex flex-col justify-between px-2 indexs-center">
+      <div className="flex flex-col justify-between w-full px-2 border-b-2 indexs-center">
         {formSearchResult[dayIndex].hotels?.map((hotel, rowIndex) => {
           const hotelRow = formSearchResult[dayIndex].hotels?.[rowIndex];
-          const filteredHotels = getHotelOptions(hotelRow?.hotelType || { id: "", name: "" });
-
           if (!hotelRow) return null;
 
           return (
-            <div key={rowIndex} className="flex my-3 gap-4 w-full">
-              <div className="flex flex-col gap-2 items-start justify-center md:w-3/12">
+            <div key={rowIndex} className="flex w-full gap-4 my-3">
+              <div className="flex flex-col items-start justify-center gap-2 md:w-3/12">
                 <p>Loại khách sạn</p>
                 <Dropdown
-                  options={hotelTypeOptions}
+                  options={hotelTypes}
                   name={`hotel-type-${dayIndex}-${rowIndex}`}
                   value={hotelRow?.hotelType.id || ""}
                   onChange={(option) => handleChangeHotelType(option, rowIndex)}
@@ -126,11 +137,21 @@ export const HoltelRow = ({
               <div className="flex flex-col gap-2 md:w-3/12">
                 <p>Khách sạn</p>
                 <Dropdown
-                  options={filteredHotels}
+                  options={[
+                    { id: 0, name: "Vui lòng chọn" },
+                    ...hotelsByRank.map((hotel) => ({
+                      ...hotel,
+                      id: hotel.id,
+                      name: hotel.hotel_name,
+                    })),
+                  ]}
                   name={`hotel-${dayIndex}-${rowIndex}`}
                   value={hotelRow?.hotelName.id || ""}
                   onChange={(option) => {
                     console.log("option :>> ", option);
+
+                    setHotelTypesOptions(option.hotel_types || []);
+
                     handleChange(dayIndex, rowIndex, "hotelName", option);
                   }}
                 />
@@ -139,7 +160,7 @@ export const HoltelRow = ({
               <div className="flex flex-col gap-2 md:w-3/12">
                 <p>Loại phòng</p>
                 <Dropdown
-                  options={roomTypes}
+                  options={hotelTypesOptions}
                   name={`room-type-${dayIndex}-${rowIndex}`}
                   value={hotelRow?.roomType.id || ""}
                   onChange={(option) =>
@@ -180,7 +201,7 @@ export const HoltelRow = ({
               </div>
               <Price
                 value={hotelRow?.price || 0}
-                className="md:w-3/12 pr-2"
+                className="pr-2 md:w-3/12"
                 size="lg"
               />
 

@@ -4,16 +4,24 @@ export const hotelTypes = [
     id: 0,
   },
   {
-    name: "5 sao",
+    name: "1 sao",
     id: 1,
   },
   {
-    name: "4 sao",
+    name: "2 sao",
     id: 2,
   },
   {
     name: "3 sao",
     id: 3,
+  },
+  {
+    name: "4 sao",
+    id: 4,
+  },
+  {
+    name: "5 sao",
+    id: 5,
   },
 ];
 

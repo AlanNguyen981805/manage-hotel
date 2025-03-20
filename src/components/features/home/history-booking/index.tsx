@@ -11,7 +11,7 @@ const HistoryBooking = () => {
   } = useBookingState();
   const { setOpenDialog } = useDialogStore();
 
-  const history = localStorage.getItem("bookingHistory");
+  const history = localStorage.getItem("bookingHistory") ?? '';
   const historyItems = history ? (JSON.parse(history) as IHistoryInfo[]) : [];
 
   const handleClickItem = (item: IHistoryInfo) => {
