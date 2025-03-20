@@ -54,7 +54,7 @@ export interface Location {
   updatedAt: string;
   publishedAt: string;
   hotels: Hotel[];
-  service_route: ServiceRoute | null;
+  service_routes: ServiceRoute[];
 }
 
 export interface Route {

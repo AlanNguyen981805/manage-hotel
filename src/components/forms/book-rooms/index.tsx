@@ -21,7 +21,7 @@ const BookRoomForm = () => {
 
     setLoading(true);
     try {
-      const query = `?populate[location][populate][hotels][populate][hotel_types][populate]=price_hotels&populate[location][populate]=service_route`;
+      const query = `?populate[location][populate][hotels][populate][hotel_types][populate]=price_hotels&populate[location][populate][service_routes][fields]=id,documentId,service_code,service_desc,service_price,createdAt,updatedAt,publishedAt&populate[location][populate][cars][fields]=id,type_car,car_price,car_code`;
 
       const response = await apiClient.get<RoutesResponse>(
         `${API_ENDPOINTS.ROUTES}${query}`

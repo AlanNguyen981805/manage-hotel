@@ -4,7 +4,7 @@ import Dropdown from "@/components/ui/dropdown";
 import { Price } from "@/components/ui/price";
 import useFormSearchResult from "@/hooks/use-search-result";
 import { Field, Label, Radio, RadioGroup } from "@headlessui/react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { BtnAddRow } from "../add-row";
 import {
   IPropRowSearch,
@@ -15,6 +15,7 @@ import {
   initialTransportationRowData,
   transportationTypes,
 } from "./defination";
+import useRoutesStore from "@/store/useRoutesStore";
 
 const plans: ITransportationMode[] = [
   { name: "1 chiều", id: "1", price: 100000 },
@@ -27,6 +28,11 @@ export const TransportationRow = ({
   formSearchResult,
 }: IPropRowSearch) => {
   const [selected, setSelected] = useState(plans[0]);
+  const { data } = useRoutesStore();
+
+  const transportationTypes = useMemo(() => {
+    return data?.find(route => route.id === Number(formSearchResult[dayIndex].city.id))?.location?.cars ?? [];
+  }, [data, dayIndex, formSearchResult]);
 
   const { handleChange, handleAddRow, handleRemoveRow } = useFormSearchResult({
     dayIndex,
@@ -98,7 +104,13 @@ export const TransportationRow = ({
                 <div className="flex flex-col gap-2 items-center justify-center">
                   <p>Loại phương tiện</p>
                   <Dropdown
-                    options={transportationTypes}
+                    options={
+                      transportationTypes?.map(car => ({
+                        id: car.id,
+                        name: car.type_car,
+                        price: car.car_price,
+                      })) || []
+                    }
                     name={`transportation-type-${dayIndex}-${rowIndex}`}
                     value={transportation?.transportationType.id || ""}
                     onChange={(option) => {

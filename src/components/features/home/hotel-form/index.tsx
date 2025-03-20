@@ -4,24 +4,20 @@ import Dropdown from "@/components/ui/dropdown";
 import { Price } from "@/components/ui/price";
 import { caculatePriceByRow } from "@/helpers/calc-room-helper";
 import useFormSearchResult from "@/hooks/use-search-result";
+import useRoutesStore from "@/store/useRoutesStore";
+import { Hotel, HotelType } from "@/types/route";
 import { useState } from "react";
 import { BtnAddRow } from "../add-row";
 import {
   IHotel,
-  IHotelType,
-  IPropRowSearch,
+  IPropRowSearch
 } from "../result-search-booking/defination";
 import {
   additionalBeds,
-  hotels,
   hotelTypes,
   initialHotelRowData,
-  numberOfRooms,
-  roomTypes,
+  numberOfRooms
 } from "./defination";
-import useRoutesStore from "@/store/useRoutesStore";
-import useBookingState from "@/store/useRoomState";
-import { Hotel, HotelType } from "@/types/route";
 
 export const HoltelRow = ({
   dayIndex,
@@ -30,13 +26,9 @@ export const HoltelRow = ({
 }: IPropRowSearch) => {
   const { data } = useRoutesStore();
 
-  // const [hotelTypeOptions] = useState(hotelTypes);
-
   const [hotelsByRank, setHotelsByRank] = useState<Hotel[]>([]);
 
   const [hotelTypesOptions, setHotelTypesOptions] = useState<HotelType[]>([]);
-
-  const { resultSearchBooking } = useBookingState();
 
   const { handleAddRow, handleChange, handleRemoveRow } = useFormSearchResult({
     dayIndex,
@@ -50,7 +42,6 @@ export const HoltelRow = ({
     hotelRow: IHotel,
     rowIndex: number
   ) => {
-    console.log("option :>> ", option);
     const rowTypePrice = option.price_hotels[0].price;
 
     // const rowTypePrice = option.price;
@@ -116,12 +107,6 @@ export const HoltelRow = ({
     setHotelsByRank(hotelsByRank);
 
     handleChange(dayIndex, rowIndex, "hotelType", option);
-  };
-
-  const getHotelOptions = (hotelType: IHotelType) => {
-    if (!hotelType?.id) return [];
-
-    return hotels.filter((hotel) => hotel.hotelType === Number(hotelType.id));
   };
 
   const isShowRemoveButton =

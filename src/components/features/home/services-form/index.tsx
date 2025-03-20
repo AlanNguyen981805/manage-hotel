@@ -1,11 +1,12 @@
 "use client";
 
 import Dropdown from "@/components/ui/dropdown";
-import useFormSearchResult from "@/hooks/use-search-result";
-import { IPropRowSearch, IService } from "../result-search-booking/defination";
-import { BtnAddRow } from "../add-row";
-import { services } from "./defiantion";
 import { Price } from "@/components/ui/price";
+import useFormSearchResult from "@/hooks/use-search-result";
+import useRoutesStore from "@/store/useRoutesStore";
+import { useMemo } from "react";
+import { BtnAddRow } from "../add-row";
+import { IPropRowSearch, IService } from "../result-search-booking/defination";
 
 export const ServicesRow = ({
   dayIndex,
@@ -21,6 +22,12 @@ export const ServicesRow = ({
     serviceQuantity: 1,
     price: 0,
   };
+  
+  const { data } = useRoutesStore();
+
+  const servicesByLocation = useMemo(() => {
+    return data?.find(route => route.id === Number(formSearchResult[dayIndex].city.id))?.location?.service_routes ?? [];
+  }, [data, dayIndex, formSearchResult]);
 
   const { handleChange, handleAddRow, handleRemoveRow } = useFormSearchResult({
     dayIndex,
@@ -37,7 +44,7 @@ export const ServicesRow = ({
   };
 
   const handleChangeService = (
-    option: IService,
+    option: { id: number; name: string; price: number },
     rowIndex: number,
     quantity: number
   ) => {
@@ -66,7 +73,13 @@ export const ServicesRow = ({
             <div className="flex flex-col gap-2 items-center justify-center">
               <p>Loại dịch vụ</p>
               <Dropdown
-                options={services}
+                options={
+                  servicesByLocation?.map(service => ({
+                    id: service.id,
+                    name: service.service_desc,
+                    price: service.service_price,
+                  })) || []
+                }
                 name={`service-type-${dayIndex}-${rowIndex}`}
                 value={
                   formSearchResult[dayIndex].services?.[rowIndex]?.serviceType
