@@ -3,17 +3,20 @@
 import { IFormSearchResult } from "@/components/features/home/result-search-booking/defination";
 import { Price } from "@/components/ui/price";
 import { useTranslation } from "@/hooks/useTranslation";
+import { generateWordDocument } from "./booking-info-doc";
 
 interface SummaryBookingProps {
   resultSearchBooking: IFormSearchResult;
 }
 
-export const SummaryBooking = ({ resultSearchBooking }: SummaryBookingProps) => {
+export const SummaryBooking = ({
+  resultSearchBooking,
+}: SummaryBookingProps) => {
   const { t } = useTranslation();
 
   const calculateTotals = () => {
     let hotelTotal = 0;
-    let transportationTotal = 0; 
+    let transportationTotal = 0;
     let servicesTotal = 0;
     let additionalCostsTotal = 0;
 
@@ -39,14 +42,15 @@ export const SummaryBooking = ({ resultSearchBooking }: SummaryBookingProps) => 
       });
     });
 
-    const total = hotelTotal + transportationTotal + servicesTotal + additionalCostsTotal;
+    const total =
+      hotelTotal + transportationTotal + servicesTotal + additionalCostsTotal;
 
     return {
       hotelTotal,
       transportationTotal,
       servicesTotal,
       additionalCostsTotal,
-      total
+      total,
     };
   };
 
@@ -55,35 +59,35 @@ export const SummaryBooking = ({ resultSearchBooking }: SummaryBookingProps) => 
   return (
     <div className="bg-white rounded-lg shadow p-6">
       <div className="flex flex-col gap-6">
-        <h3 className="text-xl font-semibold">{t('summary.title')}</h3>
+        <h3 className="text-xl font-semibold">{t("summary.title")}</h3>
 
         <div className="flex flex-col gap-3">
           <div className="flex justify-between">
-            <span className="text-gray-600">{t('summary.hotel')}</span>
+            <span className="text-gray-600">{t("summary.hotel")}</span>
             <Price value={totals.hotelTotal} label="" />
           </div>
           <div className="flex justify-between">
-            <span className="text-gray-600">{t('summary.transportation')}</span>
+            <span className="text-gray-600">{t("summary.transportation")}</span>
             <Price value={totals.transportationTotal} label="" />
           </div>
           <div className="flex justify-between">
-            <span className="text-gray-600">{t('summary.service')}</span>
+            <span className="text-gray-600">{t("summary.service")}</span>
             <Price value={totals.servicesTotal} label="" />
           </div>
           <div className="flex justify-between">
-            <span className="text-gray-600">{t('summary.additional')}</span>
+            <span className="text-gray-600">{t("summary.additional")}</span>
             <Price value={totals.additionalCostsTotal} label="" />
           </div>
           <div className="flex justify-between font-semibold text-lg pt-3 border-t">
-            <span>{t('summary.total')}</span>
+            <span>{t("summary.total")}</span>
             <Price value={totals.total} label="" size="lg" />
           </div>
         </div>
 
         <div className="flex flex-col gap-2 text-sm text-gray-600">
-          <p>{t('summary.paymentNotice1')}</p>
-          <p>{t('summary.paymentNotice2')}</p>
-          <p>{t('summary.paymentNotice3')}</p>
+          <p>{t("summary.paymentNotice1")}</p>
+          <p>{t("summary.paymentNotice2")}</p>
+          <p>{t("summary.paymentNotice3")}</p>
         </div>
 
         <button
@@ -121,7 +125,8 @@ export const SummaryBooking = ({ resultSearchBooking }: SummaryBookingProps) => 
         >
           Download Booking Details
         </button>
+        <button onClick={generateWordDocument}>Tạo file Word</button>
       </div>
     </div>
   );
-}
+};
