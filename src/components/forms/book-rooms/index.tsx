@@ -28,16 +28,7 @@ const BookRoomForm = () => {
 
     setLoading(true);
     try {
-      const hotelFields =
-        "populate[location][populate][hotels][populate][hotel_types][populate]=price_hotels";
-      const serviceFields =
-        "populate[location][populate][service_routes][fields]=id,documentId,service_code,service_desc,service_price,createdAt,updatedAt,publishedAt";
-      const carFields =
-        "populate[location][populate][cars][fields]=id,type_car,car_price,car_code";
-      const companyFields =
-        "populate[location][populate][companies][populate][service_companies][fields]=service_code";
-
-      const query = `?/api/routes?${hotelFields}&${serviceFields}&${carFields}&${companyFields}`;
+      const query = `?populate[location][populate][hotels][populate][hotel_types][populate]=price_hotels&populate[location][populate][service_routes][fields]=id,documentId,service_code,service_desc,service_price,createdAt,updatedAt,publishedAt&populate[location][populate][cars][fields]=id,type_car,car_price,car_code&populate[location][populate][companies][populate][service_companies][fields]=service_code`;
 
       const response = await apiClient.get<RoutesResponse>(
         `${API_ENDPOINTS.ROUTES}${query}`
