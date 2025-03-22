@@ -54,6 +54,15 @@ export interface ServiceRoute {
   publishedAt: string;
 }
 
+export interface Companies {
+  service_companies: {
+    id: number;
+    documentId: string;
+    service_code: string;
+    service_price: number;
+  }[];
+}
+
 export interface Location {
   id: number;
   documentId: string;
@@ -62,6 +71,7 @@ export interface Location {
   updatedAt: string;
   publishedAt: string;
   hotels: Hotel[];
+  companies: Companies[];
   service_routes: ServiceRoute[];
   cars: Cars[];
 }

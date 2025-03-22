@@ -26,11 +26,18 @@ export const ServicesRow = ({
   const { data } = useRoutesStore();
 
   const servicesByLocation = useMemo(() => {
-    return (
+    const serviceCompaniesData =
+      data
+        ?.find(
+          (route) => route.id === Number(formSearchResult[dayIndex].city.id)
+        )
+        ?.location?.companies?.map((item) => item?.service_companies)
+        .flat() ?? [];
+    const serviceRoutesData =
       data?.find(
         (route) => route.id === Number(formSearchResult[dayIndex].city.id)
-      )?.location?.service_routes ?? []
-    );
+      )?.location?.service_routes ?? [];
+    return [...serviceCompaniesData, ...serviceRoutesData];
   }, [data, dayIndex, formSearchResult]);
 
   const { handleChange, handleAddRow, handleRemoveRow } = useFormSearchResult({
@@ -90,7 +97,7 @@ export const ServicesRow = ({
                     { id: 0, name: "Vui lòng chọn", price: 0 },
                     ...servicesByLocation?.map((service) => ({
                       id: service.id,
-                      name: service.service_desc,
+                      name: service.service_code,
                       price: service.service_price,
                     })),
                   ]}
