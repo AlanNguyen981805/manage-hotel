@@ -25,7 +25,7 @@ export const HotelInfo = ({ hotels }: HotelInfoProps) => {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">{t('booking.roomQuantity')}:</span>
-                  <span>{hotel.quantityRoom.name || ""}</span>
+                  <span>{hotel.quantityRoom || ""}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">{t('booking.roomType')}:</span>

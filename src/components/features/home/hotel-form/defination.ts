@@ -241,59 +241,55 @@ export const roomTypes = [
   },
 ];
 
-export const numberOfRooms = [
-  {
-    name: "Vui lòng chọn",
-    id: "0",
-    price: 0,
-    quantity: 0,
-  },
-  {
-    name: "1 phòng",
-    id: "1",
-    price: 100000,
-    quantity: 1,
-  },
-  {
-    name: "2 phòng",
-    id: "2",
-    price: 200000,
-    quantity: 2,
-  },
-  {
-    name: "3 phòng",
-    id: "3",
-    price: 300000,
-    quantity: 3,
-  },
-];
+// export const numberOfRooms = [
+//   {
+//     name: "Vui lòng chọn",
+//     id: "0",
+//     price: 0,
+//     quantity: 0,
+//   },
+//   {
+//     name: "1 phòng",
+//     id: "1",
+//     price: 100000,
+//     quantity: 1,
+//   },
+//   {
+//     name: "2 phòng",
+//     id: "2",
+//     price: 200000,
+//     quantity: 2,
+//   },
+//   {
+//     name: "3 phòng",
+//     id: "3",
+//     price: 300000,
+//     quantity: 3,
+//   },
+// ];
 
-export const additionalBeds = [
-  {
-    name: "Vui lòng chọn",
-    id: "0",
-    price: 0,
-    quantity: 0,
-  },
-  {
-    name: "1 giường",
-    id: "1",
-    price: 1000,
-    quantity: 1,
-  },
-  {
-    name: "2 giường",
-    id: "2",
-    price: 2000,
-    quantity: 2,
-  },
-  {
-    name: "3 giường",
-    id: "3",
-    price: 3000,
-    quantity: 3,
-  },
-];
+// export const additionalBeds = [
+//   {
+//     name: "Vui lòng chọn",
+//     id: "0",
+//     quantity: 0,
+//   },
+//   {
+//     name: "1 giường",
+//     id: "1",
+//     quantity: 1,
+//   },
+//   {
+//     name: "2 giường",
+//     id: "2",
+//     quantity: 2,
+//   },
+//   {
+//     name: "3 giường",
+//     id: "3",
+//     quantity: 3,
+//   },
+// ];
 
 export const initialHotelRowData = {
   hotelType: {
@@ -310,20 +306,17 @@ export const initialHotelRowData = {
     price: 0,
     price_hotels: [],
   },
-  quantityRoom: {
-    id: "",
-    name: "",
-    price: 0,
-    quantity: 0,
-  },
-  additionalBeds: {
-    id: "",
-    name: "",
-    price: 0,
-    quantity: 0,
-  },
+  quantityRoom: 0,
+  additionalBeds: 0,
   timeAvailable: "",
   price: 0,
+};
+
+export const resetHotelData = {
+  additionalBeds: 0,
+  price: 0,
+  quantityRoom: 0,
+  timeAvailable: "",
 };
 
 export interface IHotelRowData {

@@ -41,12 +41,11 @@ const useFormSearchResult = ({
     dayIndex: string,
     rowIndex: number,
     field: string,
-    option?: unknown
+    option?: unknown,
   ) => {
     setForm((prevState) => {
       const hotelData = prevState[dayIndex][type] || [];
       const updatedData = [...hotelData];
-
       updatedData[rowIndex] = {
         ...updatedData[rowIndex],
         [field]: option,

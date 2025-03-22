@@ -91,25 +91,17 @@ export interface IHotel {
     id: string;
     name: string;
     expire_date?: string;
+    extra_price?: number
   };
   roomType: {
     id: string;
     name: string;
     price: number;
+    createdAt?: string;
     price_hotels: { price?: number }[];
   };
-  quantityRoom: {
-    id: string;
-    name: string;
-    price: number;
-    quantity: number;
-  };
-  additionalBeds: {
-    id: string;
-    name: string;
-    price: number;
-    quantity: number;
-  };
+  quantityRoom: number
+  additionalBeds: number;
   timeAvailable: string;
   price: number;
 }

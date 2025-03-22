@@ -9,12 +9,8 @@ import { Hotel, HotelType } from "@/types/route";
 import { useEffect, useState } from "react";
 import { BtnAddRow } from "../add-row";
 import { IHotel, IPropRowSearch } from "../result-search-booking/defination";
-import {
-  additionalBeds,
-  hotelTypes,
-  initialHotelRowData,
-  numberOfRooms,
-} from "./defination";
+import { hotelTypes, initialHotelRowData, resetHotelData } from "./defination";
+import useBookingState from "@/store/useRoomState";
 
 export const HoltelRow = ({
   dayIndex,
@@ -23,9 +19,14 @@ export const HoltelRow = ({
 }: IPropRowSearch) => {
   const { data } = useRoutesStore();
 
-  const [hotelsByRank, setHotelsByRank] = useState<Hotel[]>([]);
+  const [hotelsByRank, setHotelsByRank] = useState<{ [key: number]: Hotel[] }>(
+    {}
+  );
 
-  const [hotelTypesOptions, setHotelTypesOptions] = useState<HotelType[]>([]);
+  const [hotelTypesOptions, setHotelTypesOptions] = useState<{
+    [key: number]: HotelType[];
+  }>({});
+  const {} = useBookingState();
 
   const { handleAddRow, handleChange, handleRemoveRow } = useFormSearchResult({
     dayIndex,
@@ -39,19 +40,17 @@ export const HoltelRow = ({
     hotelRow: IHotel,
     rowIndex: number
   ) => {
-    const rowTypePrice = Number(option.price_hotels[0].price ?? 0);
+    const rowTypePrice = Number(option.price_hotels[0]?.price ?? 0);
 
     // const rowTypePrice = option.price;
-    const numberOfRooms = hotelRow?.quantityRoom.quantity;
-    const additionalBedsPrice = hotelRow?.additionalBeds.price;
-    const additionalBedsQuantity = hotelRow?.additionalBeds.quantity;
+    const numberOfRooms = hotelRow?.quantityRoom;
+    const additionalBedsQuantity = hotelRow?.additionalBeds;
 
     handleChange(dayIndex, rowIndex, "roomType", option);
 
     const result = caculatePriceByRow(
       rowTypePrice,
       numberOfRooms,
-      additionalBedsPrice,
       additionalBedsQuantity
     );
 
@@ -59,40 +58,39 @@ export const HoltelRow = ({
   };
 
   const handleChangeNumberOfRooms = (
-    option: { name: string; id: string; price: number; quantity: number },
+    quantity: string,
     hotelRow: IHotel,
     rowIndex: number
   ) => {
-    handleChange(dayIndex, rowIndex, "quantityRoom", option);
+    handleChange(dayIndex, rowIndex, "quantityRoom", Number(quantity));
 
     if (hotelRow?.roomType?.price_hotels[0]?.price) {
       const result = caculatePriceByRow(
         hotelRow?.roomType?.price_hotels[0]?.price,
-        option.quantity,
-        hotelRow?.additionalBeds.price,
-        hotelRow?.additionalBeds.quantity
+        Number(quantity ?? 0),
+        hotelRow?.additionalBeds
       );
       handleChange(dayIndex, rowIndex, "price", result);
     }
   };
 
   const handleChangeAdditionalBeds = (
-    option: { name: string; id: string; price: number; quantity: number },
+    quantity: string,
     hotelRow: IHotel,
     rowIndex: number
   ) => {
     const result = caculatePriceByRow(
       hotelRow?.roomType?.price_hotels[0]?.price,
-      hotelRow?.quantityRoom.quantity,
-      option.price,
-      option.quantity
+      hotelRow?.quantityRoom,
+      hotelRow?.hotelName?.extra_price,
+      Number(quantity ?? 0)
     );
 
-    handleChange(dayIndex, rowIndex, "additionalBeds", option);
+    handleChange(dayIndex, rowIndex, "additionalBeds", Number(quantity ?? 0));
     handleChange(dayIndex, rowIndex, "price", result);
   };
 
-  const handleChangeHotelType = (
+  const handleChangeHotelType = async (
     option: {
       name: string;
       id: number;
@@ -107,8 +105,33 @@ export const HoltelRow = ({
 
     const hotelsByRank = hotels.filter((hotel) => hotel.rank === option.id);
 
-    setHotelsByRank(hotelsByRank);
-    handleChange(dayIndex, rowIndex, "hotelType", option);
+    setHotelsByRank((pre) => ({
+      ...pre,
+      [rowIndex]: hotelsByRank,
+    }));
+    await handleChange(dayIndex, rowIndex, "hotelType", option);
+    await setForm((prevState) => {
+      const prevHotel = prevState[dayIndex]["hotels"] ?? [];
+      const updatedData = [...prevHotel];
+      updatedData[rowIndex] = {
+        ...updatedData[rowIndex],
+        ...resetHotelData,
+        hotelName: { id: "", name: "" },
+        roomType: {
+          id: "",
+          name: "",
+          price: 0,
+          price_hotels: [],
+        },
+      };
+      return {
+        ...prevState,
+        [dayIndex]: {
+          ...prevState[dayIndex],
+          hotels: updatedData,
+        },
+      };
+    });
   };
 
   const isShowRemoveButton =
@@ -116,7 +139,7 @@ export const HoltelRow = ({
     formSearchResult[dayIndex].hotels?.length > 1;
 
   useEffect(() => {
-    setHotelsByRank([]);
+    setHotelsByRank({});
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formSearchResult[dayIndex].city.id]);
 
@@ -131,7 +154,6 @@ export const HoltelRow = ({
           const expire_date = new Date(
             hotelRow?.hotelName?.expire_date ?? "01/01/2024"
           ).toLocaleDateString("en-US");
-
           return (
             <div key={rowIndex} className="flex w-full gap-4 my-3">
               <div className="flex flex-col items-start justify-center gap-2 md:w-3/12">
@@ -149,7 +171,7 @@ export const HoltelRow = ({
                 <Dropdown
                   options={[
                     { id: 0, name: "Vui lòng chọn", hotel_types: [] },
-                    ...hotelsByRank.map((hotel) => ({
+                    ...(hotelsByRank[rowIndex] ?? []).map((hotel) => ({
                       ...hotel,
                       id: hotel.id,
                       name: hotel.hotel_name,
@@ -157,10 +179,35 @@ export const HoltelRow = ({
                   ]}
                   name={`hotel-${dayIndex}-${rowIndex}`}
                   value={hotelRow?.hotelName.id || ""}
-                  onChange={(option) => {
-                    setHotelTypesOptions(option.hotel_types || []);
+                  onChange={async (option) => {
+                    setHotelTypesOptions((pre) => ({
+                      ...pre,
+                      [rowIndex]: option.hotel_types || [],
+                    }));
 
-                    handleChange(dayIndex, rowIndex, "hotelName", option);
+                    await handleChange(dayIndex, rowIndex, "hotelName", option);
+
+                    await setForm((prevState) => {
+                      const prevHotel = prevState[dayIndex]["hotels"] ?? [];
+                      const updatedData = [...prevHotel];
+                      updatedData[rowIndex] = {
+                        ...updatedData[rowIndex],
+                        ...resetHotelData,
+                        roomType: {
+                          id: "",
+                          name: "",
+                          price: 0,
+                          price_hotels: [],
+                        },
+                      };
+                      return {
+                        ...prevState,
+                        [dayIndex]: {
+                          ...prevState[dayIndex],
+                          hotels: updatedData,
+                        },
+                      };
+                    });
                   }}
                 />
               </div>
@@ -170,13 +217,28 @@ export const HoltelRow = ({
                 <Dropdown
                   options={[
                     { id: 0, name: "Vui lòng chọn", price_hotels: [] },
-                    ...hotelTypesOptions,
+                    ...(hotelTypesOptions[rowIndex] ?? []),
                   ]}
                   name={`room-type-${dayIndex}-${rowIndex}`}
                   value={hotelRow?.roomType.id || ""}
-                  onChange={(option) =>
-                    handleChangeRoomType(option, hotelRow, rowIndex)
-                  }
+                  onChange={async (option) => {
+                    await handleChangeRoomType(option, hotelRow, rowIndex);
+                    await setForm((prevState) => {
+                      const prevHotel = prevState[dayIndex]["hotels"] ?? [];
+                      const updatedData = [...prevHotel];
+                      updatedData[rowIndex] = {
+                        ...updatedData[rowIndex],
+                        ...resetHotelData,
+                      };
+                      return {
+                        ...prevState,
+                        [dayIndex]: {
+                          ...prevState[dayIndex],
+                          hotels: updatedData,
+                        },
+                      };
+                    });
+                  }}
                 />
               </div>
 
@@ -187,28 +249,41 @@ export const HoltelRow = ({
 
               <div className="flex flex-col gap-2 md:w-3/12">
                 <p>Số lượng phòng</p>
-                <Dropdown
-                  options={numberOfRooms}
-                  name={`quantity-room-${dayIndex}-${rowIndex}`}
-                  value={hotelRow?.quantityRoom.id || ""}
-                  onChange={(option) => {
-                    handleChangeNumberOfRooms(option, hotelRow, rowIndex);
+                <input
+                  type="number"
+                  id="quantityRoom"
+                  className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-accent  focus:border-accent block w-full p-2.5  dark:focus:ring-accent dark:focus:border-accent"
+                  required
+                  value={hotelRow?.quantityRoom}
+                  min={0}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    handleChangeNumberOfRooms(
+                      e.target.value,
+                      hotelRow,
+                      rowIndex
+                    );
                   }}
+                  disabled={hotelItem?.roomType?.createdAt ? false : true}
                 />
               </div>
 
               <div className="flex flex-col gap-2 md:w-3/12">
                 <p>Số giường thêm</p>
-                <Dropdown
-                  options={additionalBeds}
-                  name={`additional-beds-${dayIndex}-${rowIndex}`}
-                  value={hotelRow?.additionalBeds.id || ""}
-                  onChange={(option) => {
-                    handleChangeAdditionalBeds(option, hotelRow, rowIndex);
+                <input
+                  type="number"
+                  id="additionalBeds"
+                  className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-accent  focus:border-accent block w-full p-2.5  dark:focus:ring-accent dark:focus:border-accent"
+                  required
+                  value={hotelRow?.additionalBeds}
+                  min={0}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    handleChangeAdditionalBeds(
+                      e.target.value,
+                      hotelRow,
+                      rowIndex
+                    );
                   }}
-                  disabled={
-                    hotelItem?.quantityRoom?.quantity > 0 ? false : true
-                  }
+                  disabled={hotelItem?.roomType?.createdAt ? false : true}
                 />
               </div>
               <Price
