@@ -6,17 +6,14 @@ import { caculatePriceByRow } from "@/helpers/calc-room-helper";
 import useFormSearchResult from "@/hooks/use-search-result";
 import useRoutesStore from "@/store/useRoutesStore";
 import { Hotel, HotelType } from "@/types/route";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BtnAddRow } from "../add-row";
-import {
-  IHotel,
-  IPropRowSearch
-} from "../result-search-booking/defination";
+import { IHotel, IPropRowSearch } from "../result-search-booking/defination";
 import {
   additionalBeds,
   hotelTypes,
   initialHotelRowData,
-  numberOfRooms
+  numberOfRooms,
 } from "./defination";
 
 export const HoltelRow = ({
@@ -38,11 +35,11 @@ export const HoltelRow = ({
   });
 
   const handleChangeRoomType = (
-    option: { name: string; id: string; price: number },
+    option: HotelType,
     hotelRow: IHotel,
     rowIndex: number
   ) => {
-    const rowTypePrice = option.price_hotels[0].price;
+    const rowTypePrice = Number(option.price_hotels[0].price ?? 0);
 
     // const rowTypePrice = option.price;
     const numberOfRooms = hotelRow?.quantityRoom.quantity;
@@ -68,9 +65,9 @@ export const HoltelRow = ({
   ) => {
     handleChange(dayIndex, rowIndex, "quantityRoom", option);
 
-    if (hotelRow?.roomType?.price) {
+    if (hotelRow?.roomType?.price_hotels[0]?.price) {
       const result = caculatePriceByRow(
-        hotelRow?.roomType?.price,
+        hotelRow?.roomType?.price_hotels[0]?.price,
         option.quantity,
         hotelRow?.additionalBeds.price,
         hotelRow?.additionalBeds.quantity
@@ -85,7 +82,7 @@ export const HoltelRow = ({
     rowIndex: number
   ) => {
     const result = caculatePriceByRow(
-      hotelRow?.roomType?.price,
+      hotelRow?.roomType?.price_hotels[0]?.price,
       hotelRow?.quantityRoom.quantity,
       option.price,
       option.quantity
@@ -95,7 +92,13 @@ export const HoltelRow = ({
     handleChange(dayIndex, rowIndex, "price", result);
   };
 
-  const handleChangeHotelType = (option: any, rowIndex: number) => {
+  const handleChangeHotelType = (
+    option: {
+      name: string;
+      id: number;
+    },
+    rowIndex: number
+  ) => {
     const getLocation = data?.find(
       (route) => route.id === Number(formSearchResult[dayIndex].city.id)
     );
@@ -105,7 +108,6 @@ export const HoltelRow = ({
     const hotelsByRank = hotels.filter((hotel) => hotel.rank === option.id);
 
     setHotelsByRank(hotelsByRank);
-
     handleChange(dayIndex, rowIndex, "hotelType", option);
   };
 
@@ -113,14 +115,22 @@ export const HoltelRow = ({
     formSearchResult[dayIndex].hotels &&
     formSearchResult[dayIndex].hotels?.length > 1;
 
+  useEffect(() => {
+    setHotelsByRank([]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formSearchResult[dayIndex].city.id]);
+
   return (
     <div>
       <BtnAddRow name="Hotel" onAddRow={handleAddRow} />
 
-      <div className="flex flex-col justify-between w-full px-2 border-b-2 indexs-center">
-        {formSearchResult[dayIndex].hotels?.map((hotel, rowIndex) => {
+      <div className="flex flex-col justify-between w-full px-2 border-b-2 indexs-center items-center">
+        {formSearchResult[dayIndex].hotels?.map((hotelItem, rowIndex) => {
           const hotelRow = formSearchResult[dayIndex].hotels?.[rowIndex];
           if (!hotelRow) return null;
+          const expire_date = new Date(
+            hotelRow?.hotelName?.expire_date ?? "01/01/2024"
+          ).toLocaleDateString("en-US");
 
           return (
             <div key={rowIndex} className="flex w-full gap-4 my-3">
@@ -138,7 +148,7 @@ export const HoltelRow = ({
                 <p>Khách sạn</p>
                 <Dropdown
                   options={[
-                    { id: 0, name: "Vui lòng chọn" },
+                    { id: 0, name: "Vui lòng chọn", hotel_types: [] },
                     ...hotelsByRank.map((hotel) => ({
                       ...hotel,
                       id: hotel.id,
@@ -148,8 +158,6 @@ export const HoltelRow = ({
                   name={`hotel-${dayIndex}-${rowIndex}`}
                   value={hotelRow?.hotelName.id || ""}
                   onChange={(option) => {
-                    console.log("option :>> ", option);
-
                     setHotelTypesOptions(option.hotel_types || []);
 
                     handleChange(dayIndex, rowIndex, "hotelName", option);
@@ -160,7 +168,10 @@ export const HoltelRow = ({
               <div className="flex flex-col gap-2 md:w-3/12">
                 <p>Loại phòng</p>
                 <Dropdown
-                  options={hotelTypesOptions}
+                  options={[
+                    { id: 0, name: "Vui lòng chọn", price_hotels: [] },
+                    ...hotelTypesOptions,
+                  ]}
                   name={`room-type-${dayIndex}-${rowIndex}`}
                   value={hotelRow?.roomType.id || ""}
                   onChange={(option) =>
@@ -171,9 +182,7 @@ export const HoltelRow = ({
 
               <div className="flex flex-col gap-2 md:w-3/12">
                 <p>Ngày hiệu lực</p>
-                <p className="text-lg">
-                  {hotelRow?.timeAvailable || "01/01/2024"}
-                </p>
+                <p className="text-lg">{expire_date}</p>
               </div>
 
               <div className="flex flex-col gap-2 md:w-3/12">
@@ -197,6 +206,9 @@ export const HoltelRow = ({
                   onChange={(option) => {
                     handleChangeAdditionalBeds(option, hotelRow, rowIndex);
                   }}
+                  disabled={
+                    hotelItem?.quantityRoom?.quantity > 0 ? false : true
+                  }
                 />
               </div>
               <Price

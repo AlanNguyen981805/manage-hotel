@@ -244,25 +244,25 @@ export const roomTypes = [
 export const numberOfRooms = [
   {
     name: "Vui lòng chọn",
-    id: 0,
+    id: "0",
     price: 0,
     quantity: 0,
   },
   {
     name: "1 phòng",
-    id: 1,
+    id: "1",
     price: 100000,
     quantity: 1,
   },
   {
     name: "2 phòng",
-    id: 2,
+    id: "2",
     price: 200000,
     quantity: 2,
   },
   {
     name: "3 phòng",
-    id: 3,
+    id: "3",
     price: 300000,
     quantity: 3,
   },
@@ -271,25 +271,25 @@ export const numberOfRooms = [
 export const additionalBeds = [
   {
     name: "Vui lòng chọn",
-    id: 0,
+    id: "0",
     price: 0,
     quantity: 0,
   },
   {
     name: "1 giường",
-    id: 1,
+    id: "1",
     price: 1000,
     quantity: 1,
   },
   {
     name: "2 giường",
-    id: 2,
+    id: "2",
     price: 2000,
     quantity: 2,
   },
   {
     name: "3 giường",
-    id: 3,
+    id: "3",
     price: 3000,
     quantity: 3,
   },
@@ -308,6 +308,7 @@ export const initialHotelRowData = {
     id: "",
     name: "",
     price: 0,
+    price_hotels: [],
   },
   quantityRoom: {
     id: "",
@@ -340,4 +341,3 @@ export interface ICityRowData {
     city: string;
   };
 }
-

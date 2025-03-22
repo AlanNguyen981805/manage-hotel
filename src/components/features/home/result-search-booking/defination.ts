@@ -90,11 +90,13 @@ export interface IHotel {
   hotelName: {
     id: string;
     name: string;
+    expire_date?: string;
   };
   roomType: {
     id: string;
     name: string;
     price: number;
+    price_hotels: { price?: number }[];
   };
   quantityRoom: {
     id: string;

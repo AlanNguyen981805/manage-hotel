@@ -16,7 +16,8 @@ import { useRouter } from "next/navigation";
 import { memo, useEffect, useState } from "react";
 import { AdditinalCosts, Hotel, Service, Transportation } from "..";
 import Dropdown from "../../../ui/dropdown";
-import { IFormSearchResult, initialRowData } from "./defination";
+import { ICity, IFormSearchResult, initialRowData } from "./defination";
+import { initialHotelRowData } from "../hotel-form/defination";
 
 const ResultSearchBooking = memo(() => {
   const router = useRouter();
@@ -32,7 +33,8 @@ const ResultSearchBooking = memo(() => {
   const [formSearchResult, setFormSearchResult] = useState<IFormSearchResult>(
     {}
   );
-  const { data, loading } = useRoutesStore();
+
+  const { data } = useRoutesStore();
 
   const bookingHistory = localStorage.getItem("bookingHistory");
 
@@ -72,7 +74,12 @@ const ResultSearchBooking = memo(() => {
       return {
         ...prevState,
         [dayIndex]: {
-          ...prevState[dayIndex],
+          ...{
+            hotels: [initialHotelRowData],
+            transportation: [],
+            services: [],
+            additionalCosts: [],
+          },
           city: option,
         },
       };
@@ -83,7 +90,7 @@ const ResultSearchBooking = memo(() => {
     if (!data) return [];
 
     return data.map((route) => ({
-      id: route.id,
+      id: route.id.toString(),
       name: route.name,
     }));
   };
@@ -127,7 +134,10 @@ const ResultSearchBooking = memo(() => {
                               </h1>
                             </span>
                             <Dropdown
-                              options={transformTopOptions()}
+                              options={[
+                                { id: "", name: "Vui lòng chọn" },
+                                ...transformTopOptions(),
+                              ]}
                               name={`city-${dayIndex}`}
                               value={formSearchResult[dayIndex]?.city.id || ""}
                               onChange={(option) => setArea(option, dayIndex)}

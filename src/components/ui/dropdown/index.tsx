@@ -3,16 +3,20 @@ interface IProps<T> {
   name: string;
   onChange: (option: T) => void;
   value: string;
+  disabled?: boolean;
 }
 const Dropdown = <T extends { id: string | number; name: string }>({
   options,
   name,
   onChange,
   value,
+  disabled,
 }: IProps<T>) => {
   return (
     <select
-      className="bg-white border w-full border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 px-4 py-2 text-gray-700"
+      className={`bg-white border w-full border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 px-4 py-2 text-gray-700 ${
+        disabled ? "" : "cursor-pointer"
+      }`}
       name={name}
       id={name}
       onChange={(e) => {
@@ -26,6 +30,7 @@ const Dropdown = <T extends { id: string | number; name: string }>({
         e.stopPropagation();
       }}
       value={value}
+      disabled={disabled}
     >
       {options.map((option, index) => (
         <option key={index} value={option.id}>

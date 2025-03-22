@@ -8,13 +8,9 @@ import { useMemo, useState } from "react";
 import { BtnAddRow } from "../add-row";
 import {
   IPropRowSearch,
-  ITransportation,
   ITransportationMode,
 } from "../result-search-booking/defination";
-import {
-  initialTransportationRowData,
-  transportationTypes,
-} from "./defination";
+import { initialTransportationRowData } from "./defination";
 import useRoutesStore from "@/store/useRoutesStore";
 
 const plans: ITransportationMode[] = [
@@ -31,7 +27,11 @@ export const TransportationRow = ({
   const { data } = useRoutesStore();
 
   const transportationTypes = useMemo(() => {
-    return data?.find(route => route.id === Number(formSearchResult[dayIndex].city.id))?.location?.cars ?? [];
+    return (
+      data?.find(
+        (route) => route.id === Number(formSearchResult[dayIndex].city.id)
+      )?.location?.cars ?? []
+    );
   }, [data, dayIndex, formSearchResult]);
 
   const { handleChange, handleAddRow, handleRemoveRow } = useFormSearchResult({
@@ -58,7 +58,7 @@ export const TransportationRow = ({
   };
 
   const handleCalculateTransportationPrice = (
-    option: ITransportation,
+    option: { id: string; name: string; price: number },
     rowIndex: number
   ) => {
     handleChange(dayIndex, rowIndex, "transportationType", option);
@@ -99,18 +99,23 @@ export const TransportationRow = ({
             formSearchResult[dayIndex].transportation?.[rowIndex];
 
           return (
-            <div key={rowIndex} className="flex justify-between">
+            <div key={rowIndex} className="flex justify-between items-center">
               <div className="flex mb- gap-4 my-3 items-stretch">
                 <div className="flex flex-col gap-2 items-center justify-center">
                   <p>Loại phương tiện</p>
                   <Dropdown
-                    options={
-                      transportationTypes?.map(car => ({
-                        id: car.id,
+                    options={[
+                      {
+                        id: "",
+                        name: "Vui lòng chọn",
+                        price: 0,
+                      },
+                      ...transportationTypes?.map((car) => ({
+                        id: car.id.toString(),
                         name: car.type_car,
                         price: car.car_price,
-                      })) || []
-                    }
+                      })),
+                    ]}
                     name={`transportation-type-${dayIndex}-${rowIndex}`}
                     value={transportation?.transportationType.id || ""}
                     onChange={(option) => {
@@ -137,6 +142,9 @@ export const TransportationRow = ({
                         <Radio
                           value={plan}
                           className="group flex size-5 items-center justify-center rounded-full border bg-white data-[checked]:bg-blue-400"
+                          disabled={
+                            transportationTypes.length > 0 ? false : true
+                          }
                         >
                           <span className="invisible size-2 rounded-full bg-white group-data-[checked]:visible" />
                         </Radio>
@@ -152,7 +160,12 @@ export const TransportationRow = ({
                 size="lg"
               />
 
-              <button onClick={() => deleteRow(rowIndex)}>Remove</button>
+              <button
+                className="hover:text-red-600"
+                onClick={() => deleteRow(rowIndex)}
+              >
+                Remove
+              </button>
             </div>
           );
         })}

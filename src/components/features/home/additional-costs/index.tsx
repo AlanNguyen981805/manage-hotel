@@ -33,40 +33,47 @@ export const AdditionalCostsRow = ({
       <div className=" w-full border-b-2 flex flex-col justify-between px-2 indexs-center">
         {formSearchResult[dayIndex].additionalCosts?.map(
           (additionalCost, rowIndex) => (
-            <div key={rowIndex} className="flex mb-3 gap-4">
-              <div className="flex flex-col gap-2 items-center justify-center">
-                <p>Tên yêu cầu</p>
-                <div>
-                  <input
-                    type="text"
-                    className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-accent focus:border-accent block w-full p-2.5 dark:focus:ring-accent dark:focus:border-accent"
-                    required
-                    onChange={(e) =>
-                      handleChange(dayIndex, rowIndex, "additionalCostType", {
-                        id: rowIndex.toString(),
-                        name: e.target.value,
-                      })
-                    }
-                  />
+            <div
+              key={rowIndex}
+              className={`flex gap-4 justify-between ${
+                rowIndex === 0 ? "py-3" : "pb-3"
+              }`}
+            >
+              <div className="flex gap-3">
+                <div className="flex flex-col gap-2 items-center justify-center">
+                  <p>Tên yêu cầu</p>
+                  <div>
+                    <input
+                      type="text"
+                      className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-accent focus:border-accent block w-full p-2.5 dark:focus:ring-accent dark:focus:border-accent"
+                      required
+                      onChange={(e) =>
+                        handleChange(dayIndex, rowIndex, "additionalCostType", {
+                          id: rowIndex.toString(),
+                          name: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
                 </div>
-              </div>
 
-              <div className="flex flex-col gap-2 items-center justify-center">
-                <p>Giá tiền</p>
-                <div>
-                  <input
-                    type="number"
-                    className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-accent focus:border-accent block w-full p-2.5 dark:focus:ring-accent dark:focus:border-accent"
-                    required
-                    onChange={(e) =>
-                      handleChange(
-                        dayIndex,
-                        rowIndex,
-                        "price",
-                        Number(e.target.value)
-                      )
-                    }
-                  />
+                <div className="flex flex-col gap-2 items-center justify-center">
+                  <p>Giá tiền</p>
+                  <div>
+                    <input
+                      type="number"
+                      className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-accent focus:border-accent block w-full p-2.5 dark:focus:ring-accent dark:focus:border-accent"
+                      required
+                      onChange={(e) =>
+                        handleChange(
+                          dayIndex,
+                          rowIndex,
+                          "price",
+                          Number(e.target.value)
+                        )
+                      }
+                    />
+                  </div>
                 </div>
               </div>
 
@@ -78,7 +85,12 @@ export const AdditionalCostsRow = ({
                 />
               </div>
 
-              <button onClick={() => handleRemoveRow(rowIndex)}>Remove</button>
+              <button
+                className="hover:text-red-600"
+                onClick={() => handleRemoveRow(rowIndex)}
+              >
+                Remove
+              </button>
             </div>
           )
         )}

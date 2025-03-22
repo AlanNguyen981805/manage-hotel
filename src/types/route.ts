@@ -12,11 +12,11 @@ export interface PriceHotel {
 
 export interface HotelType {
   id: number;
-  documentId: string;
+  documentId?: string;
   name: string;
-  createdAt: string;
-  updatedAt: string;
-  publishedAt: string;
+  createdAt?: string;
+  updatedAt?: string;
+  publishedAt?: string;
   price_hotels: PriceHotel[];
 }
 
@@ -33,6 +33,14 @@ export interface Hotel {
   publishedAt: string;
   rank: number;
   hotel_types: HotelType[];
+}
+
+export interface Cars {
+  car_code?: string;
+  car_price: number;
+  documentId?: string;
+  id: string;
+  type_car: string;
 }
 
 export interface ServiceRoute {
@@ -55,6 +63,7 @@ export interface Location {
   publishedAt: string;
   hotels: Hotel[];
   service_routes: ServiceRoute[];
+  cars: Cars[];
 }
 
 export interface Route {
