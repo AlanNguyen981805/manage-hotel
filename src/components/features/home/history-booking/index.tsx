@@ -1,3 +1,5 @@
+"use client";
+
 import { IHistoryInfo } from "../result-search-booking/defination";
 import useDialogStore from "@/store/useDialog";
 import useBookingState from "@/store/useRoomState";
@@ -11,7 +13,10 @@ const HistoryBooking = () => {
   } = useBookingState();
   const { setOpenDialog } = useDialogStore();
 
-  const history = localStorage.getItem("bookingHistory") ?? '';
+  const history =
+    typeof window !== "undefined"
+      ? localStorage?.getItem("bookingHistory") ?? ""
+      : "";
   const historyItems = history ? (JSON.parse(history) as IHistoryInfo[]) : [];
 
   const handleClickItem = (item: IHistoryInfo) => {

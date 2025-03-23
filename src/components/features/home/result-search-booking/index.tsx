@@ -36,7 +36,10 @@ const ResultSearchBooking = memo(() => {
 
   const { data } = useRoutesStore();
 
-  const bookingHistory = localStorage.getItem("bookingHistory");
+  const bookingHistory =
+    typeof window !== "undefined"
+      ? localStorage?.getItem("bookingHistory")
+      : "";
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,11 +56,11 @@ const ResultSearchBooking = memo(() => {
     setResultSearchBooking(formSearchResult);
     if (!bookingHistory) {
       const arr = [object];
-      localStorage.setItem("bookingHistory", JSON.stringify(arr));
+      localStorage?.setItem("bookingHistory", JSON.stringify(arr));
     } else {
       const preBookingHistory = JSON.parse(bookingHistory);
       const newArr = [object, ...preBookingHistory];
-      localStorage.setItem("bookingHistory", JSON.stringify(newArr));
+      localStorage?.setItem("bookingHistory", JSON.stringify(newArr));
     }
 
     setOpenDialog(false);
