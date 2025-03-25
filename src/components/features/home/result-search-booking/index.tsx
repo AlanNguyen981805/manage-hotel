@@ -182,7 +182,7 @@ const ResultSearchBooking = memo(() => {
                   className="bg-accent text-white px-4 rounded-md h-[40px] mb-2"
                   onClick={handleSubmit}
                 >
-                  Đặt Phòng
+                  Đặt phòng
                 </button>
               </div>
             </DialogPanel>

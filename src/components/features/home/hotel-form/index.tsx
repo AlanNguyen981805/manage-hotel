@@ -11,6 +11,7 @@ import { BtnAddRow } from "../add-row";
 import { IHotel, IPropRowSearch } from "../result-search-booking/defination";
 import { hotelTypes, initialHotelRowData, resetHotelData } from "./defination";
 import useBookingState from "@/store/useRoomState";
+import { NumberInput } from "@/components/ui/number-input";
 
 export const HoltelRow = ({
   dayIndex,
@@ -247,45 +248,30 @@ export const HoltelRow = ({
                 <p className="text-lg">{expire_date}</p>
               </div>
 
-              <div className="flex flex-col gap-2 md:w-3/12">
-                <p>Số lượng phòng</p>
-                <input
-                  type="number"
-                  id="quantityRoom"
-                  className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-accent  focus:border-accent block w-full p-2.5  dark:focus:ring-accent dark:focus:border-accent"
-                  required
-                  value={hotelRow?.quantityRoom}
-                  min={0}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    handleChangeNumberOfRooms(
-                      e.target.value,
-                      hotelRow,
-                      rowIndex
-                    );
-                  }}
-                  disabled={hotelItem?.roomType?.createdAt ? false : true}
-                />
-              </div>
+              <NumberInput
+                label="Số lượng phòng"
+                value={hotelRow?.quantityRoom}
+                onChange={(value) =>
+                  handleChangeNumberOfRooms(value, hotelRow, rowIndex)
+                }
+                min={1}
+                disabled={!hotelItem?.roomType?.createdAt}
+                id={`quantityRoom-${rowIndex}`}
+                className="md:w-3/12"
+              />
 
-              <div className="flex flex-col gap-2 md:w-3/12">
-                <p>Số giường thêm</p>
-                <input
-                  type="number"
-                  id="additionalBeds"
-                  className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-accent  focus:border-accent block w-full p-2.5  dark:focus:ring-accent dark:focus:border-accent"
-                  required
-                  value={hotelRow?.additionalBeds}
-                  min={0}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    handleChangeAdditionalBeds(
-                      e.target.value,
-                      hotelRow,
-                      rowIndex
-                    );
-                  }}
-                  disabled={hotelItem?.roomType?.createdAt ? false : true}
-                />
-              </div>
+              <NumberInput
+                label="Số giường thêm"
+                value={hotelRow?.additionalBeds || 0}
+                onChange={(value) =>
+                  handleChangeAdditionalBeds(value, hotelRow, rowIndex)
+                }
+                min={0}
+                disabled={!hotelItem?.roomType?.createdAt}
+                id={`additionalBeds-${rowIndex}`}
+                className="md:w-3/12"
+              />
+
               <Price
                 value={hotelRow?.price || 0}
                 className="pr-2 md:w-3/12"

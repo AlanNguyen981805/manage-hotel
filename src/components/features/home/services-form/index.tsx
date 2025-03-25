@@ -7,6 +7,7 @@ import useRoutesStore from "@/store/useRoutesStore";
 import { useMemo } from "react";
 import { BtnAddRow } from "../add-row";
 import { IPropRowSearch, IService } from "../result-search-booking/defination";
+import { NumberInput } from "@/components/ui/number-input";
 
 export const ServicesRow = ({
   dayIndex,
@@ -117,7 +118,21 @@ export const ServicesRow = ({
                 />
               </div>
 
-              <div className="flex flex-col gap-2 items-center justify-center">
+              <NumberInput
+                label="Số lượng"
+                value={
+                  formSearchResult[dayIndex].services?.[rowIndex]
+                    ?.serviceQuantity ?? 1
+                }
+                onChange={(e) => handleChangeQuantiy(e, rowIndex)}
+                min={1}
+                disabled={
+                  !formSearchResult[dayIndex].services?.[rowIndex]?.serviceType
+                }
+                id={`quantityRoom-${rowIndex}`}
+                className="md:w-3/12"
+              />
+              {/* <div className="flex flex-col gap-2 items-center justify-center">
                 <p>Số lượng</p>
                 <div>
                   <input
@@ -134,7 +149,7 @@ export const ServicesRow = ({
                     }
                   />
                 </div>
-              </div>
+              </div> */}
             </div>
             <div className="flex flex-col gap-2 items-center justify-center">
               <Price
