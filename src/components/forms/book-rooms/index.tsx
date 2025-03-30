@@ -1,9 +1,10 @@
 "use client";
 
+import HistoryBooking from "@/components/features/home/history-booking";
+import { formatDate } from "@/helpers/date-helper";
 import { apiClient } from "@/lib/api/client";
 import { API_ENDPOINTS } from "@/lib/api/config";
 import useDialogStore from "@/store/useDialog";
-import HistoryBooking from "@/components/features/home/history-booking";
 import useBookingState from "@/store/useRoomState";
 import useRoutesStore from "@/store/useRoutesStore";
 import type { RoutesResponse } from "@/types/route";
@@ -16,11 +17,22 @@ const BookRoomForm = () => {
     setResultSearchBooking,
     setOpenHistory,
     isOpenHistory,
+    dateCheckIn,
+    dateCheckOut,
+    setDateCheckIn,
+    setDateCheckOut,
   } = useBookingState();
   const { setOpenDialog } = useDialogStore();
   const { setRoutes, setLoading, setError, loading } = useRoutesStore();
 
-  const handleCheckNow = async () => {
+  const fetchRoutes = async (
+    checkIn = dateCheckIn,
+    checkOut = dateCheckOut
+  ) => {
+    if (!checkIn || !checkOut) {
+      return;
+    }
+
     if (getNumberOfDays) {
       getNumberOfDays();
     }
@@ -28,7 +40,11 @@ const BookRoomForm = () => {
 
     setLoading(true);
     try {
-      const query = `?populate[location][populate][hotels][populate][hotel_types][populate]=price_hotels&populate[location][populate][service_routes][fields]=id,documentId,service_code,service_desc,service_price,createdAt,updatedAt,publishedAt&populate[location][populate][cars][fields]=id,type_car,car_price,car_code&populate[location][populate][companies][populate][service_companies][fields]=service_code,service_price`;
+      const query = `?populate[location][populate][hotels][populate][hotel_types][populate][price_hotels][filters][$or][0][start_date][$lte]=${formatDate(
+        checkOut
+      )}&populate[location][populate][hotels][populate][hotel_types][populate][price_hotels][filters][$or][0][end_date][$gte]=${formatDate(
+        checkIn
+      )}&populate[location][populate][service_routes][fields]=service_code,id,service_price,service_desc&populate[location][populate][cars][fields]=type_car,car_price&populate[location][populate][companies][populate][service_companies][fields]=service_code`;
 
       const response = await apiClient.get<RoutesResponse>(
         `${API_ENDPOINTS.ROUTES}${query}`
@@ -42,12 +58,39 @@ const BookRoomForm = () => {
       setError("Failed to fetch routes");
     } finally {
       setLoading(false);
-      setOpenDialog(true);
     }
   };
 
+  const handleCheckNow = async () => {
+    if (!dateCheckIn || !dateCheckOut) {
+      return;
+    }
+
+    await fetchRoutes();
+    setOpenDialog(true);
+  };
+
   const handleOpen = () => {
+    // Just toggle the history panel without fetching routes
     setOpenHistory(!isOpenHistory);
+  };
+
+  // This function will be passed to HistoryBooking component
+  const handleHistoryItemClick = async (historyItem) => {
+    console.log("historyItem :>> ", historyItem);
+    // Extract dates from the history item
+    const checkIn = new Date(historyItem.history.dateCheckIn);
+    const checkOut = new Date(historyItem.history.dateCheckOut);
+
+    // Update the booking state with these dates
+    setDateCheckIn(checkIn);
+    setDateCheckOut(checkOut);
+
+    // Fetch routes with these specific dates
+    await fetchRoutes(checkIn, checkOut);
+
+    // Open the dialog to show results
+    setOpenDialog(true);
   };
 
   return (
@@ -76,12 +119,13 @@ const BookRoomForm = () => {
             type="button"
             className="btn btn-primary border-l-[1px]"
             onClick={handleOpen}
+            disabled={loading}
           >
-            Lịch sử đặt phòng
+            {loading ? "Loading..." : "Lịch sử đặt phòng"}
           </button>
         </div>
       </form>
-      <HistoryBooking />
+      <HistoryBooking onHistoryItemClick={handleHistoryItemClick} />
     </div>
   );
 };

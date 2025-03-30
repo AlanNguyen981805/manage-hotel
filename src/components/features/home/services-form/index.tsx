@@ -27,17 +27,17 @@ export const ServicesRow = ({
   const { data } = useRoutesStore();
 
   const servicesByLocation = useMemo(() => {
+    const selectedRoute = data?.find(
+      (route) => route.id === Number(formSearchResult[dayIndex].city.id)
+    );
+
     const serviceCompaniesData =
-      data
-        ?.find(
-          (route) => route.id === Number(formSearchResult[dayIndex].city.id)
-        )
-        ?.location?.companies?.map((item) => item?.service_companies)
-        .flat() ?? [];
-    const serviceRoutesData =
-      data?.find(
-        (route) => route.id === Number(formSearchResult[dayIndex].city.id)
-      )?.location?.service_routes ?? [];
+      selectedRoute?.location?.companies?.flatMap(
+        (item) => item?.service_companies || []
+      ) || [];
+
+    const serviceRoutesData = selectedRoute?.location?.service_routes || [];
+
     return [...serviceCompaniesData, ...serviceRoutesData];
   }, [data, dayIndex, formSearchResult]);
 
@@ -60,21 +60,19 @@ export const ServicesRow = ({
     rowIndex: number,
     quantity: number
   ) => {
+    console.log("option :>> ", option);
     const price = calculatePrice(option.price, quantity);
 
     handleChange(dayIndex, rowIndex, "serviceType", option);
     handleChange(dayIndex, rowIndex, "price", price);
   };
 
-  const handleChangeQuantiy = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    rowIndex: number
-  ) => {
+  const handleChangeQuantiy = (e: number, rowIndex: number) => {
     const serviceTypePrice =
       formSearchResult[dayIndex].services?.[rowIndex]?.serviceType.price;
-    const price = calculatePrice(serviceTypePrice, Number(e.target.value));
+    const price = calculatePrice(serviceTypePrice, e);
 
-    handleChange(dayIndex, rowIndex, "serviceQuantity", e.target.value);
+    handleChange(dayIndex, rowIndex, "serviceQuantity", e);
     handleChange(dayIndex, rowIndex, "price", price);
   };
 
@@ -124,7 +122,7 @@ export const ServicesRow = ({
                   formSearchResult[dayIndex].services?.[rowIndex]
                     ?.serviceQuantity ?? 1
                 }
-                onChange={(e) => handleChangeQuantiy(e, rowIndex)}
+                onChange={(e) => handleChangeQuantiy(Number(e), rowIndex)}
                 min={1}
                 disabled={
                   !formSearchResult[dayIndex].services?.[rowIndex]?.serviceType

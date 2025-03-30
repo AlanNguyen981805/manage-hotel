@@ -4,8 +4,9 @@ export const API_BASE_URL =
 
 export const API_ENDPOINTS = {
   // Auth
-  LOGIN: "/auth/login",
-  REGISTER: "/auth/register",
+  LOGIN: "/auth/local",
+  REGISTER: "/auth/local/register",
+  ME: "/users/me",
 
   // Hotels
   HOTELS: "/hotels",
@@ -24,4 +25,9 @@ export const API_ENDPOINTS = {
   TRANSPORTATION_DETAIL: (id: string) => `/transportation/${id}`,
 
   ROUTES: "/routes",
+
+  // Histories
+  HISTORIES: "/histories",
+  USER_HISTORY: (username: string) => `/user-history/${username}`,
+  USER_HISTORIES: "/user-histories",
 };

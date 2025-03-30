@@ -53,6 +53,7 @@ export const AdditionalCostsRow = ({
                           name: e.target.value,
                         })
                       }
+                      value={additionalCost?.additionalCostType?.name || ""}
                     />
                   </div>
                 </div>
@@ -72,6 +73,7 @@ export const AdditionalCostsRow = ({
                           Number(e.target.value)
                         )
                       }
+                      value={additionalCost.price}
                     />
                   </div>
                 </div>

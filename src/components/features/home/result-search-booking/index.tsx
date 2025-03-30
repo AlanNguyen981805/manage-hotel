@@ -5,6 +5,7 @@ import { ROUTES } from "@/constants/routes";
 import useDialogStore from "@/store/useDialog";
 import useBookingState from "@/store/useRoomState";
 import useRoutesStore from "@/store/useRoutesStore";
+import useUserStore from "@/store/useUserStore";
 import {
   Dialog,
   DialogPanel,
@@ -18,6 +19,8 @@ import { AdditinalCosts, Hotel, Service, Transportation } from "..";
 import Dropdown from "../../../ui/dropdown";
 import { ICity, IFormSearchResult, initialRowData } from "./defination";
 import { initialHotelRowData } from "../hotel-form/defination";
+import { apiClient } from "@/lib/api/client";
+import { API_ENDPOINTS } from "@/lib/api/config";
 
 const ResultSearchBooking = memo(() => {
   const router = useRouter();
@@ -30,6 +33,7 @@ const ResultSearchBooking = memo(() => {
     resultSearchBooking,
   } = useBookingState();
   const { dialogStatus, setOpenDialog } = useDialogStore();
+  const { user } = useUserStore();
   const [formSearchResult, setFormSearchResult] = useState<IFormSearchResult>(
     {}
   );
@@ -41,7 +45,7 @@ const ResultSearchBooking = memo(() => {
       ? localStorage?.getItem("bookingHistory")
       : "";
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const object = {
@@ -54,6 +58,8 @@ const ResultSearchBooking = memo(() => {
     };
 
     setResultSearchBooking(formSearchResult);
+
+    // Save to localStorage
     if (!bookingHistory) {
       const arr = [object];
       localStorage?.setItem("bookingHistory", JSON.stringify(arr));
@@ -63,8 +69,23 @@ const ResultSearchBooking = memo(() => {
       localStorage?.setItem("bookingHistory", JSON.stringify(newArr));
     }
 
-    setOpenDialog(false);
+    // Kiểm tra xem người dùng đã đăng nhập chưa
+    if (user?.documentId) {
+      try {
+        await apiClient.post(API_ENDPOINTS.HISTORIES, {
+          data: {
+            code: `BOOKING-${Date.now()}`,
+            time_search: new Date().toISOString(),
+            history: JSON.stringify(object),
+            users_permissions_user: user.id,
+          },
+        });
+      } catch (error) {
+        console.error("Failed to save history to database:", error);
+      }
+    }
 
+    setOpenDialog(false);
     router.push(ROUTES.BOOKING);
   };
 
@@ -120,10 +141,10 @@ const ResultSearchBooking = memo(() => {
           <div className="flex items-center justify-center min-h-full p-4 overflow-y-auto">
             <DialogPanel
               transition
-              className="w-full max-w-4xl max-h-[700px] overflow-y-auto rounded-xl bg-white backdrop-blur-2xl duration-300 ease-out data-[closed]:transform-[scale(95%)] data-[closed]:opacity-0"
+              className="w-full max-w-5xl max-h-[700px] overflow-y-auto rounded-xl bg-white backdrop-blur-2xl duration-300 ease-out data-[closed]:transform-[scale(95%)] data-[closed]:opacity-0"
             >
               <div className="flex flex-col items-center w-full px-4 ">
-                <div className="w-full max-w-4xl mx-auto divide-y divide-black/5 rounded-xl">
+                <div className="w-full max-w-5xl mx-auto divide-y divide-black/5 rounded-xl">
                   {Array.from({ length: numberOfDays }, (_, index: number) => {
                     const dayIndex = `day${index + 1}`;
 

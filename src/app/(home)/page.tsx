@@ -1,8 +1,8 @@
 "use client";
 
+import ResultSearchBooking from "@/components/features/home/result-search-booking";
 import BookRoomForm from "@/components/forms/book-rooms";
 import HeroSlider from "@/components/ui/slider";
-import ResultSearchBooking from "@/components/features/home/result-search-booking";
 
 function Posts() {
   return (
@@ -18,4 +18,5 @@ function Posts() {
     </div>
   );
 }
+
 export default Posts;

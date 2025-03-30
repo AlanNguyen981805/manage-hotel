@@ -61,6 +61,7 @@ export const TransportationRow = ({
     option: { id: string; name: string; price: number },
     rowIndex: number
   ) => {
+    console.log("option :>> ", option);
     handleChange(dayIndex, rowIndex, "transportationType", option);
     handleChange(
       dayIndex,
