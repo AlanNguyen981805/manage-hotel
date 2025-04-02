@@ -1,11 +1,12 @@
 "use client";
 
+import useDebounce from "@/hooks/useAebounce";
 import { apiClient } from "@/lib/api/client";
 import { API_ENDPOINTS } from "@/lib/api/config";
-import useDialogStore from "@/store/useDialog";
 import useBookingState from "@/store/useRoomState";
 import useUserStore from "@/store/useUserStore";
 import { useEffect, useState } from "react";
+import { IFormSearchResult } from "../result-search-booking/defination";
 
 interface HistoryData {
   id: number;
@@ -17,7 +18,7 @@ interface HistoryData {
     dateCheckOut: string;
     numberOfDays: number;
     numberOfPeople: number;
-    days: any;
+    days: Record<string, unknown>;
   };
   createdAt: string;
   updatedAt: string;
@@ -29,83 +30,118 @@ interface HistoryData {
 }
 
 interface HistoryBookingProps {
-  onHistoryItemClick: (historyData: any) => void;
+  onHistoryItemClick: (historyData: HistoryData) => void;
 }
 
 const HistoryBooking = ({ onHistoryItemClick }: HistoryBookingProps) => {
   const { user } = useUserStore();
-  const {
-    setResultSearchBooking,
-    setNumberOfPeople,
-    setNumberOfdays,
-    isOpenHistory,
-  } = useBookingState();
-  const { setOpenDialog } = useDialogStore();
+  const { setResultSearchBooking, isOpenHistory } = useBookingState();
 
-  const [codeFilter, setCodeFilter] = useState("");
+  const [usernameFilter, setUsernameFilter] = useState("");
   const [dateFilter, setDateFilter] = useState("");
   const [histories, setHistories] = useState<HistoryData[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchHistories = async () => {
-      if (!user?.documentId) return;
+  // Use the debounce hook for both filters
+  const debouncedUsername = useDebounce(usernameFilter, 500);
+  const debouncedDate = useDebounce(dateFilter, 500);
 
-      setLoading(true);
-      try {
-        const response = await apiClient.get<{ data: HistoryData[] }>(
-          `${API_ENDPOINTS.HISTORIES}?filters[users_permissions_user][id][$eq]=${user.id}&populate=users_permissions_user`
-        );
-        setHistories(response.data.data);
-      } catch (error) {
-        setError("Failed to fetch histories");
-        console.error(error);
-      } finally {
-        setLoading(false);
+  const fetchHistories = async (username?: string, date?: string) => {
+    const searchUsername = username || user?.username;
+    const searchDate = date || "";
+
+    if (!searchUsername && !searchDate) return;
+
+    setLoading(true);
+    try {
+      let queryParams = "";
+
+      // Build query based on filters
+      if (searchUsername) {
+        queryParams = `?filters[users_permissions_user][username][$eq]=${searchUsername}`;
       }
-    };
 
-    fetchHistories();
-  }, [user?.documentId]);
+      // Add date filter if present
+      if (searchDate) {
+        const startDate = new Date(searchDate);
+        startDate.setHours(0, 0, 0, 0);
+
+        const endDate = new Date(searchDate);
+        endDate.setHours(23, 59, 59, 999);
+
+        const startDateISO = startDate.toISOString();
+        const endDateISO = endDate.toISOString();
+
+        const dateQuery = `filters[createdAt][$gte]=${startDateISO}&filters[createdAt][$lte]=${endDateISO}`;
+
+        queryParams = queryParams
+          ? `${queryParams}&${dateQuery}`
+          : `?${dateQuery}`;
+      }
+
+      // Always populate user data
+      queryParams = queryParams
+        ? `${queryParams}&populate=users_permissions_user`
+        : "?populate=users_permissions_user";
+
+      const response = await apiClient.get<{ data: HistoryData[] }>(
+        `${API_ENDPOINTS.HISTORIES}${queryParams}`
+      );
+
+      setHistories(response.data.data);
+    } catch (error) {
+      setError("Failed to fetch histories");
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Effect to fetch data when debounced values change
+  useEffect(() => {
+    if (isOpenHistory) {
+      fetchHistories(debouncedUsername, debouncedDate);
+    }
+  }, [debouncedUsername, debouncedDate, isOpenHistory]);
 
   const handleClickHistoryItem = (history: HistoryData) => {
     onHistoryItemClick(history);
-
-    setResultSearchBooking(history.history.days);
+    setResultSearchBooking(history.history.days as IFormSearchResult);
   };
 
-  const filteredHistories = histories.filter((history) => {
-    console.log("history :>> ", history);
-    const matchesCode = history.code
-      .toLowerCase()
-      .includes(codeFilter.toLowerCase());
-    const matchesDate = dateFilter
-      ? new Date(history.createdAt).toLocaleDateString().includes(dateFilter)
-      : true;
-    return matchesCode && matchesDate;
-  });
+  const handleDateFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setDateFilter(e.target.value);
+  };
 
   if (!isOpenHistory || !user?.id) return null;
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex flex-col w-full px-44 mb-1">
+        <div className="text-center p-4">Loading...</div>
+      </div>
+    );
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return (
+      <div className="flex flex-col w-full px-44 mb-1">
+        <div className="text-center text-red-500 p-4">Error: {error}</div>
+      </div>
+    );
   }
 
   return (
     <div className="flex flex-col w-full px-44 mb-1">
       <div className="flex gap-4 mb-4">
         <div className="flex-1 bg-white p-4 rounded-lg shadow">
-          <h3 className="font-medium mb-2">Lọc theo mã booking</h3>
+          <h3 className="font-medium mb-2">Lọc theo tên user</h3>
           <input
             type="text"
-            value={codeFilter}
-            onChange={(e) => setCodeFilter(e.target.value)}
-            placeholder="Nhập mã booking..."
+            value={usernameFilter}
+            onChange={(e) => setUsernameFilter(e.target.value)}
+            placeholder="Nhập tên user..."
             className="w-full p-2 border rounded-md focus:ring-accent focus:border-accent"
           />
         </div>
@@ -115,7 +151,7 @@ const HistoryBooking = ({ onHistoryItemClick }: HistoryBookingProps) => {
           <input
             type="date"
             value={dateFilter}
-            onChange={(e) => setDateFilter(e.target.value)}
+            onChange={handleDateFilterChange}
             className="w-full p-2 border rounded-md focus:ring-accent focus:border-accent"
           />
         </div>
@@ -123,10 +159,10 @@ const HistoryBooking = ({ onHistoryItemClick }: HistoryBookingProps) => {
 
       <div className="bg-white rounded-lg shadow">
         <div className="flex flex-col gap-2 p-4 max-h-[400px] overflow-y-auto">
-          {filteredHistories.length === 0 ? (
+          {histories.length === 0 ? (
             <div className="text-center text-gray-500">Không có lịch sử</div>
           ) : (
-            filteredHistories.map((history) => (
+            histories.map((history) => (
               <div
                 key={history.id}
                 className="flex justify-between items-center p-3 hover:bg-gray-50 rounded-md cursor-pointer"
