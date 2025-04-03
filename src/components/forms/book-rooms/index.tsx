@@ -10,6 +10,7 @@ import useRoutesStore from "@/store/useRoutesStore";
 import type { RoutesResponse } from "@/types/route";
 import NumberOfPeople from "../../features/home/number-of-people";
 import CheckInAndOut from "../../ui/input/checkin-and-out";
+import VendorSearch from "@/components/features/home/vendor-search";
 
 const BookRoomForm = () => {
   const {
@@ -94,7 +95,7 @@ const BookRoomForm = () => {
   };
 
   return (
-    <div className="h-[260px] flex flex-col justify-center items-center ">
+    <div className="h-[260px] flex flex-col justify-center items-center">
       <h1 className="text-4xl font-medium mb-9 text-accent">ĐẶT PHÒNG NGAY</h1>
 
       <form className="h-[300px] lg:h-[70px] w-full px-44">
@@ -103,8 +104,12 @@ const BookRoomForm = () => {
             <CheckInAndOut />
           </div>
 
-          <div className="flex-1 bg-white border-r">
+          {/* <div className="flex-1 bg-white border-r">
             <NumberOfPeople />
+          </div> */}
+
+          <div className="flex-1 bg-white border-r">
+            <VendorSearch />
           </div>
 
           <button

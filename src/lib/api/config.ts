@@ -30,4 +30,6 @@ export const API_ENDPOINTS = {
   HISTORIES: "/histories",
   USER_HISTORY: (username: string) => `/user-history/${username}`,
   USER_HISTORIES: "/user-histories",
+
+  VENDORS: "/venders",
 };
