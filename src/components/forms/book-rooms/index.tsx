@@ -104,9 +104,9 @@ const BookRoomForm = () => {
             <CheckInAndOut />
           </div>
 
-          {/* <div className="flex-1 bg-white border-r">
+          <div className="flex-1 bg-white border-r">
             <NumberOfPeople />
-          </div> */}
+          </div>
 
           <div className="flex-1 bg-white border-r">
             <VendorSearch />

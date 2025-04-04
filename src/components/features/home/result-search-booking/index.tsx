@@ -31,6 +31,7 @@ const ResultSearchBooking = memo(() => {
     dateCheckOut,
     numberOfPeople,
     resultSearchBooking,
+    vendor,
   } = useBookingState();
   const { dialogStatus, setOpenDialog } = useDialogStore();
   const { user } = useUserStore();
@@ -55,6 +56,7 @@ const ResultSearchBooking = memo(() => {
       dateCheckIn,
       dateCheckOut,
       numberOfPeople,
+      vendor,
     };
 
     setResultSearchBooking(formSearchResult);

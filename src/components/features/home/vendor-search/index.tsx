@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { Dialog } from "@headlessui/react";
 import { apiClient } from "@/lib/api/client";
 import { API_ENDPOINTS } from "@/lib/api/config";
+import useBookingState from "@/store/useRoomState";
 
 interface Vendor {
   id: number;
@@ -20,7 +21,11 @@ interface CreateVendorForm {
   email: string;
 }
 
-const VendorSearch = () => {
+interface VendorSearchProps {
+  onSelectVendor?: (vendor: Vendor) => void;
+}
+
+const VendorSearch = ({ onSelectVendor }: VendorSearchProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [vendors, setVendors] = useState<Vendor[]>([]);
   const [filteredVendors, setFilteredVendors] = useState<Vendor[]>([]);
@@ -33,6 +38,8 @@ const VendorSearch = () => {
     phone: "",
     email: "",
   });
+  const [selectedVendor, setSelectedVendor] = useState<Vendor | null>(null);
+  const { setVendor } = useBookingState();
 
   // Thêm ref để quản lý dropdown
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -116,18 +123,50 @@ const VendorSearch = () => {
     }
   };
 
+  const handleSelectVendor = (e: React.MouseEvent, vendor: Vendor) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    setSelectedVendor(vendor);
+    setSearchTerm(vendor.name);
+    setIsDropdownVisible(false);
+
+    setVendor(vendor);
+    if (onSelectVendor) {
+      onSelectVendor(vendor);
+    }
+  };
+
   return (
-    <div className="flex-1 bg-white p-4 rounded-lg shadow">
-      <h3 className="font-medium mb-2">Tìm kiếm Vendor</h3>
+    <div className="flex-1 flex flex-col bg-white p-4 rounded-lg shadow w-full">
+      <h3 className="font-medium mb-2 w-[200px]">Tìm kiếm Vendor</h3>
       <div className="relative" ref={dropdownRef}>
         <input
           type="text"
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={(e) => {
+            setSearchTerm(e.target.value);
+            // Reset selectedVendor if input is cleared or changed
+            if (selectedVendor && e.target.value !== selectedVendor.name) {
+              setSelectedVendor(null);
+            }
+          }}
           onFocus={() => searchTerm && setIsDropdownVisible(true)}
           placeholder="Nhập tên vendor..."
           className="w-full p-2 border rounded-md focus:ring-accent focus:border-accent"
         />
+
+        {/* Selected Vendor Info */}
+        {selectedVendor && (
+          <div className="mt-2 p-2 bg-gray-50 border rounded-md">
+            <div className="font-medium text-accent">{selectedVendor.name}</div>
+            <div className="text-sm">
+              <div>{selectedVendor.address}</div>
+              <div>SĐT: {selectedVendor.phone}</div>
+              <div>Email: {selectedVendor.email}</div>
+            </div>
+          </div>
+        )}
 
         {/* Vendor List */}
         {isDropdownVisible && (
@@ -136,14 +175,25 @@ const VendorSearch = () => {
               filteredVendors.map((vendor) => (
                 <div
                   key={vendor.id}
-                  className="p-2 hover:bg-gray-100 cursor-pointer"
-                  onClick={() => {
-                    setSearchTerm(vendor.name);
-                    setIsDropdownVisible(false);
-                  }}
+                  className="p-2 hover:bg-gray-100 cursor-pointer flex justify-between items-center"
                 >
-                  <div className="font-medium">{vendor.name}</div>
-                  <div className="text-sm text-gray-600">{vendor.email}</div>
+                  <div
+                    onClick={() => {
+                      setSearchTerm(vendor.name);
+                      setIsDropdownVisible(false);
+                    }}
+                    className="flex-1"
+                  >
+                    <div className="font-medium">{vendor.name}</div>
+                    <div className="text-sm text-gray-600">{vendor.email}</div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={(e) => handleSelectVendor(e, vendor)}
+                    className="bg-accent text-white py-1 px-3 rounded-md hover:bg-accent/90 ml-2"
+                  >
+                    Chọn
+                  </button>
                 </div>
               ))
             ) : (
