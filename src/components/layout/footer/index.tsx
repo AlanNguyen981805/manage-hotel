@@ -1,11 +1,37 @@
-import { Logo } from "@/assets/svgs/Logo";
+"use client";
+
+import Link from "next/link";
 
 const Footer = () => (
-  <footer className="bg-primary py-12">
-    <div className="containe r mx-auto text-white flex items-center gap-5 sm:justify-between flex-col sm:flex-row">
-      <Logo />
-      <div className="flex flex-col items-center">
-        <p>Copyright &copy; {new Date().getFullYear()}, All Right Reserved,</p>
+  <footer className="bg-white shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+        <div className="flex-shrink-0">
+          <Link href="/" className="text-xl font-bold text-indigo-600">
+            Booking
+          </Link>
+        </div>
+
+        {/* <div className="flex flex-col md:flex-row gap-8 text-gray-500 text-sm">
+          <Link href="/" className="hover:text-indigo-600">
+            Home
+          </Link>
+          <Link href="/booking" className="hover:text-indigo-600">
+            Book Room
+          </Link>
+          <Link href="#" className="hover:text-indigo-600">
+            About Us
+          </Link>
+          <Link href="#" className="hover:text-indigo-600">
+            Contact
+          </Link>
+        </div> */}
+
+        <div className="flex flex-col items-center md:items-end">
+          <p className="text-gray-500 text-sm">
+            © {new Date().getFullYear()} Booking. All Rights Reserved
+          </p>
+        </div>
       </div>
     </div>
   </footer>

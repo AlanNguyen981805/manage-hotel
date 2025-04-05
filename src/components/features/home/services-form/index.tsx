@@ -90,10 +90,10 @@ export const ServicesRow = ({
           >
             <div className="flex gap-3">
               <div className="flex flex-col gap-2 items-center justify-center">
-                <p>Loại dịch vụ</p>
+                <p>Service Type</p>
                 <Dropdown
                   options={[
-                    { id: 0, name: "Vui lòng chọn", price: 0 },
+                    { id: 0, name: "Please select", price: 0 },
                     ...servicesByLocation?.map((service) => ({
                       id: service.id,
                       name: service.service_code,
@@ -117,7 +117,7 @@ export const ServicesRow = ({
               </div>
 
               <NumberInput
-                label="Số lượng"
+                label="Quantity"
                 value={
                   formSearchResult[dayIndex].services?.[rowIndex]
                     ?.serviceQuantity ?? 1

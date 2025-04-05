@@ -14,6 +14,7 @@ export interface HotelType {
   id: number;
   documentId?: string;
   name: string;
+  price_default: number;
   createdAt?: string;
   updatedAt?: string;
   publishedAt?: string;
@@ -54,7 +55,10 @@ export interface ServiceRoute {
   publishedAt: string;
 }
 
-export interface Companies {
+export interface Company {
+  id: number;
+  documentId: string;
+  mark_up: number;
   service_companies: {
     id: number;
     documentId: string;
@@ -71,7 +75,7 @@ export interface Location {
   updatedAt: string;
   publishedAt: string;
   hotels: Hotel[];
-  companies: Companies[];
+  company: Company;
   service_routes: ServiceRoute[];
   cars: Cars[];
 }

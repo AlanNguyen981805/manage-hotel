@@ -57,7 +57,10 @@ export const HotelInfo = ({ hotels }: HotelInfoProps) => {
                     {t("booking.pricePerRoom")}:
                   </span>
                   <Price
-                    value={hotel.roomType.price_hotels[0]?.price || 0}
+                    value={
+                      hotel.roomType.price_hotels[0]?.price ||
+                      hotel.roomType.price_default
+                    }
                     size="md"
                     align="left"
                     label=""

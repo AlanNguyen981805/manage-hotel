@@ -30,6 +30,7 @@ export const HotelRow = ({
     hotelTypesOptions: {},
   });
   const [isInitialized, setIsInitialized] = useState(false);
+  const [priceDefault, setPriceDefault] = useState(0);
 
   const { handleAddRow, handleChange, handleRemoveRow } = useFormSearchResult({
     dayIndex,
@@ -64,15 +65,17 @@ export const HotelRow = ({
       value: number,
       hotelRow: IHotel,
       rowIndex: number,
-      type: "room" | "bed"
+      type: "room" | "bed",
+      priceDefault: number
     ) => {
+      console.log("priceDefault :>> ", priceDefault);
       const updatedQuantityRoom =
         type === "room" ? value : hotelRow.quantityRoom;
       const updatedAdditionalBeds =
         type === "bed" ? value : hotelRow.additionalBeds;
 
       const newPrice = caculatePriceByRow(
-        hotelRow?.roomType?.price_hotels[0]?.price || 0,
+        hotelRow?.roomType?.price_hotels[0]?.price || priceDefault,
         updatedQuantityRoom,
         hotelRow?.hotelName?.extra_price,
         updatedAdditionalBeds
@@ -194,7 +197,11 @@ export const HotelRow = ({
 
   const handleChangeRoomType = useCallback(
     (option: HotelType, hotelRow: IHotel, rowIndex: number) => {
-      const rowTypePrice = Number(option.price_hotels[0]?.price ?? 0);
+      const rowTypePrice = Number(
+        option.price_hotels[0]?.price
+          ? option.price_hotels[0]?.price
+          : option.price_default
+      );
       const numberOfRooms = hotelRow?.quantityRoom || 1;
       const additionalBedsQuantity = hotelRow?.additionalBeds || 0;
 
@@ -247,8 +254,8 @@ export const HotelRow = ({
 
           return (
             <div key={rowIndex} className="flex w-full gap-4 my-3">
-              <div className="flex flex-col items-start justify-center gap-2 md:w-3/12">
-                <p>Loại khách sạn</p>
+              <div className="flex flex-col gap-2 md:w-3/12">
+                <p>Hotel Type</p>
                 <Dropdown
                   options={hotelTypes}
                   name={`hotel-type-${dayIndex}-${rowIndex}`}
@@ -258,10 +265,10 @@ export const HotelRow = ({
               </div>
 
               <div className="flex flex-col gap-2 md:w-3/12">
-                <p>Khách sạn</p>
+                <p>Hotel</p>
                 <Dropdown
                   options={[
-                    { id: 0, name: "Vui lòng chọn", hotel_types: [] },
+                    { id: 0, name: "Please select", hotel_types: [] },
                     ...(state.hotelsByRank[rowIndex] ?? []).map((hotel) => ({
                       ...hotel,
                       id: hotel.id,
@@ -307,22 +314,23 @@ export const HotelRow = ({
               </div>
 
               <div className="flex flex-col gap-2 md:w-3/12">
-                <p>Loại phòng</p>
+                <p>Room Type</p>
                 <Dropdown
                   options={[
-                    { id: 0, name: "Vui lòng chọn", price_hotels: [] },
+                    { id: 0, name: "Please select", price_hotels: [] },
                     ...(state.hotelTypesOptions[rowIndex] ?? []),
                   ]}
                   name={`room-type-${dayIndex}-${rowIndex}`}
                   value={hotelRow?.roomType?.id || ""}
-                  onChange={(option) =>
-                    handleChangeRoomType(option, hotelRow, rowIndex)
-                  }
+                  onChange={(option) => {
+                    setPriceDefault(option.price_default);
+                    handleChangeRoomType(option, hotelRow, rowIndex);
+                  }}
                 />
               </div>
 
               <div className="flex flex-col gap-2 md:w-3/12">
-                <p>Ngày bắt đầu</p>
+                <p>Start Date</p>
                 <p className="text-lg">
                   {hotelRow.roomType.price_hotels[0]?.start_date
                     ? formatDateNoUtc(
@@ -332,7 +340,7 @@ export const HotelRow = ({
                 </p>
               </div>
               <div className="flex flex-col gap-2 md:w-3/12">
-                <p>Ngày kết thúc</p>
+                <p>End Date</p>
                 <p className="text-lg">
                   {hotelRow.roomType.price_hotels[0]?.end_date
                     ? formatDateNoUtc(
@@ -343,14 +351,15 @@ export const HotelRow = ({
               </div>
 
               <NumberInput
-                label="Số lượng phòng"
+                label="Number of rooms"
                 value={hotelRow?.quantityRoom || 1}
                 onChange={(value) =>
                   handleQuantityChange(
                     Number(value),
                     hotelRow,
                     rowIndex,
-                    "room"
+                    "room",
+                    priceDefault
                   )
                 }
                 min={1}
@@ -360,10 +369,16 @@ export const HotelRow = ({
               />
 
               <NumberInput
-                label="Số giường thêm"
+                label="Number of extra beds"
                 value={hotelRow?.additionalBeds || 0}
                 onChange={(value) =>
-                  handleQuantityChange(Number(value), hotelRow, rowIndex, "bed")
+                  handleQuantityChange(
+                    Number(value),
+                    hotelRow,
+                    rowIndex,
+                    "bed",
+                    priceDefault
+                  )
                 }
                 min={0}
                 disabled={!hotelRow?.roomType?.id}

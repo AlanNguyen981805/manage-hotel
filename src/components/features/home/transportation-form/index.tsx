@@ -103,12 +103,12 @@ export const TransportationRow = ({
             <div key={rowIndex} className="flex justify-between items-center">
               <div className="flex mb- gap-4 my-3 items-stretch">
                 <div className="flex flex-col gap-2 items-center justify-center">
-                  <p>Loại phương tiện</p>
+                  <p>Transportation Type</p>
                   <Dropdown
                     options={[
                       {
                         id: "",
-                        name: "Vui lòng chọn",
+                        name: "Please select",
                         price: 0,
                       },
                       ...transportationTypes?.map((car) => ({

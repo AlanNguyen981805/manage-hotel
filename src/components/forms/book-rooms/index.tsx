@@ -11,6 +11,7 @@ import type { RoutesResponse } from "@/types/route";
 import NumberOfPeople from "../../features/home/number-of-people";
 import CheckInAndOut from "../../ui/input/checkin-and-out";
 import VendorSearch from "@/components/features/home/vendor-search";
+import useToastStore from "@/store/useToastStore";
 
 const BookRoomForm = () => {
   const {
@@ -22,10 +23,11 @@ const BookRoomForm = () => {
     dateCheckOut,
     setDateCheckIn,
     setDateCheckOut,
+    vendor,
   } = useBookingState();
   const { setOpenDialog } = useDialogStore();
   const { setRoutes, setLoading, setError, loading } = useRoutesStore();
-
+  const { addToast } = useToastStore();
   const fetchRoutes = async (
     checkIn = dateCheckIn,
     checkOut = dateCheckOut
@@ -45,7 +47,7 @@ const BookRoomForm = () => {
         checkOut
       )}&populate[location][populate][hotels][populate][hotel_types][populate][price_hotels][filters][$or][0][end_date][$gte]=${formatDate(
         checkIn
-      )}&populate[location][populate][service_routes][fields]=service_code,id,service_price,service_desc&populate[location][populate][cars][fields]=type_car,car_price&populate[location][populate][companies][populate][service_companies][fields]=service_code`;
+      )}&populate[location][populate][service_routes][fields]=service_code,id,service_price,service_desc&populate[location][populate][cars][fields]=type_car,car_price&populate[location][populate][company][fields]=mark_up`;
 
       const response = await apiClient.get<RoutesResponse>(
         `${API_ENDPOINTS.ROUTES}${query}`
@@ -63,7 +65,11 @@ const BookRoomForm = () => {
   };
 
   const handleCheckNow = async () => {
-    if (!dateCheckIn || !dateCheckOut) {
+    if (!dateCheckIn || !dateCheckOut || !vendor) {
+      addToast(
+        "Please select check in and check out date and vendor",
+        "warning"
+      );
       return;
     }
 
@@ -95,10 +101,10 @@ const BookRoomForm = () => {
   };
 
   return (
-    <div className="h-[260px] flex flex-col justify-center items-center">
-      <h1 className="text-4xl font-medium mb-9 text-accent">ĐẶT PHÒNG NGAY</h1>
+    <div className="h-[260px] px-4 rounded-md flex flex-col justify-center items-center">
+      <h1 className="text-4xl font-medium mb-9 text-accent">BOOKING NOW</h1>
 
-      <form className="h-[300px] lg:h-[70px] w-full px-44">
+      <form className="h-[300px] lg:h-[70px] w-full">
         <div className="flex flex-col w-full h-full lg:flex-row">
           <div className="flex-1 bg-white border-r">
             <CheckInAndOut />
@@ -120,17 +126,14 @@ const BookRoomForm = () => {
           >
             {loading ? "Checking..." : "Check Now"}
           </button>
-          <button
-            type="button"
-            className="btn btn-primary border-l-[1px]"
-            onClick={handleOpen}
-            disabled={loading}
-          >
-            {loading ? "Loading..." : "Lịch sử đặt phòng"}
-          </button>
         </div>
       </form>
-      <HistoryBooking onHistoryItemClick={handleHistoryItemClick} />
+
+      <HistoryBooking
+        onHistoryItemClick={handleHistoryItemClick}
+        isOpenHistory={isOpenHistory}
+        setIsOpenHistory={setOpenHistory}
+      />
     </div>
   );
 };

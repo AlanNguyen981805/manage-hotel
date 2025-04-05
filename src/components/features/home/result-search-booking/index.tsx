@@ -96,6 +96,7 @@ const ResultSearchBooking = memo(() => {
   }
 
   const setArea = (option: ICity, dayIndex: string) => {
+    console.log("option :>> ", option);
     setFormSearchResult((prevState) => {
       return {
         ...prevState,
@@ -118,6 +119,7 @@ const ResultSearchBooking = memo(() => {
     return data.map((route) => ({
       id: route.id.toString(),
       name: route.name,
+      desc: route.desc,
     }));
   };
 
@@ -129,7 +131,7 @@ const ResultSearchBooking = memo(() => {
   }, [numberOfDays, resultSearchBooking]);
 
   return (
-    <div className="flex flex-col items-center justify-center w-full m-2">
+    <div className="flex flex-col items-center justify-center w-full">
       <Dialog
         open={dialogStatus}
         as="div"
@@ -143,25 +145,25 @@ const ResultSearchBooking = memo(() => {
           <div className="flex items-center justify-center min-h-full p-4 overflow-y-auto">
             <DialogPanel
               transition
-              className="w-full max-w-5xl max-h-[700px] overflow-y-auto rounded-xl bg-white backdrop-blur-2xl duration-300 ease-out data-[closed]:transform-[scale(95%)] data-[closed]:opacity-0"
+              className="w-full max-w-7xl max-h-[90vh] overflow-y-auto rounded-xl bg-white backdrop-blur-2xl duration-300 ease-out data-[closed]:transform-[scale(95%)] data-[closed]:opacity-0"
             >
-              <div className="flex flex-col items-center w-full px-4 ">
-                <div className="w-full max-w-5xl mx-auto divide-y divide-black/5 rounded-xl">
+              <div className="flex flex-col items-center w-full px-6 py-4">
+                <div className="w-full max-w-7xl mx-auto divide-y divide-black/5 rounded-xl">
                   {Array.from({ length: numberOfDays }, (_, index: number) => {
                     const dayIndex = `day${index + 1}`;
 
                     return (
-                      <Disclosure as="div" className="p-2" key={index}>
+                      <Disclosure as="div" className="p-3" key={index}>
                         <DisclosureButton className="flex items-center justify-between w-full group">
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-3">
                             <span className="text-sm/6 font-medium text-black group-data-[hover]:text-black/80">
-                              <h1 className="text-2xl font-bold w-[100px]">
-                                NGÀY {index + 1}
+                              <h1 className="text-2xl font-bold w-[120px]">
+                                DAY {index + 1}
                               </h1>
                             </span>
                             <Dropdown
                               options={[
-                                { id: "", name: "Vui lòng chọn" },
+                                { id: "", name: "Please select" },
                                 ...transformTopOptions(),
                               ]}
                               name={`city-${dayIndex}`}
@@ -171,7 +173,7 @@ const ResultSearchBooking = memo(() => {
                           </div>
                           <ArrowDown />
                         </DisclosureButton>
-                        <DisclosurePanel className="mt-2 text-sm/5 text-black/50">
+                        <DisclosurePanel className="mt-3 text-sm/5 text-black/50">
                           <Hotel
                             dayIndex={dayIndex}
                             setForm={setFormSearchResult}
@@ -200,12 +202,12 @@ const ResultSearchBooking = memo(() => {
                     );
                   })}
                 </div>
-                <hr className="w-full my-2" />
+                <hr className="w-full my-4" />
                 <button
-                  className="bg-accent text-white px-4 rounded-md h-[40px] mb-2"
+                  className="bg-accent text-white px-6 py-2 rounded-md h-[48px] mb-3 text-lg font-medium"
                   onClick={handleSubmit}
                 >
-                  Đặt phòng
+                  Book Room
                 </button>
               </div>
             </DialogPanel>

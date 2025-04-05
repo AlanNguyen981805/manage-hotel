@@ -41,7 +41,10 @@ export const useAuth = create((set) => ({
       return response.data;
     } catch (error) {
       set({
-        error: error.response?.data?.message || "Login failed",
+        error:
+          error.response?.data?.error?.status === 400
+            ? error.response?.data?.error?.message
+            : "Có lỗi xảy ra, vui lòng liên hệ admin",
         loading: false,
       });
       throw error;
@@ -71,8 +74,12 @@ export const useAuth = create((set) => ({
 
       return response.data;
     } catch (error) {
+      console.log("error :>> ", error);
       set({
-        error: error.response?.data?.message || "Registration failed",
+        error:
+          error.response?.data?.error?.status === 400
+            ? error.response?.data?.error?.message
+            : "Có lỗi xảy ra, vui lòng liên hệ admin",
         loading: false,
       });
       throw error;

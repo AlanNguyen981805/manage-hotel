@@ -18,11 +18,11 @@ const Header = () => {
   });
 
   const navLinks = [
-    { key: 'nav.home', path: '/' },
-    { key: 'nav.rooms', path: '/' },
-    { key: 'nav.restaurant', path: '/' },
-    { key: 'nav.spa', path: '/' },
-    { key: 'nav.contact', path: '/' }
+    { key: "nav.home", path: "/" },
+    { key: "nav.rooms", path: "/" },
+    { key: "nav.restaurant", path: "/" },
+    { key: "nav.spa", path: "/" },
+    { key: "nav.contact", path: "/" },
   ];
 
   return (
@@ -40,12 +40,16 @@ const Header = () => {
             flex gap-x-4 lg:gap-x-8 font-tertiary tracking-[3px] text-[15px] items-center uppercase`}
           >
             {navLinks.map((link) => (
-              <Link href={link.path} className="transition hover:text-accent" key={link.key}>
+              <Link
+                href={link.path}
+                className="transition hover:text-accent"
+                key={link.key}
+              >
                 {t(link.key)}
               </Link>
             ))}
           </nav>
-          
+
           <LanguageSwitcher />
         </div>
       </div>

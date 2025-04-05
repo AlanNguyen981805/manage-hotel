@@ -15,15 +15,15 @@ export const TransportationInfo = ({
         <>
           <div className="flex flex-col gap-2 pl-4" key={index}>
             <div className="flex justify-between">
-              <span className="text-gray-600">Tên phương tiện:</span>
+              <span className="text-gray-600">Transportation Name:</span>
               <span>{trans.transportationType.name}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-600">Loại phương tiện:</span>
+              <span className="text-gray-600">Transportation Mode:</span>
               <span>{trans.transportationMode.name}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-600">Giá tiền:</span>
+              <span className="text-gray-600">Price:</span>
               <Price value={trans.price || 0} size="md" align="left" label="" />
             </div>
           </div>

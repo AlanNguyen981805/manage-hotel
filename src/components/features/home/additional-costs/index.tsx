@@ -41,7 +41,7 @@ export const AdditionalCostsRow = ({
             >
               <div className="flex gap-3">
                 <div className="flex flex-col gap-2 items-center justify-center">
-                  <p>Tên yêu cầu</p>
+                  <p>Additional Cost Name</p>
                   <div>
                     <input
                       type="text"
@@ -59,7 +59,7 @@ export const AdditionalCostsRow = ({
                 </div>
 
                 <div className="flex flex-col gap-2 items-center justify-center">
-                  <p>Giá tiền</p>
+                  <p>Price</p>
                   <div>
                     <input
                       type="number"
@@ -82,7 +82,7 @@ export const AdditionalCostsRow = ({
               <div className="flex flex-col gap-2 md:w-3/12 pr-2">
                 <Price
                   value={additionalCost?.price || 0}
-                  label="Giá"
+                  label="Price"
                   size="lg"
                 />
               </div>

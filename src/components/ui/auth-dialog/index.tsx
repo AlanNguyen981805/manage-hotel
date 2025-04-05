@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Dialog } from "@headlessui/react";
 import { useAuth } from "@/hooks/useAuth";
+import useToastStore from "@/store/useToastStore";
 
 interface AuthDialogProps {
   isOpen: boolean;
@@ -17,11 +18,12 @@ export function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
   const [registerEmail, setRegisterEmail] = useState("");
   const [registerPassword, setRegisterPassword] = useState("");
   const { login, register, loading, error } = useAuth();
-
+  const { addToast } = useToastStore();
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     const success = await login(username, password);
     if (success) {
+      addToast("Login successfully", "success");
       onClose();
       setUsername("");
       setPassword("");
@@ -35,7 +37,9 @@ export function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
       registerEmail,
       registerPassword
     );
+
     if (success) {
+      addToast("Register successfully", "success");
       onClose();
       setRegisterUsername("");
       setRegisterEmail("");

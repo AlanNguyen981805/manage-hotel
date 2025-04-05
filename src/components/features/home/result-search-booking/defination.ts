@@ -99,6 +99,7 @@ export interface IHotel {
     price: number;
     createdAt?: string;
     price_hotels: { price?: number; start_date?: string; end_date?: string }[];
+    price_default?: number;
   };
   quantityRoom: number;
   additionalBeds: number;

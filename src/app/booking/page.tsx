@@ -1,5 +1,6 @@
 "use client";
 
+import { ArrowDown } from "@/assets/svgs/ArrowDown";
 import {
   AdditionalCostsInfo,
   HotelInfo,
@@ -13,14 +14,16 @@ import {
   DisclosureButton,
   DisclosurePanel,
 } from "@headlessui/react";
-import { ArrowDown } from "@/assets/svgs/ArrowDown";
-import { useTranslation } from "@/hooks/useTranslation";
 
 export default function Booking() {
-  const { resultSearchBooking } = useBookingState();
-  const { t } = useTranslation();
-
-  console.log("resultSearchBooking :>> ", resultSearchBooking);
+  const {
+    resultSearchBooking,
+    vendor,
+    dateCheckIn,
+    dateCheckOut,
+    numberOfPeople,
+    numberOfDays,
+  } = useBookingState();
 
   return (
     <div className="w-full h-full">
@@ -28,12 +31,18 @@ export default function Booking() {
         <div className="w-[70%]">
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex flex-col gap-6">
-              <h3 className="text-xl font-semibold mb-4">{t('booking.details')}</h3>
+              <h3 className="text-xl font-semibold mb-4">Booking Details</h3>
               {Object.keys(resultSearchBooking).map((keyName, i) => (
                 <Disclosure key={i} as="div" defaultOpen={false}>
-                  <DisclosureButton className={`group flex w-full items-center justify-between py-4 ${i < Object.keys(resultSearchBooking).length - 1 ? 'border-b' : ''}`}>
+                  <DisclosureButton
+                    className={`group flex w-full items-center justify-between py-4 ${
+                      i < Object.keys(resultSearchBooking).length - 1
+                        ? "border-b"
+                        : ""
+                    }`}
+                  >
                     <h4 className="font-medium text-lg">
-                      {t('booking.day')} {i + 1} - {resultSearchBooking[keyName].city.name}
+                      DAY {i + 1} - {resultSearchBooking[keyName].city.name}
                     </h4>
                     <ArrowDown />
                   </DisclosureButton>
@@ -67,7 +76,14 @@ export default function Booking() {
         </div>
 
         <div className="w-[30%]">
-          <SummaryBooking resultSearchBooking={resultSearchBooking} />
+          <SummaryBooking
+            resultSearchBooking={resultSearchBooking}
+            vendor={vendor}
+            dateCheckIn={dateCheckIn}
+            dateCheckOut={dateCheckOut}
+            numberOfPeople={numberOfPeople}
+            numberOfDays={numberOfDays}
+          />
         </div>
       </div>
     </div>

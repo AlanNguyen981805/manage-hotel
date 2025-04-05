@@ -3,22 +3,38 @@
 import { IFormSearchResult } from "@/components/features/home/result-search-booking/defination";
 import { Price } from "@/components/ui/price";
 import { useTranslation } from "@/hooks/useTranslation";
+import useRoutesStore from "@/store/useRoutesStore";
 import { generateWordDocument } from "./booking-info-doc";
 
 interface SummaryBookingProps {
   resultSearchBooking: IFormSearchResult;
+  vendor: any;
+  dateCheckIn: Date | null;
+  dateCheckOut: Date | null;
+  numberOfPeople: number;
+  numberOfDays: number;
 }
 
 export const SummaryBooking = ({
   resultSearchBooking,
+  vendor,
+  dateCheckIn,
+  dateCheckOut,
+  numberOfPeople,
+  numberOfDays,
 }: SummaryBookingProps) => {
   const { t } = useTranslation();
+  const { data } = useRoutesStore();
 
   const calculateTotals = () => {
     let hotelTotal = 0;
     let transportationTotal = 0;
     let servicesTotal = 0;
     let additionalCostsTotal = 0;
+    const markup =
+      data && data[0]?.location?.company?.mark_up
+        ? data[0]?.location?.company?.mark_up
+        : 1;
 
     Object.values(resultSearchBooking).forEach((dayBooking) => {
       // Sum hotels
@@ -43,7 +59,11 @@ export const SummaryBooking = ({
     });
 
     const total =
-      hotelTotal + transportationTotal + servicesTotal + additionalCostsTotal;
+      (hotelTotal +
+        transportationTotal +
+        servicesTotal +
+        additionalCostsTotal) *
+      markup;
 
     return {
       hotelTotal,
@@ -90,42 +110,24 @@ export const SummaryBooking = ({
           <p>{t("summary.paymentNotice3")}</p>
         </div>
 
-        <button
-          type="button"
-          onClick={() => {
-            // Create content for Word document
-            const content = `
-                    Booking Details
-                    
-                    Hotel: $${totals.hotelTotal}
-                    Transportation: $${totals.transportationTotal}
-                    Service: $${totals.servicesTotal}
-                    Additional: $${totals.additionalCostsTotal}
-                    Total: $${totals.total}
-                    
-                    Additional Information:
-                    - Free WiFi available throughout the property
-                    - Check-in time: 2:00 PM
-                    - Check-out time: 12:00 PM
-                    - Free cancellation until 24 hours before check-in
-                  `;
-
-            // Create blob and download
-            const blob = new Blob([content], {
-              type: "application/msword",
-            });
-            const url = window.URL.createObjectURL(blob);
-            const link = document.createElement("a");
-            link.href = url;
-            link.download = "booking-details.doc";
-            link.click();
-            window.URL.revokeObjectURL(url);
-          }}
-          className="w-full bg-accent text-black/80 py-3 rounded-lg hover:bg-accent/90 transition"
-        >
-          Download Booking Details
-        </button>
-        <button onClick={generateWordDocument}>Tạo file Word</button>
+        <div>
+          <button
+            className="w-full bg-accent text-black/80 py-3 rounded-lg hover:bg-accent/90 transition"
+            onClick={() =>
+              generateWordDocument(
+                vendor,
+                dateCheckIn,
+                dateCheckOut,
+                resultSearchBooking,
+                numberOfPeople,
+                totals,
+                numberOfDays
+              )
+            }
+          >
+            Download Proposal
+          </button>
+        </div>
       </div>
     </div>
   );
