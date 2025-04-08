@@ -1,29 +1,29 @@
+import type { Location, LocationsResponse } from "@/types/route";
 import { create } from "zustand";
-import type { RoutesResponse, Route } from "@/types/route";
 
-interface RoutesState {
-  data: Route[] | null;
-  meta: RoutesResponse["meta"] | null;
+interface LocationsState {
+  data: Location[] | null;
+  meta: LocationsResponse["meta"] | null;
   loading: boolean;
   error: string | null;
-  selectedRoute: Route | null;
+  selectedLocation: Location | null;
 
   // Actions
-  setRoutes: (response: RoutesResponse) => void;
+  setLocations: (response: LocationsResponse) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
-  setSelectedRoute: (route: Route | null) => void;
+  setSelectedLocation: (location: Location | null) => void;
   reset: () => void;
 }
 
-const useRoutesStore = create<RoutesState>((set) => ({
+const useLocationsStore = create<LocationsState>((set) => ({
   data: null,
   meta: null,
   loading: false,
   error: null,
-  selectedRoute: null,
+  selectedLocation: null,
 
-  setRoutes: (response) =>
+  setLocations: (response) =>
     set({
       data: response.data,
       meta: response.meta,
@@ -34,7 +34,7 @@ const useRoutesStore = create<RoutesState>((set) => ({
 
   setError: (error) => set({ error }),
 
-  setSelectedRoute: (route) => set({ selectedRoute: route }),
+  setSelectedLocation: (location) => set({ selectedLocation: location }),
 
   reset: () =>
     set({
@@ -42,8 +42,8 @@ const useRoutesStore = create<RoutesState>((set) => ({
       meta: null,
       loading: false,
       error: null,
-      selectedRoute: null,
+      selectedLocation: null,
     }),
 }));
 
-export default useRoutesStore;
+export default useLocationsStore;

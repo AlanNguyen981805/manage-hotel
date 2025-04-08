@@ -3,12 +3,19 @@
 import { IFormSearchResult } from "@/components/features/home/result-search-booking/defination";
 import { Price } from "@/components/ui/price";
 import { useTranslation } from "@/hooks/useTranslation";
-import useRoutesStore from "@/store/useRoutesStore";
+import useLocationsStore from "@/store/useRoutesStore";
 import { generateWordDocument } from "./booking-info-doc";
+
+interface VendorInfo {
+  name: string;
+  address?: string;
+  phone?: string;
+  email?: string;
+}
 
 interface SummaryBookingProps {
   resultSearchBooking: IFormSearchResult;
-  vendor: any;
+  vendor: VendorInfo;
   dateCheckIn: Date | null;
   dateCheckOut: Date | null;
   numberOfPeople: number;
@@ -24,7 +31,7 @@ export const SummaryBooking = ({
   numberOfDays,
 }: SummaryBookingProps) => {
   const { t } = useTranslation();
-  const { data } = useRoutesStore();
+  const { data } = useLocationsStore();
 
   const calculateTotals = () => {
     let hotelTotal = 0;
@@ -80,6 +87,32 @@ export const SummaryBooking = ({
     <div className="bg-white rounded-lg shadow p-6">
       <div className="flex flex-col gap-6">
         <h3 className="text-xl font-semibold">{t("summary.title")}</h3>
+
+        {vendor && (
+          <div className="p-4 border rounded-lg space-y-2 bg-gray-50">
+            <h4 className="font-medium">Vendor Information</h4>
+            <div className="space-y-1 text-sm">
+              <p>
+                <span className="font-medium">Name:</span> {vendor.name}
+              </p>
+              {vendor.address && (
+                <p>
+                  <span className="font-medium">Address:</span> {vendor.address}
+                </p>
+              )}
+              {vendor.phone && (
+                <p>
+                  <span className="font-medium">Phone:</span> {vendor.phone}
+                </p>
+              )}
+              {vendor.email && (
+                <p>
+                  <span className="font-medium">Email:</span> {vendor.email}
+                </p>
+              )}
+            </div>
+          </div>
+        )}
 
         <div className="flex flex-col gap-3">
           <div className="flex justify-between">

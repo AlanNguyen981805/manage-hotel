@@ -1,59 +1,3 @@
-// const data = {
-//   day1: {
-//     city: "Hà Nội",
-//     hotel: [
-//       {
-//         name: "Hotel 1",
-//         quantity: "1",
-//         additionalBeds: "1",
-//       },
-//       {
-//         name: "Hotel 2",
-//         quantity: "1",
-//         additionalBeds: "1",
-//       },
-//     ],
-//     transportation: [
-//       {
-//         name: "Transportation 1",
-//         quantity: "1",
-//         additionalBeds: "1",
-//       },
-//     ],
-//     services: [
-//       {
-//         name: "Service 1",
-//         quantity: "1",
-//         additionalBeds: "1",
-//       },
-//       {
-//         name: "Service 2",
-//         quantity: "1",
-//         additionalBeds: "1",
-//       },
-//     ],
-//     additionalCosts: [
-//       {
-//         name: "Additional Cost 1",
-//         quantity: "1",
-//         additionalBeds: "1",
-//       },
-//       {
-//         name: "Additional Cost 2",
-//         quantity: "1",
-//         additionalBeds: "1",
-//       },
-//     ],
-//   },
-//   day2: {
-//     city: "Hồ Chí Minh",
-//     hotel: [],
-//     transportation: [],
-//     services: [],
-//     additionalCosts: [],
-//   },
-// };
-
 import { Dispatch, SetStateAction } from "react";
 import { initialHotelRowData } from "../hotel-form/defination";
 
@@ -67,6 +11,10 @@ export const initialRowData = (numberOfDays: number) => {
   const rowData: IFormSearchResult = {};
   for (let i = 0; i < numberOfDays; i++) {
     rowData[`day${i + 1}`] = {
+      routes: {
+        id: "",
+        name: "",
+      },
       city: {
         id: "",
         name: "",
@@ -144,6 +92,10 @@ export interface IAdditionalCosts {
 }
 export interface IFormSearchResult {
   [key: string]: {
+    routes: {
+      id: string;
+      name: string;
+    };
     city: {
       id: string;
       name: string;

@@ -6,7 +6,7 @@ import { Price } from "@/components/ui/price";
 import { caculatePriceByRow } from "@/helpers/calc-room-helper";
 import { formatDateNoUtc } from "@/helpers/date-helper";
 import useFormSearchResult from "@/hooks/use-search-result";
-import useRoutesStore from "@/store/useRoutesStore";
+import useLocationsStore from "@/store/useRoutesStore";
 import { HotelType } from "@/types/route";
 import { useCallback, useEffect, useState } from "react";
 import { BtnAddRow } from "../add-row";
@@ -24,7 +24,7 @@ export const HotelRow = ({
   setForm,
   formSearchResult,
 }: IPropRowSearch) => {
-  const { data: dataRoute } = useRoutesStore();
+  const { data: dataRoute } = useLocationsStore();
   const [state, setState] = useState<HotelRowState>({
     hotelsByRank: {},
     hotelTypesOptions: {},
@@ -68,7 +68,6 @@ export const HotelRow = ({
       type: "room" | "bed",
       priceDefault: number
     ) => {
-      console.log("priceDefault :>> ", priceDefault);
       const updatedQuantityRoom =
         type === "room" ? value : hotelRow.quantityRoom;
       const updatedAdditionalBeds =
@@ -109,6 +108,7 @@ export const HotelRow = ({
       formSearchResult[dayIndex]?.hotels?.length > 0 &&
       dataRoute
     ) {
+      console.log("formSearchResult :>> ", formSearchResult);
       const hotels = formSearchResult[dayIndex].hotels;
       const newState: HotelRowState = {
         hotelsByRank: {},
@@ -118,10 +118,10 @@ export const HotelRow = ({
       hotels.forEach((hotelRow, rowIndex) => {
         if (hotelRow.hotelType?.id) {
           const location = dataRoute?.find(
-            (route) => route.id === Number(formSearchResult[dayIndex].city.id)
+            (route) => route.id === Number(formSearchResult[dayIndex].routes.id)
           );
           const filteredHotels =
-            location?.location?.hotels?.filter(
+            location?.hotels?.filter(
               (hotel) => hotel.rank === Number(hotelRow.hotelType.id)
             ) || [];
 
@@ -223,9 +223,9 @@ export const HotelRow = ({
     rowIndex: number
   ) => {
     const getLocation = dataRoute?.find(
-      (route) => route.id === Number(formSearchResult[dayIndex].city.id)
+      (route) => route.id === Number(formSearchResult[dayIndex].routes.id)
     );
-    const hotels = getLocation?.location?.hotels ?? [];
+    const hotels = getLocation?.hotels ?? [];
     const filteredHotels = hotels.filter((hotel) => hotel.rank === option.id);
 
     setState((prev) => ({

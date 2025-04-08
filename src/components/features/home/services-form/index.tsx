@@ -3,7 +3,7 @@
 import Dropdown from "@/components/ui/dropdown";
 import { Price } from "@/components/ui/price";
 import useFormSearchResult from "@/hooks/use-search-result";
-import useRoutesStore from "@/store/useRoutesStore";
+import useLocationsStore from "@/store/useRoutesStore";
 import { useMemo } from "react";
 import { BtnAddRow } from "../add-row";
 import { IPropRowSearch, IService } from "../result-search-booking/defination";
@@ -24,19 +24,18 @@ export const ServicesRow = ({
     price: 0,
   };
 
-  const { data } = useRoutesStore();
+  const { data } = useLocationsStore();
 
   const servicesByLocation = useMemo(() => {
     const selectedRoute = data?.find(
-      (route) => route.id === Number(formSearchResult[dayIndex].city.id)
+      (route) => route.id === Number(formSearchResult[dayIndex].routes.id)
     );
 
     const serviceCompaniesData =
-      selectedRoute?.location?.companies?.flatMap(
-        (item) => item?.service_companies || []
-      ) || [];
+      selectedRoute?.company.service_companies?.flatMap((item) => item || []) ||
+      [];
 
-    const serviceRoutesData = selectedRoute?.location?.service_routes || [];
+    const serviceRoutesData = selectedRoute?.service_routes || [];
 
     return [...serviceCompaniesData, ...serviceRoutesData];
   }, [data, dayIndex, formSearchResult]);

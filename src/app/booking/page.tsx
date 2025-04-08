@@ -27,7 +27,7 @@ export default function Booking() {
 
   return (
     <div className="w-full h-full">
-      <div className="container mx-auto flex gap-8 py-8">
+      <div className="container-fluid px-12 mx-auto flex gap-8 py-8">
         <div className="w-[70%]">
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex flex-col gap-6">

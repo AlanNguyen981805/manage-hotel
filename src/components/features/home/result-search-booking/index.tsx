@@ -4,7 +4,7 @@ import { ArrowDown } from "@/assets/svgs/ArrowDown";
 import { ROUTES } from "@/constants/routes";
 import useDialogStore from "@/store/useDialog";
 import useBookingState from "@/store/useRoomState";
-import useRoutesStore from "@/store/useRoutesStore";
+import useLocationsStore from "@/store/useRoutesStore";
 import useUserStore from "@/store/useUserStore";
 import {
   Dialog,
@@ -39,12 +39,8 @@ const ResultSearchBooking = memo(() => {
     {}
   );
 
-  const { data } = useRoutesStore();
-
-  const bookingHistory =
-    typeof window !== "undefined"
-      ? localStorage?.getItem("bookingHistory")
-      : "";
+  const { data } = useLocationsStore();
+  const [dayRoutes, setDayRoutes] = useState<Record<string, ICity[]>>({});
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,16 +56,6 @@ const ResultSearchBooking = memo(() => {
     };
 
     setResultSearchBooking(formSearchResult);
-
-    // Save to localStorage
-    if (!bookingHistory) {
-      const arr = [object];
-      localStorage?.setItem("bookingHistory", JSON.stringify(arr));
-    } else {
-      const preBookingHistory = JSON.parse(bookingHistory);
-      const newArr = [object, ...preBookingHistory];
-      localStorage?.setItem("bookingHistory", JSON.stringify(newArr));
-    }
 
     // Kiểm tra xem người dùng đã đăng nhập chưa
     if (user?.documentId) {
@@ -96,7 +82,6 @@ const ResultSearchBooking = memo(() => {
   }
 
   const setArea = (option: ICity, dayIndex: string) => {
-    console.log("option :>> ", option);
     setFormSearchResult((prevState) => {
       return {
         ...prevState,
@@ -108,27 +93,81 @@ const ResultSearchBooking = memo(() => {
             additionalCosts: [],
           },
           city: option,
+          routes: prevState[dayIndex]?.routes,
         },
       };
     });
   };
 
-  const transformTopOptions = () => {
+  const transformListLocationOptions = () => {
     if (!data) return [];
 
-    return data.map((route) => ({
-      id: route.id.toString(),
-      name: route.name,
-      desc: route.desc,
+    return data.map((location) => ({
+      id: location.id,
+      name: location.location_name,
     }));
+  };
+
+  const handleChangeLocation = (option: ICity, dayIndex: string) => {
+    console.log("option :>> ", option);
+    setFormSearchResult((prevState) => ({
+      ...prevState,
+      [dayIndex]: {
+        ...prevState[dayIndex],
+        routes: option,
+      },
+    }));
+
+    const findLocation = data?.find(
+      (location) => location.id === Number(option.id)
+    );
+    if (findLocation && findLocation.routes) {
+      const transformListRoutes = findLocation.routes.map((route) => ({
+        id: String(route.id),
+        name: route.name,
+        desc: route.desc,
+      }));
+
+      // Store routes for this specific day
+      setDayRoutes((prev) => ({
+        ...prev,
+        [dayIndex]: transformListRoutes,
+      }));
+    }
   };
 
   useEffect(() => {
     setFormSearchResult(initialRowData(numberOfDays));
     if (resultSearchBooking.day1) {
       setFormSearchResult(resultSearchBooking);
+
+      // Initialize dayRoutes from history data
+      if (data) {
+        const newDayRoutes: Record<string, ICity[]> = {};
+
+        Object.keys(resultSearchBooking).forEach((dayIndex) => {
+          const routeId = resultSearchBooking[dayIndex]?.routes?.id;
+          if (routeId) {
+            const findLocation = data.find(
+              (location) => location.id === Number(routeId)
+            );
+
+            if (findLocation && findLocation.routes) {
+              const transformListRoutes = findLocation.routes.map((route) => ({
+                id: String(route.id),
+                name: route.name,
+                desc: route.desc,
+              }));
+
+              newDayRoutes[dayIndex] = transformListRoutes;
+            }
+          }
+        });
+
+        setDayRoutes(newDayRoutes);
+      }
     }
-  }, [numberOfDays, resultSearchBooking]);
+  }, [numberOfDays, resultSearchBooking, data]);
 
   return (
     <div className="flex flex-col items-center justify-center w-full">
@@ -164,7 +203,20 @@ const ResultSearchBooking = memo(() => {
                             <Dropdown
                               options={[
                                 { id: "", name: "Please select" },
-                                ...transformTopOptions(),
+                                ...transformListLocationOptions(),
+                              ]}
+                              name={`location-${dayIndex}`}
+                              value={
+                                formSearchResult[dayIndex]?.routes?.id || ""
+                              }
+                              onChange={(option) =>
+                                handleChangeLocation(option, dayIndex)
+                              }
+                            />
+                            <Dropdown
+                              options={[
+                                { id: "", name: "Please select" },
+                                ...(dayRoutes[dayIndex] || []),
                               ]}
                               name={`city-${dayIndex}`}
                               value={formSearchResult[dayIndex]?.city.id || ""}

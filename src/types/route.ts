@@ -87,13 +87,27 @@ export interface Route {
   updatedAt: string;
   publishedAt: string;
   code: string;
-  desc: string;
   name: string;
-  location: Location | null;
+  desc: string;
+  description: string | null;
 }
 
-export interface RoutesResponse {
-  data: Route[];
+export interface Location {
+  id: number;
+  documentId: string;
+  location_name: string;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string;
+  routes: Route[];
+  hotels: Hotel[];
+  company: Company;
+  service_routes: ServiceRoute[];
+  cars: Cars[];
+}
+
+export interface LocationsResponse {
+  data: Location[];
   meta: {
     pagination: {
       page: number;

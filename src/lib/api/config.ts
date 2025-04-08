@@ -32,4 +32,6 @@ export const API_ENDPOINTS = {
   USER_HISTORIES: "/user-histories",
 
   VENDORS: "/venders",
+
+  LOCATION: "/locations",
 };

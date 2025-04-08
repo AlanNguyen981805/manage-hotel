@@ -10,7 +10,7 @@ import { IFormSearchResult } from "../result-search-booking/defination";
 import { Dialog } from "@headlessui/react";
 import useToastStore from "@/store/useToastStore";
 
-interface HistoryData {
+export interface HistoryData {
   id: number;
   documentId: string;
   code: string;
@@ -21,6 +21,12 @@ interface HistoryData {
     numberOfDays: number;
     numberOfPeople: number;
     days: Record<string, unknown>;
+    vendor: {
+      name: string;
+      address: string;
+      phone: string;
+      email: string;
+    };
   };
   createdAt: string;
   updatedAt: string;
@@ -184,6 +190,9 @@ const HistoryBooking = ({
                     </div>
                     <div className="text-sm">
                       Days: {history?.history?.numberOfDays}
+                    </div>
+                    <div className="text-sm">
+                      Vendor: {history?.history?.vendor?.name}
                     </div>
                   </div>
                 </div>

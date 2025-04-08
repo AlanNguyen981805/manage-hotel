@@ -11,8 +11,8 @@ import {
   ITransportationMode,
 } from "../result-search-booking/defination";
 import { initialTransportationRowData } from "./defination";
-import useRoutesStore from "@/store/useRoutesStore";
-
+import useLocationsStore from "@/store/useRoutesStore";
+import type { Cars } from "@/types/route";
 const plans: ITransportationMode[] = [
   { name: "1 chiều", id: "1", price: 100000 },
   { name: "2 chiều", id: "2", price: 200000 },
@@ -24,13 +24,13 @@ export const TransportationRow = ({
   formSearchResult,
 }: IPropRowSearch) => {
   const [selected, setSelected] = useState(plans[0]);
-  const { data } = useRoutesStore();
+  const { data } = useLocationsStore();
 
   const transportationTypes = useMemo(() => {
     return (
       data?.find(
-        (route) => route.id === Number(formSearchResult[dayIndex].city.id)
-      )?.location?.cars ?? []
+        (route) => route.id === Number(formSearchResult[dayIndex].routes.id)
+      )?.cars ?? []
     );
   }, [data, dayIndex, formSearchResult]);
 
@@ -111,7 +111,7 @@ export const TransportationRow = ({
                         name: "Please select",
                         price: 0,
                       },
-                      ...transportationTypes?.map((car) => ({
+                      ...transportationTypes?.map((car: Cars) => ({
                         id: car.id.toString(),
                         name: car.type_car,
                         price: car.car_price,
