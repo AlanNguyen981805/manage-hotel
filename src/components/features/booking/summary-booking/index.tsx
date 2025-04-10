@@ -38,10 +38,11 @@ export const SummaryBooking = ({
     let transportationTotal = 0;
     let servicesTotal = 0;
     let additionalCostsTotal = 0;
-    const markup =
-      data && data[0]?.location?.company?.mark_up
-        ? data[0]?.location?.company?.mark_up
-        : 1;
+
+    const company = data && data[0] && data[0].company;
+    const mark_hotel = company?.mark_hotel ?? 1;
+    const mark_tranfer = company?.mark_tranfer ?? 1;
+    const mark_service_com = company?.mark_service_com ?? 1;
 
     Object.values(resultSearchBooking).forEach((dayBooking) => {
       // Sum hotels
@@ -56,7 +57,11 @@ export const SummaryBooking = ({
 
       // Sum services
       dayBooking.services?.forEach((service) => {
-        servicesTotal += service.price;
+        if (service.serviceType.type === "company") {
+          servicesTotal += service.price * mark_service_com;
+        } else {
+          servicesTotal += service.price;
+        }
       });
 
       // Sum additional costs
@@ -66,22 +71,19 @@ export const SummaryBooking = ({
     });
 
     const total =
-      (hotelTotal +
-        transportationTotal +
-        servicesTotal +
-        additionalCostsTotal) *
-      markup;
+      hotelTotal + transportationTotal + servicesTotal + additionalCostsTotal;
 
     return {
-      hotelTotal,
-      transportationTotal,
-      servicesTotal,
+      hotelTotal: hotelTotal * mark_hotel,
+      transportationTotal: transportationTotal * mark_tranfer,
+      servicesTotal: servicesTotal,
       additionalCostsTotal,
       total,
     };
   };
 
   const totals = calculateTotals();
+  console.log("totals :>> ", totals);
 
   return (
     <div className="bg-white rounded-lg shadow p-6">

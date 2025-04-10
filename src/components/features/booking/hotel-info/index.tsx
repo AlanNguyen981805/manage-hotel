@@ -10,7 +10,6 @@ interface HotelInfoProps {
 
 export const HotelInfo = ({ hotels }: HotelInfoProps) => {
   const { t } = useTranslation();
-  console.log("hotels :>> ", hotels);
 
   return (
     <>

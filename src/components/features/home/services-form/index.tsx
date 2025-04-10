@@ -32,10 +32,16 @@ export const ServicesRow = ({
     );
 
     const serviceCompaniesData =
-      selectedRoute?.company.service_companies?.flatMap((item) => item || []) ||
-      [];
+      selectedRoute?.company.service_companies?.flatMap((item) => ({
+        ...item,
+        type: "company",
+      })) || [];
 
-    const serviceRoutesData = selectedRoute?.service_routes || [];
+    const serviceRoutesData =
+      selectedRoute?.service_routes?.map((item) => ({
+        ...item,
+        type: "route",
+      })) || [];
 
     return [...serviceCompaniesData, ...serviceRoutesData];
   }, [data, dayIndex, formSearchResult]);
@@ -59,7 +65,6 @@ export const ServicesRow = ({
     rowIndex: number,
     quantity: number
   ) => {
-    console.log("option :>> ", option);
     const price = calculatePrice(option.price, quantity);
 
     handleChange(dayIndex, rowIndex, "serviceType", option);
@@ -90,6 +95,7 @@ export const ServicesRow = ({
             <div className="flex gap-3">
               <div className="flex flex-col gap-2 items-center justify-center">
                 <p>Service Type</p>
+                {JSON.stringify(servicesByLocation)}
                 <Dropdown
                   options={[
                     { id: 0, name: "Please select", price: 0 },
@@ -97,6 +103,7 @@ export const ServicesRow = ({
                       id: service.id,
                       name: service.service_code,
                       price: service.service_price,
+                      type: service.type,
                     })),
                   ]}
                   name={`service-type-${dayIndex}-${rowIndex}`}

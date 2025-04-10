@@ -77,6 +77,7 @@ export interface IService {
     id: string;
     name: string;
     price: number;
+    type: "route" | "company";
   };
   serviceQuantity: number;
   price: number;

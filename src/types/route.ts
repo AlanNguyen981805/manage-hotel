@@ -59,6 +59,9 @@ export interface Company {
   id: number;
   documentId: string;
   mark_up: number;
+  mark_hotel: number | null;
+  mark_service_com: number | null;
+  mark_tranfer: number | null;
   service_companies: {
     id: number;
     documentId: string;
