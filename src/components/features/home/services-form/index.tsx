@@ -95,7 +95,6 @@ export const ServicesRow = ({
             <div className="flex gap-3">
               <div className="flex flex-col gap-2 items-center justify-center">
                 <p>Service Type</p>
-                {JSON.stringify(servicesByLocation)}
                 <Dropdown
                   options={[
                     { id: 0, name: "Please select", price: 0 },
