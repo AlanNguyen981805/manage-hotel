@@ -125,7 +125,7 @@ const ResultSearchBooking = memo(() => {
       const transformListRoutes = findLocation.routes.map((route) => ({
         id: String(route.id),
         name: route.name,
-        desc: route.desc,
+        desc: route.description,
       }));
 
       // Store routes for this specific day

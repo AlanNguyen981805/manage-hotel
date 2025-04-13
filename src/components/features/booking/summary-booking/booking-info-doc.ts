@@ -1,3 +1,5 @@
+// TODO: cần phải thay data desc của location để hiển thị đúng
+
 import { formatCurrency } from "@/helpers/currency-helper";
 import { formatDate } from "@/helpers/date-helper";
 import {
@@ -13,8 +15,10 @@ import {
   TableCell,
   TableRow,
   TextRun,
+  VerticalAlign,
 } from "docx";
 import { saveAs } from "file-saver";
+import { convertHtmlToDocx } from "./data-mock";
 
 export const generateWordDocument = async (
   vendor,
@@ -66,7 +70,6 @@ export const generateWordDocument = async (
                 children: [
                   new ImageRun({
                     data: imageBuffer,
-                    type: "jpg",
                     transformation: {
                       width: 150,
                       height: 150,
@@ -242,7 +245,7 @@ export const generateWordDocument = async (
                       left: 120,
                       right: 120,
                     },
-                    verticalAlign: "center",
+                    verticalAlign: VerticalAlign.CENTER,
                   }),
                   new TableCell({
                     children: [
@@ -266,7 +269,7 @@ export const generateWordDocument = async (
                       left: 120,
                       right: 120,
                     },
-                    verticalAlign: "center",
+                    verticalAlign: VerticalAlign.CENTER,
                   }),
                 ],
                 height: {
@@ -389,103 +392,114 @@ export const generateWordDocument = async (
             ],
           }),
 
-          ...Object.entries(resultSearchBooking)
-            .filter(([key]) => key !== "city")
-            .map(([dayKey, dayData], index) => {
-              // Calculate the date for this day by adding index days to check-in date
-              const currentDate = new Date(dateCheckIn);
-              currentDate.setDate(currentDate.getDate() + index);
-              const formattedDate = new Intl.DateTimeFormat("en-GB", {
-                day: "2-digit",
-                month: "short",
-              }).format(currentDate);
+          ...(
+            await Promise.all(
+              Object.entries(resultSearchBooking)
+                .filter(([key]) => key !== "city")
+                .map(async ([dayKey, dayData], index) => {
+                  // Calculate the date for this day by adding index days to check-in date
+                  const currentDate = new Date(dateCheckIn);
+                  currentDate.setDate(currentDate.getDate() + index);
+                  const formattedDate = new Intl.DateTimeFormat("en-GB", {
+                    day: "2-digit",
+                    month: "short",
+                  }).format(currentDate);
 
-              return [
-                // Day header with date
-                new Paragraph({
-                  heading: "Heading2",
-                  spacing: {
-                    before: index > 0 ? 400 : 0, // Add space before each day except the first one
-                  },
-                  children: [
-                    new TextRun({
-                      text: `DAY ${index + 1} (${formattedDate}) : ${
-                        dayData?.city?.name || ""
-                      }`,
-                      font: "Verdana",
-                      size: 24,
-                      bold: true,
-                      color: "0070C0",
-                    }),
-                  ],
-                  spacing: {
-                    before: 200,
-                    after: 100,
-                  },
-                }),
-                // Day description
-                new Paragraph({
-                  children: [
-                    new TextRun({
-                      text: dayData?.city?.desc || "",
-                      font: "Verdana",
-                    }),
-                  ],
-                }),
-                // Accommodation details for each day
-                new Paragraph({
-                  spacing: {
-                    before: 200,
-                  },
-                  children: [
-                    new TextRun({
-                      text: "Accommodation:",
-                      font: "Verdana",
-                      size: 16,
-                    }),
-                  ],
-                }),
-                new Paragraph({
-                  spacing: {
-                    before: 100,
-                  },
-                  children: [
-                    new TextRun({
-                      text: "Service included:",
-                      font: "Verdana",
-                      size: 16,
-                    }),
-                  ],
-                }),
-                new Paragraph({
-                  spacing: {
-                    before: 100,
-                  },
-                  children: [
-                    new TextRun({
-                      text: "Transfer:",
-                      font: "Verdana",
-                      size: 16,
-                    }),
-                  ],
-                }),
+                  const content: Paragraph[] = await convertHtmlToDocx(
+                    dayData?.city?.desc
+                  );
 
-                ...(dayData?.services || []).map((service) => {
-                  return new Paragraph({
-                    spacing: {
-                      before: 100,
-                    },
-                    children: [
-                      new TextRun({
-                        text: `- ${service?.serviceType?.name || ""}`,
-                        font: "Verdana",
-                      }),
-                    ],
-                  });
-                }),
-              ];
-            })
-            .flat(),
+                  return [
+                    // Day header with date
+                    new Paragraph({
+                      heading: "Heading2",
+                      spacing: {
+                        before: index > 0 ? 400 : 0, // Add space before each day except the first one
+                      },
+                      children: [
+                        new TextRun({
+                          text: `DAY ${index + 1} (${formattedDate}) : ${
+                            dayData?.city?.name || ""
+                          }`,
+                          font: "Verdana",
+                          size: 24,
+                          bold: true,
+                          color: "0070C0",
+                        }),
+                      ],
+                      spacing: {
+                        before: 200,
+                        after: 100,
+                      },
+                    }),
+                    // Day description - handle HTML content with formatting from CKEditor
+                    ...(dayData?.city?.desc
+                      ? content
+                      : [
+                          new Paragraph({
+                            children: [
+                              new TextRun({
+                                text: "",
+                                font: "Verdana",
+                              }),
+                            ],
+                          }),
+                        ]),
+                    // Accommodation details for each day
+                    new Paragraph({
+                      spacing: {
+                        before: 200,
+                      },
+                      children: [
+                        new TextRun({
+                          text: "Accommodation:",
+                          font: "Verdana",
+                          size: 16,
+                        }),
+                      ],
+                    }),
+                    new Paragraph({
+                      spacing: {
+                        before: 100,
+                      },
+                      children: [
+                        new TextRun({
+                          text: "Service included:",
+                          font: "Verdana",
+                          size: 16,
+                        }),
+                      ],
+                    }),
+                    new Paragraph({
+                      spacing: {
+                        before: 100,
+                      },
+                      children: [
+                        new TextRun({
+                          text: "Transfer:",
+                          font: "Verdana",
+                          size: 16,
+                        }),
+                      ],
+                    }),
+
+                    ...(dayData?.services || []).map((service) => {
+                      return new Paragraph({
+                        spacing: {
+                          before: 100,
+                        },
+                        children: [
+                          new TextRun({
+                            text: `- ${service?.serviceType?.name || ""}`,
+                            font: "Verdana",
+                          }),
+                        ],
+                      });
+                    }),
+                  ];
+                })
+            )
+          ).flat(),
 
           new Paragraph({
             children: [
