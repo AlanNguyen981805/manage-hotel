@@ -452,10 +452,54 @@ export const generateWordDocument = async (
                       },
                       children: [
                         new TextRun({
-                          text: "Accommodation:",
+                          text: "Accommodation: ",
                           font: "Verdana",
                           size: 16,
                         }),
+                        ...(() => {
+                          // Filter out duplicate hotels based on hotel_name
+                          const uniqueHotels = (dayData?.hotels || []).reduce(
+                            (unique, hotel) => {
+                              const hotelName =
+                                hotel?.hotelName?.hotel_name || "";
+                              if (
+                                hotelName &&
+                                !unique.some(
+                                  (h) => h?.hotelName?.hotel_name === hotelName
+                                )
+                              ) {
+                                unique.push(hotel);
+                              }
+                              return unique;
+                            },
+                            []
+                          );
+
+                          return uniqueHotels.reduce(
+                            (acc: TextRun[], hotel, idx, arr) => {
+                              // Add hotel name
+                              acc.push(
+                                new TextRun({
+                                  text: hotel?.hotelName?.hotel_name || "",
+                                  font: "Verdana",
+                                })
+                              );
+
+                              // Add separator if not the last hotel
+                              if (idx < arr.length - 1) {
+                                acc.push(
+                                  new TextRun({
+                                    text: " / ",
+                                    font: "Verdana",
+                                  })
+                                );
+                              }
+
+                              return acc;
+                            },
+                            []
+                          );
+                        })(),
                       ],
                     }),
                     new Paragraph({
@@ -468,6 +512,40 @@ export const generateWordDocument = async (
                           font: "Verdana",
                           size: 16,
                         }),
+                        ...(() => {
+                          // Filter services with type = company
+                          const companyServices = (
+                            dayData?.services || []
+                          ).filter(
+                            (service) =>
+                              service?.serviceType?.type === "company"
+                          );
+
+                          return companyServices.reduce(
+                            (acc: TextRun[], service, idx, arr) => {
+                              // Add service name
+                              acc.push(
+                                new TextRun({
+                                  text: ` ${service?.serviceType?.name || ""}`,
+                                  font: "Verdana",
+                                })
+                              );
+
+                              // Add separator if not the last service
+                              if (idx < arr.length - 1) {
+                                acc.push(
+                                  new TextRun({
+                                    text: " / ",
+                                    font: "Verdana",
+                                  })
+                                );
+                              }
+
+                              return acc;
+                            },
+                            []
+                          );
+                        })(),
                       ],
                     }),
                     new Paragraph({
@@ -483,19 +561,23 @@ export const generateWordDocument = async (
                       ],
                     }),
 
-                    ...(dayData?.services || []).map((service) => {
-                      return new Paragraph({
-                        spacing: {
-                          before: 100,
-                        },
-                        children: [
-                          new TextRun({
-                            text: `- ${service?.serviceType?.name || ""}`,
-                            font: "Verdana",
-                          }),
-                        ],
-                      });
-                    }),
+                    ...(dayData?.services || [])
+                      .filter(
+                        (service) => service?.serviceType?.type === "route"
+                      )
+                      .map((service) => {
+                        return new Paragraph({
+                          spacing: {
+                            before: 100,
+                          },
+                          children: [
+                            new TextRun({
+                              text: `- ${service?.serviceType?.name || ""}`,
+                              font: "Verdana",
+                            }),
+                          ],
+                        });
+                      }),
                   ];
                 })
             )
