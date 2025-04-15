@@ -32,7 +32,7 @@ export const ServicesRow = ({
     );
 
     const serviceCompaniesData =
-      selectedRoute?.company.service_companies?.flatMap((item) => ({
+      selectedRoute?.company?.service_companies?.flatMap((item) => ({
         ...item,
         type: "company",
       })) || [];
@@ -60,21 +60,41 @@ export const ServicesRow = ({
     return serviceTypePrice ? serviceTypePrice * serviceQuantity : 0;
   };
 
+  const priceAfterMarkup = (price: number, type: "company" | "route") => {
+    const company = data?.[0]?.company;
+    const mark_service = company?.mark_service_com ?? 1;
+
+    return type === "company" ? price * mark_service : price;
+  };
+
   const handleChangeService = (
-    option: { id: number; name: string; price: number },
+    option: {
+      id: number;
+      name: string;
+      price: number;
+      type: "company" | "route";
+    },
     rowIndex: number,
     quantity: number
   ) => {
-    const price = calculatePrice(option.price, quantity);
+    const markedPrice = priceAfterMarkup(option.price, option.type);
+    const price = calculatePrice(markedPrice, quantity);
 
     handleChange(dayIndex, rowIndex, "serviceType", option);
     handleChange(dayIndex, rowIndex, "price", price);
   };
 
   const handleChangeQuantiy = (e: number, rowIndex: number) => {
-    const serviceTypePrice =
-      formSearchResult[dayIndex].services?.[rowIndex]?.serviceType.price;
-    const price = calculatePrice(serviceTypePrice, e);
+    const serviceType =
+      formSearchResult[dayIndex].services?.[rowIndex]?.serviceType;
+    const serviceTypePrice = serviceType?.price;
+    const serviceTypeType = serviceType?.type as "company" | "route";
+
+    const markedPrice = priceAfterMarkup(
+      serviceTypePrice || 0,
+      serviceTypeType
+    );
+    const price = calculatePrice(markedPrice, e);
 
     handleChange(dayIndex, rowIndex, "serviceQuantity", e);
     handleChange(dayIndex, rowIndex, "price", price);
@@ -135,24 +155,6 @@ export const ServicesRow = ({
                 id={`quantityRoom-${rowIndex}`}
                 className="md:w-3/12"
               />
-              {/* <div className="flex flex-col gap-2 items-center justify-center">
-                <p>Số lượng</p>
-                <div>
-                  <input
-                    type="number"
-                    id="quantity"
-                    className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-accent  focus:border-accent block w-full p-2.5  dark:focus:ring-accent dark:focus:border-accent"
-                    required
-                    defaultValue={
-                      formSearchResult[dayIndex].services?.[rowIndex]
-                        ?.serviceQuantity ?? 1
-                    }
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      handleChangeQuantiy(e, rowIndex)
-                    }
-                  />
-                </div>
-              </div> */}
             </div>
             <div className="flex flex-col gap-2 items-center justify-center">
               <Price

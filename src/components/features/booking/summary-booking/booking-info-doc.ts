@@ -1,5 +1,3 @@
-// TODO: cần phải thay data desc của location để hiển thị đúng
-
 import { formatCurrency } from "@/helpers/currency-helper";
 import { formatDate } from "@/helpers/date-helper";
 import {
@@ -446,120 +444,136 @@ export const generateWordDocument = async (
                           }),
                         ]),
                     // Accommodation details for each day
-                    new Paragraph({
-                      spacing: {
-                        before: 200,
-                      },
-                      children: [
-                        new TextRun({
-                          text: "Accommodation: ",
-                          font: "Verdana",
-                          size: 16,
-                        }),
-                        ...(() => {
-                          // Filter out duplicate hotels based on hotel_name
-                          const uniqueHotels = (dayData?.hotels || []).reduce(
-                            (unique, hotel) => {
-                              const hotelName =
-                                hotel?.hotelName?.hotel_name || "";
-                              if (
-                                hotelName &&
-                                !unique.some(
-                                  (h) => h?.hotelName?.hotel_name === hotelName
-                                )
-                              ) {
-                                unique.push(hotel);
-                              }
-                              return unique;
+                    ...(dayData?.hotels && dayData.hotels.length > 0
+                      ? [
+                          new Paragraph({
+                            spacing: {
+                              before: 200,
                             },
-                            []
-                          );
+                            children: [
+                              new TextRun({
+                                text: "Accommodation: ",
+                                font: "Verdana",
+                              }),
+                              ...(() => {
+                                // Filter out duplicate hotels based on hotel_name
+                                const uniqueHotels = (
+                                  dayData?.hotels || []
+                                ).reduce((unique, hotel) => {
+                                  const hotelName =
+                                    hotel?.hotelName?.hotel_name || "";
+                                  if (
+                                    hotelName &&
+                                    !unique.some(
+                                      (h) =>
+                                        h?.hotelName?.hotel_name === hotelName
+                                    )
+                                  ) {
+                                    unique.push(hotel);
+                                  }
+                                  return unique;
+                                }, []);
 
-                          return uniqueHotels.reduce(
-                            (acc: TextRun[], hotel, idx, arr) => {
-                              // Add hotel name
-                              acc.push(
-                                new TextRun({
-                                  text: hotel?.hotelName?.hotel_name || "",
-                                  font: "Verdana",
-                                })
-                              );
+                                return uniqueHotels.reduce(
+                                  (acc: TextRun[], hotel, idx, arr) => {
+                                    // Add hotel name
+                                    acc.push(
+                                      new TextRun({
+                                        text:
+                                          hotel?.hotelName?.hotel_name || "",
+                                        font: "Verdana",
+                                      })
+                                    );
 
-                              // Add separator if not the last hotel
-                              if (idx < arr.length - 1) {
-                                acc.push(
-                                  new TextRun({
-                                    text: " / ",
-                                    font: "Verdana",
-                                  })
+                                    // Add separator if not the last hotel
+                                    if (idx < arr.length - 1) {
+                                      acc.push(
+                                        new TextRun({
+                                          text: " / ",
+                                          font: "Verdana",
+                                        })
+                                      );
+                                    }
+
+                                    return acc;
+                                  },
+                                  []
                                 );
-                              }
-
-                              return acc;
+                              })(),
+                            ],
+                          }),
+                        ]
+                      : []),
+                    ...(dayData?.services?.some(
+                      (service) => service?.serviceType?.type === "company"
+                    )
+                      ? [
+                          new Paragraph({
+                            spacing: {
+                              before: 100,
                             },
-                            []
-                          );
-                        })(),
-                      ],
-                    }),
-                    new Paragraph({
-                      spacing: {
-                        before: 100,
-                      },
-                      children: [
-                        new TextRun({
-                          text: "Service included:",
-                          font: "Verdana",
-                          size: 16,
-                        }),
-                        ...(() => {
-                          // Filter services with type = company
-                          const companyServices = (
-                            dayData?.services || []
-                          ).filter(
-                            (service) =>
-                              service?.serviceType?.type === "company"
-                          );
-
-                          return companyServices.reduce(
-                            (acc: TextRun[], service, idx, arr) => {
-                              // Add service name
-                              acc.push(
-                                new TextRun({
-                                  text: ` ${service?.serviceType?.name || ""}`,
-                                  font: "Verdana",
-                                })
-                              );
-
-                              // Add separator if not the last service
-                              if (idx < arr.length - 1) {
-                                acc.push(
-                                  new TextRun({
-                                    text: " / ",
-                                    font: "Verdana",
-                                  })
+                            children: [
+                              new TextRun({
+                                text: "Service included:",
+                                font: "Verdana",
+                              }),
+                              ...(() => {
+                                // Filter services with type = company
+                                const companyServices = (
+                                  dayData?.services || []
+                                ).filter(
+                                  (service) =>
+                                    service?.serviceType?.type === "company"
                                 );
-                              }
 
-                              return acc;
+                                return companyServices.reduce(
+                                  (acc: TextRun[], service, idx, arr) => {
+                                    // Add service name
+                                    acc.push(
+                                      new TextRun({
+                                        text: ` ${
+                                          service?.serviceType?.name || ""
+                                        }`,
+                                        font: "Verdana",
+                                      })
+                                    );
+
+                                    // Add separator if not the last service
+                                    if (idx < arr.length - 1) {
+                                      acc.push(
+                                        new TextRun({
+                                          text: " / ",
+                                          font: "Verdana",
+                                        })
+                                      );
+                                    }
+
+                                    return acc;
+                                  },
+                                  []
+                                );
+                              })(),
+                            ],
+                          }),
+                        ]
+                      : []),
+                    ...(dayData?.services?.some(
+                      (service) => service?.serviceType?.type === "route"
+                    )
+                      ? [
+                          new Paragraph({
+                            spacing: {
+                              before: 100,
                             },
-                            []
-                          );
-                        })(),
-                      ],
-                    }),
-                    new Paragraph({
-                      spacing: {
-                        before: 100,
-                      },
-                      children: [
-                        new TextRun({
-                          text: "Transfer:",
-                          font: "Verdana",
-                          size: 16,
-                        }),
-                      ],
-                    }),
+                            children: [
+                              new TextRun({
+                                text: "Transfer:",
+                                font: "Verdana",
+                              }),
+                            ],
+                          }),
+                        ]
+                      : []),
 
                     ...(dayData?.services || [])
                       .filter(
@@ -588,7 +602,7 @@ export const generateWordDocument = async (
               new TextRun({
                 text: `TOUR COST: ${formatCurrency(
                   totals.total / numberOfPeople
-                )} VNĐ PER PERSON (GROUP OF ${numberOfPeople} PAX + 1 CHILD 10 YEARS)`,
+                )} VNĐ PER PERSON (GROUP OF ${numberOfPeople} PAX)`,
                 color: "FF0000",
                 bold: true,
                 font: "Verdana",

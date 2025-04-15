@@ -3,7 +3,6 @@
 import { IFormSearchResult } from "@/components/features/home/result-search-booking/defination";
 import { Price } from "@/components/ui/price";
 import { useTranslation } from "@/hooks/useTranslation";
-import useLocationsStore from "@/store/useRoutesStore";
 import { generateWordDocument } from "./booking-info-doc";
 
 interface VendorInfo {
@@ -31,18 +30,12 @@ export const SummaryBooking = ({
   numberOfDays,
 }: SummaryBookingProps) => {
   const { t } = useTranslation();
-  const { data } = useLocationsStore();
 
   const calculateTotals = () => {
     let hotelTotal = 0;
     let transportationTotal = 0;
     let servicesTotal = 0;
     let additionalCostsTotal = 0;
-
-    const company = data && data[0] && data[0].company;
-    const mark_hotel = company?.mark_hotel ?? 1;
-    const mark_tranfer = company?.mark_tranfer ?? 1;
-    const mark_service_com = company?.mark_service_com ?? 1;
 
     Object.values(resultSearchBooking).forEach((dayBooking) => {
       // Sum hotels
@@ -57,11 +50,7 @@ export const SummaryBooking = ({
 
       // Sum services
       dayBooking.services?.forEach((service) => {
-        if (service.serviceType.type === "company") {
-          servicesTotal += service.price * mark_service_com;
-        } else {
-          servicesTotal += service.price;
-        }
+        servicesTotal += service.price;
       });
 
       // Sum additional costs
@@ -74,8 +63,8 @@ export const SummaryBooking = ({
       hotelTotal + transportationTotal + servicesTotal + additionalCostsTotal;
 
     return {
-      hotelTotal: hotelTotal * mark_hotel,
-      transportationTotal: transportationTotal * mark_tranfer,
+      hotelTotal: hotelTotal,
+      transportationTotal: transportationTotal,
       servicesTotal: servicesTotal,
       additionalCostsTotal,
       total,

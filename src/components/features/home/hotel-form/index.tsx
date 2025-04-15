@@ -8,7 +8,7 @@ import { formatDateNoUtc } from "@/helpers/date-helper";
 import useFormSearchResult from "@/hooks/use-search-result";
 import useLocationsStore from "@/store/useRoutesStore";
 import { HotelType } from "@/types/route";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { BtnAddRow } from "../add-row";
 import { IHotel, IPropRowSearch } from "../result-search-booking/defination";
 import {
@@ -239,9 +239,35 @@ export const HotelRow = ({
     await handleChange(dayIndex, rowIndex, "hotelType", option);
   };
 
+  const priceAfterMarkup = (price: number) => {
+    const company = dataRoute?.[0]?.company;
+
+    const mark_hotel = company?.mark_hotel ?? 1;
+    return price * mark_hotel;
+  };
+
   const isShowRemoveButton =
     formSearchResult[dayIndex].hotels &&
     formSearchResult[dayIndex].hotels?.length > 1;
+
+  const availableHotelRanks = useMemo(() => {
+    const getLocation = dataRoute?.find(
+      (route) => route.id === Number(formSearchResult[dayIndex].routes.id)
+    );
+    const hotels = getLocation?.hotels ?? [];
+
+    // Extract unique ranks from available hotels
+    const uniqueRanks = [...new Set(hotels.map((hotel) => hotel.rank))].filter(
+      Boolean
+    );
+
+    // Filter hotelTypes to only include available ranks
+    return hotelTypes.filter(
+      (type) => type.id === 0 || uniqueRanks.includes(type.id)
+    );
+  }, [dataRoute, formSearchResult, dayIndex]);
+
+  if (availableHotelRanks.length === 1) return null;
 
   return (
     <div>
@@ -257,7 +283,7 @@ export const HotelRow = ({
               <div className="flex flex-col gap-2 md:w-3/12">
                 <p>Hotel Type</p>
                 <Dropdown
-                  options={hotelTypes}
+                  options={availableHotelRanks}
                   name={`hotel-type-${dayIndex}-${rowIndex}`}
                   value={hotelRow?.hotelType?.id || ""}
                   onChange={(option) => handleChangeHotelType(option, rowIndex)}
@@ -387,7 +413,7 @@ export const HotelRow = ({
               />
 
               <Price
-                value={hotelRow?.price || 0}
+                value={priceAfterMarkup(hotelRow?.price || 0)}
                 className="pr-2 md:w-3/12"
                 size="lg"
               />

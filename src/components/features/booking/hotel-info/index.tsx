@@ -13,7 +13,7 @@ export const HotelInfo = ({ hotels }: HotelInfoProps) => {
 
   return (
     <>
-      {hotels.length > 0 && (
+      {hotels?.length > 0 && (
         <div className="mb-4">
           <h5 className="font-medium text-gray-700 mb-2">
             {t("booking.hotel")}
