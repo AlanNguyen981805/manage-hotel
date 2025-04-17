@@ -13,6 +13,7 @@ import CheckInAndOut from "../../ui/input/checkin-and-out";
 import VendorSearch from "@/components/features/home/vendor-search";
 import useToastStore from "@/store/useToastStore";
 import { HistoryData } from "@/components/features/home/history-booking";
+import { IFormSearchResult } from "@/components/features/home/result-search-booking/defination";
 
 const BookRoomForm = () => {
   const {
@@ -61,6 +62,7 @@ const BookRoomForm = () => {
       if (response.data) {
         setRoutes(response.data);
       }
+      return response.data;
     } catch (error) {
       console.error("Error fetching routes:", error);
       setError("Failed to fetch routes");
@@ -92,9 +94,53 @@ const BookRoomForm = () => {
     // Update the booking state with these dates
     setDateCheckIn(checkIn);
     setDateCheckOut(checkOut);
-
     // Fetch routes with these specific dates
-    await fetchRoutes(checkIn, checkOut);
+    const response = await fetchRoutes(checkIn, checkOut);
+
+    // Create a copy of the history data to update
+    const historyData = JSON.parse(
+      JSON.stringify(historyItem.history.days)
+    ) as IFormSearchResult;
+
+    // Update the history data with the latest route descriptions from the API
+    if (response && response.data) {
+      // Loop through each day in the history data
+      Object.keys(historyData).forEach((dayKey) => {
+        const dayData = historyData[dayKey];
+        if (dayData.routes && dayData.routes.id) {
+          // Find matching route in the fetched data
+          const matchedRoute = response.data.find(
+            (location) => location.documentId === dayData.routes.id
+          );
+
+          // Update route description with the latest data from API
+          if (matchedRoute) {
+            // Update the routes with latest data
+            dayData.routes = {
+              ...dayData.routes,
+              desc: matchedRoute.description || dayData.routes.desc,
+            };
+
+            // If there are city routes, update them too
+            if (matchedRoute.routes && dayData.city && dayData.city.id) {
+              const matchedCity = matchedRoute.routes.find(
+                (route) => String(route.documentId) === dayData.city.id
+              );
+
+              if (matchedCity) {
+                dayData.city = {
+                  ...dayData.city,
+                  desc: matchedCity.description || dayData.city.desc,
+                };
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // Set the updated history data to the booking state
+    setResultSearchBooking(historyData);
 
     // Open the dialog to show results
     setOpenDialog(true);

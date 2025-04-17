@@ -50,6 +50,7 @@ export const SummaryBooking = ({
 
       // Sum services
       dayBooking.services?.forEach((service) => {
+        console.log("service :>> ", service);
         servicesTotal += service.price;
       });
 

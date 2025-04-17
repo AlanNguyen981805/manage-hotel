@@ -25,11 +25,14 @@ export const TransportationRow = ({
 }: IPropRowSearch) => {
   const [selected, setSelected] = useState(plans[0]);
   const { data } = useLocationsStore();
+  const findCompany = data?.find(
+    (route) => route.documentId === formSearchResult[dayIndex].routes.id
+  );
 
   const transportationTypes = useMemo(() => {
     return (
       data?.find(
-        (route) => route.id === Number(formSearchResult[dayIndex].routes.id)
+        (route) => route.documentId === formSearchResult[dayIndex].routes.id
       )?.cars ?? []
     );
   }, [data, dayIndex, formSearchResult]);
@@ -53,7 +56,9 @@ export const TransportationRow = ({
     transportationTypePrice: number,
     transportationModePrice: number
   ) => {
-    const price = transportationTypePrice + transportationModePrice;
+    const mark_tranfer = findCompany?.company?.mark_tranfer ?? 1;
+    const price =
+      (transportationTypePrice + transportationModePrice) * mark_tranfer;
     return price;
   };
 
@@ -61,7 +66,6 @@ export const TransportationRow = ({
     option: { id: string; name: string; price: number },
     rowIndex: number
   ) => {
-    console.log("option :>> ", option);
     handleChange(dayIndex, rowIndex, "transportationType", option);
     handleChange(
       dayIndex,
@@ -85,6 +89,8 @@ export const TransportationRow = ({
       calculatePrice(transportationTypePrice, e.price)
     );
   };
+
+  console.log("transportationTypes :>> ", transportationTypes);
 
   return (
     <div>
@@ -112,7 +118,7 @@ export const TransportationRow = ({
                         price: 0,
                       },
                       ...transportationTypes?.map((car: Cars) => ({
-                        id: car.id.toString(),
+                        id: car.documentId || "",
                         name: car.type_car,
                         price: car.car_price,
                       })),

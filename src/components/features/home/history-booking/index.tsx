@@ -115,7 +115,9 @@ const HistoryBooking = ({
 
   const handleClickHistoryItem = (history: HistoryData) => {
     onHistoryItemClick(history);
-    setResultSearchBooking(history.history.days as IFormSearchResult);
+
+    // NOTE: Tạm tắt lại việc lưu lại dữ liệu từ lịch sử
+    // setResultSearchBooking(history.history.days as IFormSearchResult);
     setIsOpenHistory(false);
     addToast("Applied search from history", "success");
   };

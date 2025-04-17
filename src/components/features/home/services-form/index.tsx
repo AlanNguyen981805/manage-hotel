@@ -28,7 +28,7 @@ export const ServicesRow = ({
 
   const servicesByLocation = useMemo(() => {
     const selectedRoute = data?.find(
-      (route) => route.id === Number(formSearchResult[dayIndex].routes.id)
+      (route) => route.documentId === formSearchResult[dayIndex].routes.id
     );
 
     const serviceCompaniesData =

@@ -42,6 +42,7 @@ export interface IHotel {
     extra_price?: number;
   };
   roomType: {
+    documentId: string;
     id: string;
     name: string;
     price: number;
@@ -94,8 +95,9 @@ export interface IAdditionalCosts {
 export interface IFormSearchResult {
   [key: string]: {
     routes: {
-      id: string;
+      documentId: string;
       name: string;
+      id: string;
     };
     city: {
       id: string;

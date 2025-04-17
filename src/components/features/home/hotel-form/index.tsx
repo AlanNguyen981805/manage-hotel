@@ -31,6 +31,9 @@ export const HotelRow = ({
   });
   const [isInitialized, setIsInitialized] = useState(false);
   const [priceDefault, setPriceDefault] = useState(0);
+  const findCompany = dataRoute?.find(
+    (route) => route.documentId === formSearchResult[dayIndex].routes.id
+  );
 
   const { handleAddRow, handleChange, handleRemoveRow } = useFormSearchResult({
     dayIndex,
@@ -74,10 +77,12 @@ export const HotelRow = ({
         type === "bed" ? value : hotelRow.additionalBeds;
 
       const newPrice = caculatePriceByRow(
-        hotelRow?.roomType?.price_hotels[0]?.price || priceDefault,
+        hotelRow?.roomType?.price_hotels[0]?.price ||
+          hotelRow.roomType.price_default,
         updatedQuantityRoom,
         hotelRow?.hotelName?.extra_price,
-        updatedAdditionalBeds
+        updatedAdditionalBeds,
+        findCompany?.company?.mark_hotel || 1
       );
 
       setForm((prevState) => {
@@ -118,7 +123,7 @@ export const HotelRow = ({
       hotels.forEach((hotelRow, rowIndex) => {
         if (hotelRow.hotelType?.id) {
           const location = dataRoute?.find(
-            (route) => route.id === Number(formSearchResult[dayIndex].routes.id)
+            (route) => route.documentId === formSearchResult[dayIndex].routes.id
           );
           const filteredHotels =
             location?.hotels?.filter(
@@ -129,7 +134,7 @@ export const HotelRow = ({
 
           if (hotelRow.hotelName?.id) {
             const selectedHotel = filteredHotels.find(
-              (h) => h.id === Number(hotelRow.hotelName.id)
+              (h) => h.documentId === hotelRow.hotelName.id
             );
             if (selectedHotel) {
               newState.hotelTypesOptions[rowIndex] =
@@ -209,7 +214,8 @@ export const HotelRow = ({
         rowTypePrice,
         numberOfRooms,
         hotelRow?.hotelName?.extra_price,
-        additionalBedsQuantity
+        additionalBedsQuantity,
+        findCompany?.company?.mark_hotel || 1
       );
 
       handleChange(dayIndex, rowIndex, "roomType", option);
@@ -223,7 +229,7 @@ export const HotelRow = ({
     rowIndex: number
   ) => {
     const getLocation = dataRoute?.find(
-      (route) => route.id === Number(formSearchResult[dayIndex].routes.id)
+      (route) => route.documentId === formSearchResult[dayIndex].routes.id
     );
     const hotels = getLocation?.hotels ?? [];
     const filteredHotels = hotels.filter((hotel) => hotel.rank === option.id);
@@ -239,12 +245,16 @@ export const HotelRow = ({
     await handleChange(dayIndex, rowIndex, "hotelType", option);
   };
 
-  const priceAfterMarkup = (price: number) => {
-    const company = dataRoute?.[0]?.company;
+  // const priceAfterMarkup = (price: number) => {
+  //   const findCompany = dataRoute?.find(
+  //     (route) => route.documentId === formSearchResult[dayIndex].routes.id
+  //   );
 
-    const mark_hotel = company?.mark_hotel ?? 1;
-    return price * mark_hotel;
-  };
+  //   const mark_hotel = findCompany?.company?.mark_hotel ?? 1;
+  //   const totalPrice = price * mark_hotel;
+
+  //   return totalPrice;
+  // };
 
   const isShowRemoveButton =
     formSearchResult[dayIndex].hotels &&
@@ -252,7 +262,7 @@ export const HotelRow = ({
 
   const availableHotelRanks = useMemo(() => {
     const getLocation = dataRoute?.find(
-      (route) => route.id === Number(formSearchResult[dayIndex].routes.id)
+      (route) => route.documentId === formSearchResult[dayIndex].routes.id
     );
     const hotels = getLocation?.hotels ?? [];
 
@@ -297,7 +307,7 @@ export const HotelRow = ({
                     { id: 0, name: "Please select", hotel_types: [] },
                     ...(state.hotelsByRank[rowIndex] ?? []).map((hotel) => ({
                       ...hotel,
-                      id: hotel.id,
+                      id: hotel.documentId,
                       name: hotel.hotel_name,
                     })),
                   ]}
@@ -343,11 +353,19 @@ export const HotelRow = ({
                 <p>Room Type</p>
                 <Dropdown
                   options={[
-                    { id: 0, name: "Please select", price_hotels: [] },
-                    ...(state.hotelTypesOptions[rowIndex] ?? []),
+                    { id: 0, name: "Please select" },
+                    ...(state.hotelTypesOptions[rowIndex] ?? []).map(
+                      (roomType) => ({
+                        id: roomType.documentId || "",
+                        documentId: roomType.documentId || "",
+                        name: roomType.name,
+                        price_default: roomType.price_default,
+                        price_hotels: roomType.price_hotels || [],
+                      })
+                    ),
                   ]}
                   name={`room-type-${dayIndex}-${rowIndex}`}
-                  value={hotelRow?.roomType?.id || ""}
+                  value={hotelRow?.roomType?.documentId || ""}
                   onChange={(option) => {
                     setPriceDefault(option.price_default);
                     handleChangeRoomType(option, hotelRow, rowIndex);
@@ -413,7 +431,7 @@ export const HotelRow = ({
               />
 
               <Price
-                value={priceAfterMarkup(hotelRow?.price || 0)}
+                value={hotelRow?.price || 0}
                 className="pr-2 md:w-3/12"
                 size="lg"
               />

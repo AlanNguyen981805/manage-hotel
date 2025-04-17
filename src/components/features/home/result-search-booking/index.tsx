@@ -53,6 +53,7 @@ const ResultSearchBooking = memo(() => {
       dateCheckOut,
       numberOfPeople,
       vendor,
+      old_data: {},
     };
 
     setResultSearchBooking(formSearchResult);
@@ -103,7 +104,7 @@ const ResultSearchBooking = memo(() => {
     if (!data) return [];
 
     return data.map((location) => ({
-      id: location.id,
+      id: location.documentId,
       name: location.location_name,
     }));
   };
@@ -119,11 +120,12 @@ const ResultSearchBooking = memo(() => {
     }));
 
     const findLocation = data?.find(
-      (location) => location.id === Number(option.id)
+      (location) => location.documentId === option.id
     );
     if (findLocation && findLocation.routes) {
       const transformListRoutes = findLocation.routes.map((route) => ({
-        id: String(route.id),
+        id: String(route.documentId),
+        documentId: String(route.documentId),
         name: route.name,
         desc: route.description,
       }));
@@ -149,12 +151,12 @@ const ResultSearchBooking = memo(() => {
           const routeId = resultSearchBooking[dayIndex]?.routes?.id;
           if (routeId) {
             const findLocation = data.find(
-              (location) => location.id === Number(routeId)
+              (location) => location.documentId === routeId
             );
 
             if (findLocation && findLocation.routes) {
               const transformListRoutes = findLocation.routes.map((route) => ({
-                id: String(route.id),
+                id: String(route.documentId),
                 name: route.name,
                 desc: route.desc,
               }));
