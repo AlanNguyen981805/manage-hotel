@@ -25,6 +25,9 @@ export const ServicesRow = ({
   };
 
   const { data } = useLocationsStore();
+  const findCompany = data?.find(
+    (route) => route.documentId === formSearchResult[dayIndex].routes.id
+  );
 
   const servicesByLocation = useMemo(() => {
     const selectedRoute = data?.find(
@@ -61,8 +64,7 @@ export const ServicesRow = ({
   };
 
   const priceAfterMarkup = (price: number, type: "company" | "route") => {
-    const company = data?.[0]?.company;
-    const mark_service = company?.mark_service_com ?? 1;
+    const mark_service = findCompany?.company.mark_service_com ?? 1;
 
     return type === "company" ? price * mark_service : price;
   };
@@ -82,6 +84,12 @@ export const ServicesRow = ({
 
     handleChange(dayIndex, rowIndex, "serviceType", option);
     handleChange(dayIndex, rowIndex, "price", price);
+    handleChange(
+      dayIndex,
+      rowIndex,
+      "mark_service_com",
+      findCompany?.company.mark_service_com ?? 1
+    );
   };
 
   const handleChangeQuantiy = (e: number, rowIndex: number) => {
@@ -98,6 +106,12 @@ export const ServicesRow = ({
 
     handleChange(dayIndex, rowIndex, "serviceQuantity", e);
     handleChange(dayIndex, rowIndex, "price", price);
+    handleChange(
+      dayIndex,
+      rowIndex,
+      "mark_service_com",
+      findCompany?.company.mark_service_com ?? 1
+    );
   };
 
   return (

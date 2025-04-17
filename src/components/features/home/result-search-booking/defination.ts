@@ -34,6 +34,7 @@ export interface IHotelType {
 }
 
 export interface IHotel {
+  mark_hotel: number;
   hotelType: IHotelType;
   hotelName: {
     id: string;
@@ -54,6 +55,7 @@ export interface IHotel {
   additionalBeds: number;
   timeAvailable: string;
   price: number;
+  old_price: number;
 }
 
 export interface ITransportationMode {
@@ -98,6 +100,9 @@ export interface IFormSearchResult {
       documentId: string;
       name: string;
       id: string;
+      mark_hotel: number;
+      mark_tranfer: number;
+      mark_service_com: number;
     };
     city: {
       id: string;

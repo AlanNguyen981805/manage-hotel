@@ -57,8 +57,9 @@ export const HotelInfo = ({ hotels }: HotelInfoProps) => {
                   </span>
                   <Price
                     value={
-                      hotel.roomType.price_hotels[0]?.price ||
-                      hotel.roomType.price_default
+                      hotel?.roomType?.price_hotels[0]?.price *
+                        hotel?.mark_hotel ||
+                      hotel?.roomType?.price_default * hotel?.mark_hotel
                     }
                     size="md"
                     align="left"

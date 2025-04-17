@@ -24,6 +24,7 @@ export default function Booking() {
     numberOfPeople,
     numberOfDays,
   } = useBookingState();
+  console.log("resultSearchBooking :>> ", resultSearchBooking);
 
   return (
     <div className="w-full h-full">

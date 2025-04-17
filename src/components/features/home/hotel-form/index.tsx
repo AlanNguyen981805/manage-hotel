@@ -34,6 +34,7 @@ export const HotelRow = ({
   const findCompany = dataRoute?.find(
     (route) => route.documentId === formSearchResult[dayIndex].routes.id
   );
+  console.log("findCompany :>> ", findCompany);
 
   const { handleAddRow, handleChange, handleRemoveRow } = useFormSearchResult({
     dayIndex,
@@ -220,6 +221,12 @@ export const HotelRow = ({
 
       handleChange(dayIndex, rowIndex, "roomType", option);
       handleChange(dayIndex, rowIndex, "price", newPrice);
+      handleChange(
+        dayIndex,
+        rowIndex,
+        "mark_hotel",
+        findCompany?.company?.mark_hotel || 1
+      );
     },
     [dayIndex, handleChange]
   );
@@ -243,6 +250,12 @@ export const HotelRow = ({
     }));
 
     await handleChange(dayIndex, rowIndex, "hotelType", option);
+    handleChange(
+      dayIndex,
+      rowIndex,
+      "mark_hotel",
+      findCompany?.company?.mark_hotel || 1
+    );
   };
 
   // const priceAfterMarkup = (price: number) => {
