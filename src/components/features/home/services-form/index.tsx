@@ -137,6 +137,7 @@ export const ServicesRow = ({
                       name: service.service_code,
                       price: service.service_price,
                       type: service.type,
+                      desc: service.service_desc,
                     })),
                   ]}
                   name={`service-type-${dayIndex}-${rowIndex}`}

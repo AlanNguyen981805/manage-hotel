@@ -3,13 +3,8 @@ export const caculatePriceByRow = (
   numberOfRooms: number = 1,
   additionalBedsPrice: number = 0,
   additionalBedsQuantity: number = 0,
-  mark_hotel: number = 1
+  mark_hotel: number
 ) => {
-  console.log("roomTypePrice :>> ", roomTypePrice);
-  console.log("numberOfRooms :>> ", numberOfRooms);
-  console.log("additionalBedsPrice :>> ", additionalBedsPrice);
-  console.log("additionalBedsQuantity :>> ", additionalBedsQuantity);
-
   const bedsPrice = additionalBedsPrice * additionalBedsQuantity;
 
   const price = roomTypePrice * numberOfRooms + bedsPrice;

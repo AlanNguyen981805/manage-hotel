@@ -12,37 +12,32 @@ import {
 } from "../result-search-booking/defination";
 import { initialTransportationRowData } from "./defination";
 import useLocationsStore from "@/store/useRoutesStore";
-import type { Cars } from "@/types/route";
-const plans: ITransportationMode[] = [
-  { name: "1 chiều", id: "1", price: 100000 },
-  { name: "2 chiều", id: "2", price: 200000 },
-];
+import type { Cars, TransportationPrice } from "@/types/route";
 
 export const TransportationRow = ({
   dayIndex,
   setForm,
   formSearchResult,
 }: IPropRowSearch) => {
-  const [selected, setSelected] = useState(plans[0]);
   const { data } = useLocationsStore();
-  const findCompany = data?.find(
-    (route) => route.documentId === formSearchResult[dayIndex].routes.id
-  );
-
-  const transportationTypes = useMemo(() => {
-    return (
-      data?.find(
-        (route) => route.documentId === formSearchResult[dayIndex].routes.id
-      )?.cars ?? []
-    );
-  }, [data, dayIndex, formSearchResult]);
-
   const { handleChange, handleAddRow, handleRemoveRow } = useFormSearchResult({
     dayIndex,
     setForm,
     type: "transportation",
     initialData: initialTransportationRowData,
   });
+
+  const findCompany = data?.find(
+    (route) => route.documentId === formSearchResult[dayIndex].routes.id
+  );
+
+  const transportationTypes = useMemo(
+    () =>
+      data?.find(
+        (route) => route.documentId === formSearchResult[dayIndex].routes.id
+      )?.cars ?? [],
+    [data, dayIndex, formSearchResult]
+  );
 
   const deleteRow = (rowIndex: number) => {
     handleRemoveRow(rowIndex);
@@ -52,45 +47,52 @@ export const TransportationRow = ({
     formSearchResult[dayIndex]?.transportation &&
     formSearchResult[dayIndex]?.transportation?.length < 1;
 
-  const calculatePrice = (
-    transportationTypePrice: number,
-    transportationModePrice: number
-  ) => {
+  const calculatePrice = (transportationPrice: number) => {
     const mark_tranfer = findCompany?.company?.mark_tranfer ?? 1;
-    const price =
-      (transportationTypePrice + transportationModePrice) * mark_tranfer;
-    return price;
+    return transportationPrice * mark_tranfer;
   };
 
-  const handleCalculateTransportationPrice = (
-    option: { id: string; name: string; price: number },
+  const handleCarSelection = (car: Cars, rowIndex: number) => {
+    const prices = car.transportation_prices || [];
+    const firstPrice = prices[0];
+
+    handleChange(
+      dayIndex,
+      rowIndex,
+      "mark_tranfer",
+      findCompany?.company?.mark_tranfer ?? 1
+    );
+    handleChange(dayIndex, rowIndex, "transportationType", {
+      id: car.documentId,
+      name: car.type_car,
+      price: car.car_price,
+      transportation_prices: prices,
+    });
+
+    if (firstPrice) {
+      handleChange(dayIndex, rowIndex, "transportationPrice", firstPrice);
+      handleChange(
+        dayIndex,
+        rowIndex,
+        "price",
+        calculatePrice(Number(firstPrice.price))
+      );
+    }
+  };
+
+  const handlePriceSelection = (
+    price: TransportationPrice,
     rowIndex: number
   ) => {
-    handleChange(dayIndex, rowIndex, "transportationType", option);
+    console.log("price :>> ", price);
+    handleChange(dayIndex, rowIndex, "transportationPrice", price);
     handleChange(
       dayIndex,
       rowIndex,
       "price",
-      calculatePrice(option.price, selected.price)
+      calculatePrice(Number(price.price))
     );
   };
-
-  const handelChangeTransportation = (
-    e: ITransportationMode,
-    rowIndex: number,
-    transportationTypePrice: number
-  ) => {
-    setSelected(e);
-    handleChange(dayIndex, rowIndex, "transportationMode", e);
-    handleChange(
-      dayIndex,
-      rowIndex,
-      "price",
-      calculatePrice(transportationTypePrice, e.price)
-    );
-  };
-
-  console.log("transportationTypes :>> ", transportationTypes);
 
   return (
     <div>
@@ -100,75 +102,74 @@ export const TransportationRow = ({
         visible={visible}
       />
 
-      <div className="w-full border-b-2 flex flex-col justify-between indexs-center px-2">
+      <div className="w-full border-b-2 flex flex-col justify-between items-center px-2">
         {formSearchResult[dayIndex].transportation?.map((_, rowIndex) => {
           const transportation =
             formSearchResult[dayIndex].transportation?.[rowIndex];
+          const selectedCar = transportationTypes.find(
+            (car) => car.documentId === transportation?.transportationType?.id
+          );
 
           return (
-            <div key={rowIndex} className="flex justify-between items-center">
-              <div className="flex mb- gap-4 my-3 items-stretch">
-                <div className="flex flex-col gap-2 items-center justify-center">
-                  <p>Transportation Type</p>
+            <div
+              key={rowIndex}
+              className="flex justify-between items-center w-full"
+            >
+              <div className="flex gap-4 my-3 items-stretch w-full">
+                {/* Car Selection */}
+                <div className="flex flex-col gap-2 items-center flex-1">
+                  <p>Itinerary</p>
                   <Dropdown
                     options={[
-                      {
-                        id: "",
-                        name: "Please select",
-                        price: 0,
-                      },
-                      ...transportationTypes?.map((car: Cars) => ({
+                      { id: "", name: "Please select" },
+                      ...transportationTypes.map((car) => ({
                         id: car.documentId || "",
                         name: car.type_car,
-                        price: car.car_price,
+                        data: car,
                       })),
                     ]}
-                    name={`transportation-type-${dayIndex}-${rowIndex}`}
-                    value={transportation?.transportationType.id || ""}
-                    onChange={(option) => {
-                      handleCalculateTransportationPrice(option, rowIndex);
-                    }}
+                    name={`car-${dayIndex}-${rowIndex}`}
+                    value={transportation?.transportationType?.id || ""}
+                    onChange={(option) =>
+                      handleCarSelection(option.data, rowIndex)
+                    }
                   />
                 </div>
 
-                <div className="flex flex-col gap-2 items-center justify-center mt-3">
-                  <RadioGroup
-                    value={selected}
-                    onChange={(e) =>
-                      handelChangeTransportation(
-                        e,
-                        rowIndex,
-                        transportation?.transportationType.price || 0
-                      )
+                {/* Price Selection */}
+                <div className="flex flex-col gap-2 items-center flex-1">
+                  <p>Itinerary Type</p>
+                  <Dropdown
+                    options={[
+                      { id: "", name: "Select price" },
+                      ...(selectedCar?.transportation_prices || []).map(
+                        (price) => ({
+                          id: price.documentId || "",
+                          name: `${price.desc} (${price.price})`,
+                          data: price,
+                        })
+                      ),
+                    ]}
+                    name={`price-${dayIndex}-${rowIndex}`}
+                    value={
+                      transportation?.transportationPrice?.documentId || ""
                     }
-                    aria-label="Server size"
-                    className="flex gap-2 items-center justify-center"
-                  >
-                    {plans.map((plan) => (
-                      <Field key={plan.id} className="flex items-center gap-2">
-                        <Radio
-                          value={plan}
-                          className="group flex size-5 items-center justify-center rounded-full border bg-white data-[checked]:bg-blue-400"
-                          disabled={
-                            transportationTypes.length > 0 ? false : true
-                          }
-                        >
-                          <span className="invisible size-2 rounded-full bg-white group-data-[checked]:visible" />
-                        </Radio>
-                        <Label>{plan.name}</Label>
-                      </Field>
-                    ))}
-                  </RadioGroup>
+                    onChange={(option) =>
+                      handlePriceSelection(option.data, rowIndex)
+                    }
+                    disabled={!selectedCar}
+                  />
                 </div>
               </div>
+
               <Price
                 value={transportation?.price || 0}
-                className="md:w-3/12 pr-2"
+                className="md:w-2/12 pr-2"
                 size="lg"
               />
 
               <button
-                className="hover:text-red-600"
+                className="hover:text-red-600 px-4"
                 onClick={() => deleteRow(rowIndex)}
               >
                 Remove

@@ -106,6 +106,7 @@ const ResultSearchBooking = memo(() => {
     return data.map((location) => ({
       id: location.documentId,
       name: location.location_name,
+      images: location?.images,
     }));
   };
 

@@ -9,6 +9,7 @@ import {
   TransportationInfo,
 } from "@/components/features/booking";
 import useBookingState from "@/store/useRoomState";
+import useLocationsStore from "@/store/useRoutesStore";
 import {
   Disclosure,
   DisclosureButton,
@@ -24,6 +25,9 @@ export default function Booking() {
     numberOfPeople,
     numberOfDays,
   } = useBookingState();
+
+  const { data: locations } = useLocationsStore();
+
   console.log("resultSearchBooking :>> ", resultSearchBooking);
 
   return (

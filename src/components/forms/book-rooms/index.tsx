@@ -50,11 +50,11 @@ const BookRoomForm = () => {
 
     setLoading(true);
     try {
-      const query = `?populate[routes][populate]&populate[hotels][populate][hotel_types][populate][price_hotels][filters][$or][0][start_date][$lte]=${formatDate(
+      const query = `?populate[images][populate]&populate[routes][populate]&populate[hotels][populate][hotel_types][populate][price_hotels][filters][$or][0][start_date][$lte]=${formatDate(
         checkOut
       )}&populate[hotels][populate][hotel_types][populate][price_hotels][filters][$or][0][end_date][$gte]=${formatDate(
         checkIn
-      )}&populate[service_routes][populate]&populate[cars][populate]&populate[company][populate][service_companies][populate]`;
+      )}&populate[service_routes][populate]&populate[cars][populate][transportation_prices][populate]&populate[company][populate][service_companies][populate]`;
       const response = await apiClient.get<LocationsResponse>(
         `${API_ENDPOINTS.LOCATION}${query}`
       );

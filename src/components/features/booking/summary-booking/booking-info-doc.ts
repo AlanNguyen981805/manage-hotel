@@ -16,7 +16,7 @@ import {
   VerticalAlign,
 } from "docx";
 import { saveAs } from "file-saver";
-import { convertHtmlToDocx } from "./data-mock";
+import { convertHtmlToDocx, convertImageToDocx } from "./data-mock";
 
 export const generateWordDocument = async (
   vendor,
@@ -29,7 +29,7 @@ export const generateWordDocument = async (
 ) => {
   const imageResponse = await fetch("/logo.png").then((res) => res.blob());
 
-  const imageBuffer = await imageResponse.arrayBuffer();
+  const imageBufferHeader = await imageResponse.arrayBuffer();
 
   const doc = new Document({
     styles: {
@@ -67,7 +67,7 @@ export const generateWordDocument = async (
                 },
                 children: [
                   new ImageRun({
-                    data: imageBuffer,
+                    data: imageBufferHeader,
                     transformation: {
                       width: 150,
                       height: 150,
@@ -407,8 +407,13 @@ export const generateWordDocument = async (
                     dayData?.city?.desc
                   );
 
+                  const images = await convertImageToDocx(
+                    dayData.routes.images
+                  );
+
                   return [
-                    // Day header with date
+                    ...images,
+
                     new Paragraph({
                       heading: "Heading2",
                       spacing: {
@@ -532,7 +537,7 @@ export const generateWordDocument = async (
                                     acc.push(
                                       new TextRun({
                                         text: ` ${
-                                          service?.serviceType?.name || ""
+                                          service?.serviceType?.desc || ""
                                         }`,
                                         font: "Verdana",
                                       })
@@ -559,7 +564,7 @@ export const generateWordDocument = async (
                       : []),
                     ...(dayData?.services?.some(
                       (service) => service?.serviceType?.type === "route"
-                    )
+                    ) || dayData?.transportation?.length > 0
                       ? [
                           new Paragraph({
                             spacing: {
@@ -567,7 +572,12 @@ export const generateWordDocument = async (
                             },
                             children: [
                               new TextRun({
-                                text: "Transfer:",
+                                text: `Transfer: ${
+                                  dayData?.transportation?.length > 0
+                                    ? dayData?.transportation[0]
+                                        ?.transportationPrice?.desc
+                                    : ""
+                                }`,
                                 font: "Verdana",
                               }),
                             ],
@@ -586,7 +596,7 @@ export const generateWordDocument = async (
                           },
                           children: [
                             new TextRun({
-                              text: `- ${service?.serviceType?.name || ""}`,
+                              text: `- ${service?.serviceType?.desc || ""}`,
                               font: "Verdana",
                             }),
                           ],

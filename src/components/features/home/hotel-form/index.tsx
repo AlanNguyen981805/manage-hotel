@@ -77,13 +77,15 @@ export const HotelRow = ({
       const updatedAdditionalBeds =
         type === "bed" ? value : hotelRow.additionalBeds;
 
+      const mark_hotel = findCompany?.company?.mark_hotel || 1;
+
       const newPrice = caculatePriceByRow(
         hotelRow?.roomType?.price_hotels[0]?.price ||
           hotelRow.roomType.price_default,
         updatedQuantityRoom,
         hotelRow?.hotelName?.extra_price,
         updatedAdditionalBeds,
-        findCompany?.company?.mark_hotel || 1
+        mark_hotel
       );
 
       setForm((prevState) => {

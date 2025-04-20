@@ -42,6 +42,7 @@ export interface Cars {
   documentId?: string;
   id: string;
   type_car: string;
+  transportation_prices: TransportationPrice[];
 }
 
 export interface ServiceRoute {
@@ -95,6 +96,12 @@ export interface Route {
   description: string | null;
 }
 
+export interface Image {
+  id: number;
+  documentId: string;
+  url: string;
+}
+
 export interface Location {
   id: number;
   documentId: string;
@@ -107,6 +114,7 @@ export interface Location {
   company: Company;
   service_routes: ServiceRoute[];
   cars: Cars[];
+  images: Image[];
 }
 
 export interface LocationsResponse {
@@ -120,3 +128,14 @@ export interface LocationsResponse {
     };
   };
 }
+
+// Trong file types/route.ts
+export type TransportationPrice = {
+  documentId: string;
+  seats: string;
+  price: string;
+  desc: string;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string;
+};

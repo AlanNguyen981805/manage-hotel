@@ -138,3 +138,62 @@ export const convertHtmlToDocx = async (
 
   return paragraphs;
 };
+
+export const convertImageToDocx = async (
+  imageUrls: string[]
+): Promise<Paragraph[]> => {
+  const imageRuns: (ImageRun | TextRun)[] = [];
+
+  for (let i = 0; i < imageUrls?.length; i++) {
+    const imageUrl = imageUrls[i];
+
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_STRAPI_URL}${imageUrl.url}`
+    );
+    const contentType = response.headers.get("Content-Type") || "";
+    const imageBuffer = await response.arrayBuffer();
+
+    const getImageType = (mime: string): "png" | "jpeg" | "gif" | undefined => {
+      if (mime.includes("png")) return "png";
+      if (mime.includes("jpeg") || mime.includes("jpg")) return "jpeg";
+      if (mime.includes("gif")) return "gif";
+      return undefined;
+    };
+
+    const imageType = getImageType(contentType);
+    if (!imageType) {
+      console.warn(
+        "Unsupported image type or wrong content type:",
+        contentType
+      );
+      return [];
+    }
+
+    const image = new ImageRun({
+      data: imageBuffer,
+      transformation: {
+        width: 340,
+        height: 200,
+      },
+    });
+
+    imageRuns.push(image);
+
+    // Thêm khoảng cách sau mỗi ảnh, trừ ảnh cuối
+    if (i < imageUrls.length - 1) {
+      imageRuns.push(
+        new TextRun({
+          text: "         ", // khoảng trắng
+          size: 1, // rất nhỏ, chỉ tạo space
+        })
+      );
+    }
+  }
+
+  return [
+    new Paragraph({
+      children: imageRuns,
+      spacing: { after: 600, before: 300 },
+    }),
+  ];
+};
