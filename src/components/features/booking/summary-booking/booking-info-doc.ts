@@ -408,7 +408,7 @@ export const generateWordDocument = async (
                   );
 
                   const images = await convertImageToDocx(
-                    dayData.routes.images
+                    dayData?.city?.images
                   );
 
                   return [

@@ -50,7 +50,7 @@ const BookRoomForm = () => {
 
     setLoading(true);
     try {
-      const query = `?populate[images][populate]&populate[routes][populate]&populate[hotels][populate][hotel_types][populate][price_hotels][filters][$or][0][start_date][$lte]=${formatDate(
+      const query = `?populate[routes][populate]=images&populate[hotels][populate][hotel_types][populate][price_hotels][filters][$or][0][start_date][$lte]=${formatDate(
         checkOut
       )}&populate[hotels][populate][hotel_types][populate][price_hotels][filters][$or][0][end_date][$gte]=${formatDate(
         checkIn
