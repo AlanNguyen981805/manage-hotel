@@ -113,8 +113,8 @@ export const convertHtmlToDocx = async (
           const image = new ImageRun({
             data: imageBuffer,
             transformation: {
-              width: 500,
-              height: 300,
+              width: 680,
+              height: 360,
             },
           });
 

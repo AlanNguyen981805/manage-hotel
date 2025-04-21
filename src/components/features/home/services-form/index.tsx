@@ -133,7 +133,7 @@ export const ServicesRow = ({
                   options={[
                     { id: 0, name: "Please select", price: 0 },
                     ...servicesByLocation?.map((service) => ({
-                      id: service.id,
+                      id: service.documentId,
                       name: service.service_code,
                       price: service.service_price,
                       type: service.type,
