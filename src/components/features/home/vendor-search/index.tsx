@@ -2,11 +2,10 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Dialog } from "@headlessui/react";
-import { apiClient } from "@/lib/api/client";
-import { API_ENDPOINTS } from "@/lib/api/config";
 import useBookingState from "@/store/useRoomState";
 import useToastStore from "@/store/useToastStore";
 import useUserStore from "@/store/useUserStore";
+import { useVendorStore } from "@/store/useVendorStore";
 import { AxiosError } from "axios";
 
 interface Vendor {
@@ -31,26 +30,14 @@ interface VendorSearchProps {
 
 const VendorSearch = ({ onSelectVendor }: VendorSearchProps) => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [vendors, setVendors] = useState<Vendor[]>([]);
   const [filteredVendors, setFilteredVendors] = useState<Vendor[]>([]);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState<CreateVendorForm>({
     name: "",
     address: "",
     phone: "",
     email: "",
   });
-  const [selectedVendor, setSelectedVendor] = useState<Vendor | null>(null);
-  const { setVendor } = useBookingState();
-  const { addToast } = useToastStore();
-  const { user } = useUserStore();
-
-  // Thêm ref để quản lý dropdown
-  const dropdownRef = useRef<HTMLDivElement>(null);
-  const [isDropdownVisible, setIsDropdownVisible] = useState(false);
-
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingVendor, setEditingVendor] = useState<Vendor | null>(null);
   const [editFormData, setEditFormData] = useState<CreateVendorForm>({
@@ -60,36 +47,37 @@ const VendorSearch = ({ onSelectVendor }: VendorSearchProps) => {
     email: "",
   });
 
+  // Zustand stores
+  const { setVendor } = useBookingState();
+  const { addToast } = useToastStore();
+  const { user } = useUserStore();
+  const {
+    vendors,
+    selectedVendor,
+    loading,
+    fetchVendors,
+    createVendor,
+    updateVendor,
+    selectVendor,
+    clearSelectedVendor,
+  } = useVendorStore();
+
+  // Thêm ref để quản lý dropdown
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [isDropdownVisible, setIsDropdownVisible] = useState(false);
+
   // Fetch all vendors when component mounts, but only if user is logged in
   useEffect(() => {
-    const fetchVendors = async () => {
-      // Check if user is logged in
-      if (!user || !user.id) {
-        console.log("User not logged in, skipping vendor fetch");
-        return;
-      }
-
-      setLoading(true);
-      try {
-        const response = await apiClient.get(`${API_ENDPOINTS.VENDORS}`);
-        setVendors(response.data.data);
-      } catch (error) {
-        console.error("Error fetching vendors:", error);
-        setError("Failed to fetch vendors");
-        addToast("Không thể tải danh sách vendor", "error");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchVendors();
-  }, [user]); // Add user as a dependency to re-fetch when user changes
+    if (user?.id) {
+      fetchVendors();
+    }
+  }, [user, fetchVendors]);
 
   // Filter vendors based on search term
   useEffect(() => {
     if (searchTerm) {
       setIsDropdownVisible(true);
-      const filtered = vendors.filter((vendor) =>
+      const filtered = vendors.filter((vendor: Vendor) =>
         vendor.name.toLowerCase().includes(searchTerm.toLowerCase())
       );
       setFilteredVendors(filtered);
@@ -132,33 +120,22 @@ const VendorSearch = ({ onSelectVendor }: VendorSearchProps) => {
       return;
     }
 
-    setLoading(true);
     try {
-      const response = await apiClient.post(API_ENDPOINTS.VENDORS, {
-        data: formData,
-      });
-
-      // Add new vendor to the list
-      setVendors([...vendors, response.data.data]);
-
-      // Reset form and close modal
+      await createVendor(formData);
       setFormData({ name: "", address: "", phone: "", email: "" });
       setIsCreateModalOpen(false);
-
       addToast("Vendor created successfully", "success");
     } catch (error) {
       if (error instanceof AxiosError) {
-        setError(
+        addToast(
           error.response?.data.error.status === 400
             ? "Name or Phone And Email must be unique"
-            : "Failed to create vendor"
+            : "Failed to create vendor",
+          "error"
         );
       } else {
-        setError("Failed to create vendor");
+        addToast("Failed to create vendor", "error");
       }
-      addToast("Failed to create vendor", "error");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -166,7 +143,7 @@ const VendorSearch = ({ onSelectVendor }: VendorSearchProps) => {
     e.preventDefault();
     e.stopPropagation();
 
-    setSelectedVendor(vendor);
+    selectVendor(vendor);
     setSearchTerm(vendor.name);
     setIsDropdownVisible(false);
 
@@ -204,42 +181,14 @@ const VendorSearch = ({ onSelectVendor }: VendorSearchProps) => {
 
     if (!editingVendor) return;
 
-    setLoading(true);
     try {
-      const response = await apiClient.put(
-        `${API_ENDPOINTS.VENDORS}/${editingVendor.documentId}`,
-        {
-          data: editFormData,
-        }
-      );
-
-      // Cập nhật vendor trong danh sách
-      const updatedVendors = vendors.map((vendor) =>
-        vendor.id === editingVendor.id ? response.data.data : vendor
-      );
-      setVendors(updatedVendors);
-
-      // Cập nhật vendor đã chọn nếu đang được chọn
-      if (selectedVendor && selectedVendor.id === editingVendor.id) {
-        setSelectedVendor(response.data.data);
-        setSearchTerm(response.data.data.name);
-        setVendor(response.data.data);
-        if (onSelectVendor) {
-          onSelectVendor(response.data.data);
-        }
-      }
-
-      // Đóng modal
+      await updateVendor(editingVendor.documentId, editFormData);
       setIsEditModalOpen(false);
       setEditingVendor(null);
-
       addToast("Vendor updated successfully", "success");
     } catch (error) {
       console.error("Error updating vendor:", error);
-      setError("Failed to update vendor");
       addToast("Cannot update vendor. Please try again!", "error");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -253,7 +202,7 @@ const VendorSearch = ({ onSelectVendor }: VendorSearchProps) => {
             setSearchTerm(e.target.value);
             // Reset selectedVendor if input is cleared or changed
             if (selectedVendor && e.target.value !== selectedVendor.name) {
-              setSelectedVendor(null);
+              clearSelectedVendor();
             }
           }}
           onFocus={() => searchTerm && setIsDropdownVisible(true)}
@@ -277,18 +226,12 @@ const VendorSearch = ({ onSelectVendor }: VendorSearchProps) => {
         {isDropdownVisible && (
           <div className="absolute z-10 w-[400px] mb-0 bg-white border rounded-md shadow-lg max-h-60 overflow-auto">
             {filteredVendors.length > 0 ? (
-              filteredVendors.map((vendor) => (
+              filteredVendors.map((vendor: Vendor) => (
                 <div
                   key={vendor.id}
                   className="p-2 hover:bg-gray-100 cursor-pointer flex justify-between items-center"
                 >
-                  <div
-                    onClick={() => {
-                      setSearchTerm(vendor.name);
-                      setIsDropdownVisible(false);
-                    }}
-                    className="flex-1"
-                  >
+                  <div className="flex-1">
                     <div className="font-medium">{vendor.name}</div>
                     <div className="text-sm text-gray-600">{vendor.email}</div>
                   </div>
@@ -333,7 +276,6 @@ const VendorSearch = ({ onSelectVendor }: VendorSearchProps) => {
           className="relative z-50"
         >
           <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
-
           <div className="fixed inset-0 flex items-center justify-center p-4">
             <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
               <Dialog.Title
@@ -352,11 +294,11 @@ const VendorSearch = ({ onSelectVendor }: VendorSearchProps) => {
                     <input
                       type="text"
                       required
+                      className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
                       value={formData.name}
                       onChange={(e) =>
                         setFormData({ ...formData, name: e.target.value })
                       }
-                      className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
                     />
                   </div>
 
@@ -367,11 +309,11 @@ const VendorSearch = ({ onSelectVendor }: VendorSearchProps) => {
                     <input
                       type="text"
                       required
+                      className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
                       value={formData.address}
                       onChange={(e) =>
                         setFormData({ ...formData, address: e.target.value })
                       }
-                      className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
                     />
                   </div>
 
@@ -382,11 +324,11 @@ const VendorSearch = ({ onSelectVendor }: VendorSearchProps) => {
                     <input
                       type="tel"
                       required
+                      className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
                       value={formData.phone}
                       onChange={(e) =>
                         setFormData({ ...formData, phone: e.target.value })
                       }
-                      className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
                     />
                   </div>
 
@@ -397,16 +339,14 @@ const VendorSearch = ({ onSelectVendor }: VendorSearchProps) => {
                     <input
                       type="email"
                       required
+                      className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
                       value={formData.email}
                       onChange={(e) =>
                         setFormData({ ...formData, email: e.target.value })
                       }
-                      className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
                     />
                   </div>
                 </div>
-
-                {error && <p className="text-red-500 mt-2">{error}</p>}
 
                 <div className="mt-6 flex justify-end space-x-3">
                   <button
@@ -438,7 +378,6 @@ const VendorSearch = ({ onSelectVendor }: VendorSearchProps) => {
           className="relative z-50"
         >
           <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
-
           <div className="fixed inset-0 flex items-center justify-center p-4">
             <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
               <Dialog.Title
@@ -457,6 +396,7 @@ const VendorSearch = ({ onSelectVendor }: VendorSearchProps) => {
                     <input
                       type="text"
                       required
+                      className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
                       value={editFormData.name}
                       onChange={(e) =>
                         setEditFormData({
@@ -464,7 +404,6 @@ const VendorSearch = ({ onSelectVendor }: VendorSearchProps) => {
                           name: e.target.value,
                         })
                       }
-                      className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
                     />
                   </div>
 
@@ -475,6 +414,7 @@ const VendorSearch = ({ onSelectVendor }: VendorSearchProps) => {
                     <input
                       type="text"
                       required
+                      className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
                       value={editFormData.address}
                       onChange={(e) =>
                         setEditFormData({
@@ -482,7 +422,6 @@ const VendorSearch = ({ onSelectVendor }: VendorSearchProps) => {
                           address: e.target.value,
                         })
                       }
-                      className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
                     />
                   </div>
 
@@ -493,6 +432,7 @@ const VendorSearch = ({ onSelectVendor }: VendorSearchProps) => {
                     <input
                       type="tel"
                       required
+                      className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
                       value={editFormData.phone}
                       onChange={(e) =>
                         setEditFormData({
@@ -500,7 +440,6 @@ const VendorSearch = ({ onSelectVendor }: VendorSearchProps) => {
                           phone: e.target.value,
                         })
                       }
-                      className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
                     />
                   </div>
 
@@ -511,6 +450,7 @@ const VendorSearch = ({ onSelectVendor }: VendorSearchProps) => {
                     <input
                       type="email"
                       required
+                      className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
                       value={editFormData.email}
                       onChange={(e) =>
                         setEditFormData({
@@ -518,12 +458,9 @@ const VendorSearch = ({ onSelectVendor }: VendorSearchProps) => {
                           email: e.target.value,
                         })
                       }
-                      className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
                     />
                   </div>
                 </div>
-
-                {error && <p className="text-red-500 mt-2">{error}</p>}
 
                 <div className="mt-6 flex justify-end space-x-3">
                   <button

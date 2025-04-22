@@ -72,7 +72,6 @@ export const SummaryBooking = ({
   };
 
   const totals = calculateTotals();
-  console.log("totals :>> ", totals);
 
   return (
     <div className="bg-white rounded-lg shadow p-6">

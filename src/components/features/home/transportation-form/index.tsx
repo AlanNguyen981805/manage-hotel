@@ -3,16 +3,12 @@
 import Dropdown from "@/components/ui/dropdown";
 import { Price } from "@/components/ui/price";
 import useFormSearchResult from "@/hooks/use-search-result";
-import { Field, Label, Radio, RadioGroup } from "@headlessui/react";
-import { useMemo, useState } from "react";
-import { BtnAddRow } from "../add-row";
-import {
-  IPropRowSearch,
-  ITransportationMode,
-} from "../result-search-booking/defination";
-import { initialTransportationRowData } from "./defination";
 import useLocationsStore from "@/store/useRoutesStore";
 import type { Cars, TransportationPrice } from "@/types/route";
+import { useEffect, useMemo, useState } from "react";
+import { BtnAddRow } from "../add-row";
+import { IPropRowSearch } from "../result-search-booking/defination";
+import { initialTransportationRowData } from "./defination";
 
 export const TransportationRow = ({
   dayIndex,
@@ -20,6 +16,10 @@ export const TransportationRow = ({
   formSearchResult,
 }: IPropRowSearch) => {
   const { data } = useLocationsStore();
+  const dataRoute = data?.find(
+    (route) => route.documentId === formSearchResult[dayIndex].routes.id
+  );
+  const [isInitialized, setIsInitialized] = useState(false);
   const { handleChange, handleAddRow, handleRemoveRow } = useFormSearchResult({
     dayIndex,
     setForm,
@@ -84,7 +84,6 @@ export const TransportationRow = ({
     price: TransportationPrice,
     rowIndex: number
   ) => {
-    console.log("price :>> ", price);
     handleChange(dayIndex, rowIndex, "transportationPrice", price);
     handleChange(
       dayIndex,
@@ -93,6 +92,91 @@ export const TransportationRow = ({
       calculatePrice(Number(price.price))
     );
   };
+
+  // Initialize from history
+  useEffect(() => {
+    if (
+      !isInitialized &&
+      formSearchResult[dayIndex]?.transportation &&
+      formSearchResult[dayIndex]?.transportation?.length > 0 &&
+      dataRoute
+    ) {
+      const transportations = formSearchResult[dayIndex].transportation;
+
+      setForm((prevState) => {
+        const newState = { ...prevState };
+        if (!newState[dayIndex]) {
+          newState[dayIndex] = { transportation: [] };
+        }
+        if (!newState[dayIndex].transportation) {
+          newState[dayIndex].transportation = [];
+        }
+
+        transportations.forEach((transportationRow, rowIndex) => {
+          if (transportationRow.transportationType?.id) {
+            // Find transportation from API data
+            const selectedTransportation = transportationTypes.find(
+              (t) => t.documentId === transportationRow.transportationType.id
+            );
+
+            if (selectedTransportation) {
+              // Find matching price from API data
+              const selectedPrice =
+                selectedTransportation.transportation_prices?.find(
+                  (p) =>
+                    p.documentId ===
+                    transportationRow.transportationPrice?.documentId
+                );
+
+              if (selectedPrice) {
+                // Calculate new price based on API data
+                const price = calculatePrice(Number(selectedPrice.price));
+
+                // Update transportation row with new data
+                if (!newState[dayIndex].transportation[rowIndex]) {
+                  newState[dayIndex].transportation[rowIndex] = {};
+                }
+
+                newState[dayIndex].transportation[rowIndex] = {
+                  ...transportationRow,
+                  transportationType: {
+                    id: selectedTransportation.documentId,
+                    name: selectedTransportation.type_car,
+                    price: selectedTransportation.car_price,
+                    transportation_prices:
+                      selectedTransportation.transportation_prices,
+                  },
+                  transportationPrice: selectedPrice,
+                  mark_tranfer: findCompany?.company?.mark_tranfer ?? 1,
+                  price,
+                };
+              }
+            }
+          }
+        });
+
+        return newState;
+      });
+
+      setIsInitialized(true);
+    }
+  }, [
+    dataRoute,
+    dayIndex,
+    formSearchResult,
+    isInitialized,
+    setForm,
+    transportationTypes,
+    findCompany?.company?.mark_tranfer,
+    calculatePrice,
+  ]);
+
+  // Reset when city changes
+  useEffect(() => {
+    if (formSearchResult[dayIndex].city.id) {
+      setIsInitialized(false);
+    }
+  }, [formSearchResult[dayIndex].city.id]);
 
   return (
     <div>

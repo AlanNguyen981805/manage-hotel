@@ -110,7 +110,6 @@ export const generateWordDocument = async (
                   new TableCell({
                     children: [
                       new Paragraph({
-                        text: "Proposal to:",
                         alignment: AlignmentType.LEFT,
                         children: [
                           new TextRun({

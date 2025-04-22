@@ -34,7 +34,6 @@ export const HotelRow = ({
   const findCompany = dataRoute?.find(
     (route) => route.documentId === formSearchResult[dayIndex].routes.id
   );
-  console.log("findCompany :>> ", findCompany);
 
   const { handleAddRow, handleChange, handleRemoveRow } = useFormSearchResult({
     dayIndex,
@@ -51,14 +50,16 @@ export const HotelRow = ({
       additionalBeds: number,
       extraPrice: number
     ) => {
-      if (!roomType?.price_hotels?.[0]?.price) return 0;
+      if (!roomType?.price_hotels?.[0]?.price && !roomType?.price_default)
+        return 0;
 
-      return calculateTotalPrice({
-        basePrice: roomType.price_hotels[0].price,
-        quantity: quantityRoom,
-        additionalBeds,
+      return caculatePriceByRow(
+        Number(roomType.price_hotels[0]?.price || roomType.price_default),
+        quantityRoom,
         extraPrice,
-      });
+        additionalBeds,
+        findCompany?.company?.mark_hotel || 1
+      );
     },
     []
   );
@@ -116,29 +117,39 @@ export const HotelRow = ({
       formSearchResult[dayIndex]?.hotels?.length > 0 &&
       dataRoute
     ) {
-      console.log("formSearchResult :>> ", formSearchResult);
       const hotels = formSearchResult[dayIndex].hotels;
       const newState: HotelRowState = {
         hotelsByRank: {},
         hotelTypesOptions: {},
       };
 
+      let hotelUpdated;
+
+      // Lấy dữ liệu hotel từ API và history
       hotels.forEach((hotelRow, rowIndex) => {
         if (hotelRow.hotelType?.id) {
+          // Tìm location từ API dựa vào route ID
           const location = dataRoute?.find(
             (route) => route.documentId === formSearchResult[dayIndex].routes.id
           );
+
+          // Lọc hotels theo rank từ API
           const filteredHotels =
             location?.hotels?.filter(
               (hotel) => hotel.rank === Number(hotelRow.hotelType.id)
             ) || [];
 
           newState.hotelsByRank[rowIndex] = filteredHotels;
+          hotelUpdated = filteredHotels;
 
+          // Nếu có hotel được chọn từ history
           if (hotelRow.hotelName?.id) {
+            // Tìm hotel tương ứng từ API
             const selectedHotel = filteredHotels.find(
-              (h) => h.documentId === hotelRow.hotelName.id
+              (h) => h.documentId === hotelRow.hotelName.documentId
             );
+
+            // Lưu hotel types từ API
             if (selectedHotel) {
               newState.hotelTypesOptions[rowIndex] =
                 selectedHotel.hotel_types || [];
@@ -150,35 +161,60 @@ export const HotelRow = ({
       setState(newState);
       setIsInitialized(true);
 
-      // Update form với dữ liệu từ history
+      // Cập nhật form với dữ liệu kết hợp từ API và history
       setForm((prevState) => {
         const newState = { ...prevState };
+        if (!newState[dayIndex]) {
+          newState[dayIndex] = { hotels: [] };
+        }
+        if (!newState[dayIndex].hotels) {
+          newState[dayIndex].hotels = [];
+        }
 
-        hotels?.forEach((hotelRow, rowIndex) => {
+        hotels.forEach((hotelRow, rowIndex) => {
+          console.log("hotelUpdated :>> ", hotelUpdated);
+          console.log("hotelRow :>> ", hotelRow);
           if (hotelRow.roomType?.id) {
-            const selectedHotel = newState.hotelsByRank?.[rowIndex]?.find(
-              (h) => h.id === Number(hotelRow.hotelName?.id)
+            // Tìm hotel từ API data đã lọc
+            const selectedHotel = hotelUpdated?.find(
+              (h: any) => h.documentId === hotelRow.hotelName?.documentId
             );
+
+            // Tìm room type từ API data
             const selectedRoomType = selectedHotel?.hotel_types?.find(
-              (type) => type.id === hotelRow.roomType.id
+              (type: any) => type.documentId === hotelRow.roomType.documentId
             );
 
             if (selectedRoomType) {
+              // Tính giá mới dựa trên dữ liệu từ API
               const price = calculatePrice(
                 selectedRoomType,
-                hotelRow.quantityRoom,
-                hotelRow.additionalBeds,
+                hotelRow.quantityRoom || 1,
+                hotelRow.additionalBeds || 0,
                 hotelRow.hotelName?.extra_price || 0
+              );
+              console.log("price :>> ", price);
+
+              // Cập nhật hotel row với dữ liệu mới
+              if (!newState[dayIndex].hotels[rowIndex]) {
+                newState[dayIndex].hotels[rowIndex] = {};
+              }
+              console.log("hotelRow :>> ", hotelRow);
+              console.log(
+                "newState[dayIndex].hotels[rowIndex] :>> ",
+                newState[dayIndex].hotels[rowIndex]
               );
 
               newState[dayIndex].hotels[rowIndex] = {
                 ...hotelRow,
+                hotelName: selectedHotel,
                 roomType: selectedRoomType,
                 price,
               };
             }
           }
         });
+
         return newState;
       });
     }
@@ -260,17 +296,6 @@ export const HotelRow = ({
     );
   };
 
-  // const priceAfterMarkup = (price: number) => {
-  //   const findCompany = dataRoute?.find(
-  //     (route) => route.documentId === formSearchResult[dayIndex].routes.id
-  //   );
-
-  //   const mark_hotel = findCompany?.company?.mark_hotel ?? 1;
-  //   const totalPrice = price * mark_hotel;
-
-  //   return totalPrice;
-  // };
-
   const isShowRemoveButton =
     formSearchResult[dayIndex].hotels &&
     formSearchResult[dayIndex].hotels?.length > 1;
@@ -327,7 +352,7 @@ export const HotelRow = ({
                     })),
                   ]}
                   name={`hotel-${dayIndex}-${rowIndex}`}
-                  value={hotelRow?.hotelName?.id || ""}
+                  value={hotelRow?.hotelName?.documentId || ""}
                   onChange={async (option) => {
                     setState((pre) => ({
                       ...pre,

@@ -4,7 +4,7 @@ import Dropdown from "@/components/ui/dropdown";
 import { Price } from "@/components/ui/price";
 import useFormSearchResult from "@/hooks/use-search-result";
 import useLocationsStore from "@/store/useRoutesStore";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { BtnAddRow } from "../add-row";
 import { IPropRowSearch, IService } from "../result-search-booking/defination";
 import { NumberInput } from "@/components/ui/number-input";
@@ -25,6 +25,11 @@ export const ServicesRow = ({
   };
 
   const { data } = useLocationsStore();
+  const dataRoute = data?.find(
+    (route) => route.documentId === formSearchResult[dayIndex].routes.id
+  );
+  const [isInitialized, setIsInitialized] = useState(false);
+
   const findCompany = data?.find(
     (route) => route.documentId === formSearchResult[dayIndex].routes.id
   );
@@ -113,6 +118,87 @@ export const ServicesRow = ({
       findCompany?.company.mark_service_com ?? 1
     );
   };
+
+  // Initialize from history
+  useEffect(() => {
+    if (
+      !isInitialized &&
+      formSearchResult[dayIndex]?.services &&
+      formSearchResult[dayIndex]?.services?.length > 0 &&
+      dataRoute
+    ) {
+      const services = formSearchResult[dayIndex].services;
+
+      setForm((prevState) => {
+        const newState = { ...prevState };
+        if (!newState[dayIndex]) {
+          newState[dayIndex] = { services: [] };
+        }
+        if (!newState[dayIndex].services) {
+          newState[dayIndex].services = [];
+        }
+
+        services.forEach((serviceRow, rowIndex) => {
+          if (serviceRow.serviceType?.id) {
+            // Find service from API data
+            const selectedService = servicesByLocation?.find(
+              (s) => s.documentId === serviceRow.serviceType.id
+            );
+
+            if (selectedService) {
+              const markedPrice = priceAfterMarkup(
+                selectedService.service_price,
+                selectedService.type
+              );
+              const price = calculatePrice(
+                markedPrice,
+                serviceRow.serviceQuantity || 1
+              );
+
+              // Update service row with new data
+              if (!newState[dayIndex].services[rowIndex]) {
+                newState[dayIndex].services[rowIndex] = {};
+              }
+
+              newState[dayIndex].services[rowIndex] = {
+                ...serviceRow,
+                serviceType: {
+                  id: selectedService.documentId,
+                  name: selectedService.service_code,
+                  price: selectedService.service_price,
+                  type: selectedService.type,
+                  desc: selectedService.service_desc,
+                },
+                mark_service_com: findCompany?.company.mark_service_com ?? 1,
+                price,
+              };
+            }
+          }
+        });
+
+        return newState;
+      });
+
+      setIsInitialized(true);
+    }
+  }, [
+    dataRoute,
+    dayIndex,
+    formSearchResult,
+    isInitialized,
+    setForm,
+    servicesByLocation,
+    findCompany?.company.mark_service_com,
+    calculatePrice,
+    priceAfterMarkup,
+  ]);
+
+  // Reset when city changes
+  useEffect(() => {
+    if (formSearchResult[dayIndex].city.id) {
+      setIsInitialized(false);
+    }
+  }, [formSearchResult[dayIndex].city.id]);
 
   return (
     <div>

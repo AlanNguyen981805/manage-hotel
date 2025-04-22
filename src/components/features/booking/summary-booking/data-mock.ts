@@ -17,8 +17,6 @@ export const convertHtmlToDocx = async (
   const html = await marked(htmlString);
   const decoded = decode(html);
 
-  console.log("html :>> ", decoded);
-
   const parser = new DOMParser();
   const doc = parser.parseFromString(decoded, "text/html");
   const body = doc.body;

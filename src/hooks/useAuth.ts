@@ -74,7 +74,6 @@ export const useAuth = create((set) => ({
 
       return response.data;
     } catch (error) {
-      console.log("error :>> ", error);
       set({
         error:
           error.response?.data?.error?.status === 400

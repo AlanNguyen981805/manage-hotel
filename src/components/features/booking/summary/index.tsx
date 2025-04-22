@@ -14,7 +14,6 @@ export const SummaryBooking = ({
   total: number;
   vendor?: VendorInfo;
 }) => {
-  console.log("vendor :>> ", vendor);
   return (
     <div className="p-4 border rounded-lg space-y-4">
       {vendor && (

@@ -3,12 +3,11 @@
 import useDebounce from "@/hooks/useAebounce";
 import { apiClient } from "@/lib/api/client";
 import { API_ENDPOINTS } from "@/lib/api/config";
-import useBookingState from "@/store/useRoomState";
-import useUserStore from "@/store/useUserStore";
-import { useEffect, useState, useMemo } from "react";
-import { IFormSearchResult } from "../result-search-booking/defination";
-import { Dialog } from "@headlessui/react";
 import useToastStore from "@/store/useToastStore";
+import useUserStore from "@/store/useUserStore";
+import { useVendorStore } from "@/store/useVendorStore";
+import { Dialog } from "@headlessui/react";
+import { useEffect, useMemo, useState } from "react";
 
 export interface HistoryData {
   id: number;
@@ -22,6 +21,8 @@ export interface HistoryData {
     numberOfPeople: number;
     days: Record<string, unknown>;
     vendor: {
+      id: number;
+      documentId: string;
       name: string;
       address: string;
       phone: string;
@@ -49,8 +50,8 @@ const HistoryBooking = ({
   setIsOpenHistory,
 }: HistoryBookingProps) => {
   const { user } = useUserStore();
-  const { setResultSearchBooking } = useBookingState();
   const { addToast } = useToastStore();
+  const { vendors } = useVendorStore();
 
   const [usernameFilter, setUsernameFilter] = useState("");
   const [monthYearFilter, setMonthYearFilter] = useState("");
@@ -73,7 +74,8 @@ const HistoryBooking = ({
       );
 
       setAllHistories(response.data.data);
-    } catch (err) {
+    } catch (error) {
+      console.error("Error fetching histories:", error);
       setError("Failed to fetch histories");
       addToast("Không thể tải lịch sử. Vui lòng thử lại sau.", "error");
     } finally {
@@ -173,32 +175,36 @@ const HistoryBooking = ({
             {filteredHistories.length === 0 ? (
               <div className="text-center text-gray-500">No history found</div>
             ) : (
-              filteredHistories.map((history) => (
-                <div
-                  key={history.id}
-                  className="flex justify-between items-center p-3 hover:bg-gray-50 rounded-md cursor-pointer"
-                  onClick={() => handleClickHistoryItem(history)}
-                >
-                  <div className="flex-1">
-                    <div className="font-medium">{history.code}</div>
-                    <div className="text-sm text-gray-500">
-                      Time:{" "}
-                      {new Date(history.time_search).toLocaleString("en-US")}
+              filteredHistories.map((history) => {
+                const vendor = vendors.find(
+                  (vendor) =>
+                    vendor.documentId === history?.history?.vendor?.documentId
+                );
+                return (
+                  <div
+                    key={history.id}
+                    className="flex justify-between items-center p-3 hover:bg-gray-50 rounded-md cursor-pointer"
+                    onClick={() => handleClickHistoryItem(history)}
+                  >
+                    <div className="flex-1">
+                      <div className="font-medium">{history.code}</div>
+                      <div className="text-sm text-gray-500">
+                        Time:{" "}
+                        {new Date(history.time_search).toLocaleString("en-US")}
+                      </div>
+                    </div>
+                    <div className="flex-1 text-right">
+                      <div className="text-sm">
+                        Pax: {history?.history?.numberOfPeople}
+                      </div>
+                      <div className="text-sm">
+                        Days: {history?.history?.numberOfDays}
+                      </div>
+                      <div className="text-sm">Vendor: {vendor?.name}</div>
                     </div>
                   </div>
-                  <div className="flex-1 text-right">
-                    <div className="text-sm">
-                      People: {history?.history?.numberOfPeople}
-                    </div>
-                    <div className="text-sm">
-                      Days: {history?.history?.numberOfDays}
-                    </div>
-                    <div className="text-sm">
-                      Vendor: {history?.history?.vendor?.name}
-                    </div>
-                  </div>
-                </div>
-              ))
+                );
+              })
             )}
           </div>
         </div>

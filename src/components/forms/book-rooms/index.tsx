@@ -14,8 +14,13 @@ import VendorSearch from "@/components/features/home/vendor-search";
 import useToastStore from "@/store/useToastStore";
 import { HistoryData } from "@/components/features/home/history-booking";
 import { IFormSearchResult } from "@/components/features/home/result-search-booking/defination";
+import { useVendorStore } from "@/store/useVendorStore";
 
 const BookRoomForm = () => {
+  const { setOpenDialog } = useDialogStore();
+  const { addToast } = useToastStore();
+  const { vendors } = useVendorStore();
+
   const {
     getNumberOfDays,
     setResultSearchBooking,
@@ -25,16 +30,17 @@ const BookRoomForm = () => {
     dateCheckOut,
     setDateCheckIn,
     setDateCheckOut,
+    setNumberOfPeople,
+    setVendor,
     vendor,
   } = useBookingState();
-  const { setOpenDialog } = useDialogStore();
   const {
     setLocations: setRoutes,
     setLoading,
     setError,
     loading,
   } = useLocationsStore();
-  const { addToast } = useToastStore();
+
   const fetchRoutes = async (
     checkIn = dateCheckIn,
     checkOut = dateCheckOut
@@ -84,17 +90,13 @@ const BookRoomForm = () => {
     setOpenDialog(true);
   };
 
-  // This function will be passed to HistoryBooking component
   const handleHistoryItemClick = async (historyItem: HistoryData) => {
-    console.log("historyItem :>> ", historyItem);
-    // Extract dates from the history item
     const checkIn = new Date(historyItem.history.dateCheckIn);
     const checkOut = new Date(historyItem.history.dateCheckOut);
 
-    // Update the booking state with these dates
     setDateCheckIn(checkIn);
     setDateCheckOut(checkOut);
-    // Fetch routes with these specific dates
+
     const response = await fetchRoutes(checkIn, checkOut);
 
     // Create a copy of the history data to update
@@ -102,9 +104,7 @@ const BookRoomForm = () => {
       JSON.stringify(historyItem.history.days)
     ) as IFormSearchResult;
 
-    // Update the history data with the latest route descriptions from the API
     if (response && response.data) {
-      // Loop through each day in the history data
       Object.keys(historyData).forEach((dayKey) => {
         const dayData = historyData[dayKey];
         if (dayData.routes && dayData.routes.id) {
@@ -139,9 +139,16 @@ const BookRoomForm = () => {
       });
     }
 
+    const findVendor = vendors.find(
+      (vendor) => vendor.documentId === historyItem.history.vendor.documentId
+    );
+
     // Set the updated history data to the booking state
     setResultSearchBooking(historyData);
 
+    setNumberOfPeople(historyItem.history.numberOfPeople);
+
+    setVendor(findVendor || null);
     // Open the dialog to show results
     setOpenDialog(true);
   };

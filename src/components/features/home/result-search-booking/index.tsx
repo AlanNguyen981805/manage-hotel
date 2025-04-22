@@ -67,6 +67,7 @@ const ResultSearchBooking = memo(() => {
             time_search: new Date().toISOString(),
             history: JSON.stringify(object),
             users_permissions_user: user.id,
+            pax: numberOfPeople,
           },
         });
       } catch (error) {
@@ -110,7 +111,6 @@ const ResultSearchBooking = memo(() => {
   };
 
   const handleChangeLocation = (option: ICity, dayIndex: string) => {
-    console.log("option :>> ", option);
     setFormSearchResult((prevState) => ({
       ...prevState,
       [dayIndex]: {

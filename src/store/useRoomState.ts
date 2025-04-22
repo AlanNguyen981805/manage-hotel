@@ -4,7 +4,7 @@ import { calculateDaysBetweenDates } from "@/helpers/date-helper";
 import { create } from "zustand";
 
 interface Vendor {
-  id: number;
+  id?: number;
   name: string;
   address: string;
   phone: string;
