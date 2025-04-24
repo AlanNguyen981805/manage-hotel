@@ -69,7 +69,7 @@ export const ServicesRow = ({
   };
 
   const priceAfterMarkup = (price: number, type: "company" | "route") => {
-    const mark_service = findCompany?.company.mark_service_com ?? 1;
+    const mark_service = findCompany?.company?.mark_service_com ?? 1;
 
     return type === "company" ? price * mark_service : price;
   };
@@ -93,7 +93,7 @@ export const ServicesRow = ({
       dayIndex,
       rowIndex,
       "mark_service_com",
-      findCompany?.company.mark_service_com ?? 1
+      findCompany?.company?.mark_service_com ?? 1
     );
   };
 
@@ -115,7 +115,7 @@ export const ServicesRow = ({
       dayIndex,
       rowIndex,
       "mark_service_com",
-      findCompany?.company.mark_service_com ?? 1
+      findCompany?.company?.mark_service_com ?? 1
     );
   };
 
@@ -169,7 +169,7 @@ export const ServicesRow = ({
                   type: selectedService.type,
                   desc: selectedService.service_desc,
                 },
-                mark_service_com: findCompany?.company.mark_service_com ?? 1,
+                mark_service_com: findCompany?.company?.mark_service_com ?? 1,
                 price,
               };
             }
@@ -188,7 +188,7 @@ export const ServicesRow = ({
     isInitialized,
     setForm,
     servicesByLocation,
-    findCompany?.company.mark_service_com,
+    findCompany?.company?.mark_service_com,
     calculatePrice,
     priceAfterMarkup,
   ]);
