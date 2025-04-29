@@ -31,9 +31,7 @@ export const HotelRow = ({
   });
   const [isInitialized, setIsInitialized] = useState(false);
   const [priceDefault, setPriceDefault] = useState(0);
-  const findCompany = dataRoute?.find(
-    (route) => route.documentId === formSearchResult[dayIndex].routes.id
-  );
+  const findCompany = dataRoute && dataRoute[0].company;
 
   const { handleAddRow, handleChange, handleRemoveRow } = useFormSearchResult({
     dayIndex,
@@ -58,7 +56,7 @@ export const HotelRow = ({
         quantityRoom,
         extraPrice,
         additionalBeds,
-        findCompany?.company?.mark_hotel || 1
+        findCompany?.mark_hotel || 1
       );
     },
     []
@@ -78,7 +76,7 @@ export const HotelRow = ({
       const updatedAdditionalBeds =
         type === "bed" ? value : hotelRow.additionalBeds;
 
-      const mark_hotel = findCompany?.company?.mark_hotel || 1;
+      const mark_hotel = findCompany?.mark_hotel || 1;
 
       const newPrice = caculatePriceByRow(
         hotelRow?.roomType?.price_hotels[0]?.price ||
@@ -129,7 +127,7 @@ export const HotelRow = ({
       hotels.forEach((hotelRow, rowIndex) => {
         if (hotelRow.hotelType?.id) {
           // Tìm location từ API dựa vào route ID
-          const location = dataRoute?.find(
+          const location = findCompany?.locations.find(
             (route) => route.documentId === formSearchResult[dayIndex].routes.id
           );
 
@@ -172,8 +170,6 @@ export const HotelRow = ({
         }
 
         hotels.forEach((hotelRow, rowIndex) => {
-          console.log("hotelUpdated :>> ", hotelUpdated);
-          console.log("hotelRow :>> ", hotelRow);
           if (hotelRow.roomType?.id) {
             // Tìm hotel từ API data đã lọc
             const selectedHotel = hotelUpdated?.find(
@@ -199,12 +195,6 @@ export const HotelRow = ({
               if (!newState[dayIndex].hotels[rowIndex]) {
                 newState[dayIndex].hotels[rowIndex] = {};
               }
-              console.log("hotelRow :>> ", hotelRow);
-              console.log(
-                "newState[dayIndex].hotels[rowIndex] :>> ",
-                newState[dayIndex].hotels[rowIndex]
-              );
-
               newState[dayIndex].hotels[rowIndex] = {
                 ...hotelRow,
                 hotelName: selectedHotel,
@@ -254,7 +244,7 @@ export const HotelRow = ({
         numberOfRooms,
         hotelRow?.hotelName?.extra_price,
         additionalBedsQuantity,
-        findCompany?.company?.mark_hotel || 1
+        findCompany?.mark_hotel || 1
       );
 
       handleChange(dayIndex, rowIndex, "roomType", option);
@@ -263,7 +253,7 @@ export const HotelRow = ({
         dayIndex,
         rowIndex,
         "mark_hotel",
-        findCompany?.company?.mark_hotel || 1
+        findCompany?.mark_hotel || 1
       );
     },
     [dayIndex, handleChange]
@@ -273,9 +263,11 @@ export const HotelRow = ({
     option: IOptionHotel,
     rowIndex: number
   ) => {
-    const getLocation = dataRoute?.find(
-      (route) => route.documentId === formSearchResult[dayIndex].routes.id
-    );
+    const getLocation =
+      dataRoute &&
+      dataRoute[0].company.locations.find(
+        (route) => route.documentId === formSearchResult[dayIndex].routes.id
+      );
     const hotels = getLocation?.hotels ?? [];
     const filteredHotels = hotels.filter((hotel) => hotel.rank === option.id);
 
@@ -292,7 +284,7 @@ export const HotelRow = ({
       dayIndex,
       rowIndex,
       "mark_hotel",
-      findCompany?.company?.mark_hotel || 1
+      findCompany?.mark_hotel || 1
     );
   };
 
@@ -301,9 +293,11 @@ export const HotelRow = ({
     formSearchResult[dayIndex].hotels?.length > 1;
 
   const availableHotelRanks = useMemo(() => {
-    const getLocation = dataRoute?.find(
-      (route) => route.documentId === formSearchResult[dayIndex].routes.id
-    );
+    const getLocation =
+      dataRoute &&
+      dataRoute[0].company.locations.find(
+        (route) => route.documentId === formSearchResult[dayIndex].routes.id
+      );
     const hotels = getLocation?.hotels ?? [];
 
     // Extract unique ranks from available hotels

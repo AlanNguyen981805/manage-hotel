@@ -16,9 +16,7 @@ export const TransportationRow = ({
   formSearchResult,
 }: IPropRowSearch) => {
   const { data } = useLocationsStore();
-  const dataRoute = data?.find(
-    (route) => route.documentId === formSearchResult[dayIndex].routes.id
-  );
+
   const [isInitialized, setIsInitialized] = useState(false);
   const { handleChange, handleAddRow, handleRemoveRow } = useFormSearchResult({
     dayIndex,
@@ -27,15 +25,15 @@ export const TransportationRow = ({
     initialData: initialTransportationRowData,
   });
 
-  const findCompany = data?.find(
-    (route) => route.documentId === formSearchResult[dayIndex].routes.id
-  );
+  const findCompany = data && data[0].company;
 
   const transportationTypes = useMemo(
     () =>
-      data?.find(
+      data &&
+      (data[0].company.locations.find(
         (route) => route.documentId === formSearchResult[dayIndex].routes.id
-      )?.cars ?? [],
+      )?.cars ??
+        []),
     [data, dayIndex, formSearchResult]
   );
 
@@ -48,7 +46,7 @@ export const TransportationRow = ({
     formSearchResult[dayIndex]?.transportation?.length < 1;
 
   const calculatePrice = (transportationPrice: number) => {
-    const mark_tranfer = findCompany?.company?.mark_tranfer ?? 1;
+    const mark_tranfer = findCompany?.mark_tranfer ?? 1;
     return transportationPrice * mark_tranfer;
   };
 
@@ -60,7 +58,7 @@ export const TransportationRow = ({
       dayIndex,
       rowIndex,
       "mark_tranfer",
-      findCompany?.company?.mark_tranfer ?? 1
+      findCompany?.mark_tranfer ?? 1
     );
     handleChange(dayIndex, rowIndex, "transportationType", {
       id: car.documentId,
@@ -98,8 +96,7 @@ export const TransportationRow = ({
     if (
       !isInitialized &&
       formSearchResult[dayIndex]?.transportation &&
-      formSearchResult[dayIndex]?.transportation?.length > 0 &&
-      dataRoute
+      formSearchResult[dayIndex]?.transportation?.length > 0
     ) {
       const transportations = formSearchResult[dayIndex].transportation;
 
@@ -161,13 +158,12 @@ export const TransportationRow = ({
       setIsInitialized(true);
     }
   }, [
-    dataRoute,
     dayIndex,
     formSearchResult,
     isInitialized,
     setForm,
     transportationTypes,
-    findCompany?.company?.mark_tranfer,
+    findCompany?.mark_tranfer,
     calculatePrice,
   ]);
 
@@ -229,7 +225,7 @@ export const TransportationRow = ({
                       ...(selectedCar?.transportation_prices || []).map(
                         (price) => ({
                           id: price.documentId || "",
-                          name: `${price.desc} (${price.price})`,
+                          name: price.desc,
                           data: price,
                         })
                       ),

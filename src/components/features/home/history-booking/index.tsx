@@ -67,7 +67,7 @@ const HistoryBooking = ({
     setLoading(true);
     try {
       // Always populate user data
-      const queryParams = "?populate=users_permissions_user";
+      const queryParams = `?filters[users_permissions_user][company][id][$eq]=${user?.company?.id}&populate=users_permissions_user.company&sort=createdAt:desc`;
 
       const response = await apiClient.get<{ data: HistoryData[] }>(
         `${API_ENDPOINTS.HISTORIES}${queryParams}`

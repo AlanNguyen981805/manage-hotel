@@ -2,8 +2,7 @@ import type { Location, LocationsResponse } from "@/types/route";
 import { create } from "zustand";
 
 interface LocationsState {
-  data: Location[] | null;
-  meta: LocationsResponse["meta"] | null;
+  data: LocationsResponse | null;
   loading: boolean;
   error: string | null;
   selectedLocation: Location | null;
@@ -18,15 +17,13 @@ interface LocationsState {
 
 const useLocationsStore = create<LocationsState>((set) => ({
   data: null,
-  meta: null,
   loading: false,
   error: null,
   selectedLocation: null,
 
   setLocations: (response) =>
     set({
-      data: response.data,
-      meta: response.meta,
+      data: response,
       error: null,
     }),
 
@@ -39,7 +36,6 @@ const useLocationsStore = create<LocationsState>((set) => ({
   reset: () =>
     set({
       data: null,
-      meta: null,
       loading: false,
       error: null,
       selectedLocation: null,

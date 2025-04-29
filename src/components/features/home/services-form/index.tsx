@@ -25,28 +25,27 @@ export const ServicesRow = ({
   };
 
   const { data } = useLocationsStore();
-  const dataRoute = data?.find(
-    (route) => route.documentId === formSearchResult[dayIndex].routes.id
-  );
+
   const [isInitialized, setIsInitialized] = useState(false);
 
-  const findCompany = data?.find(
-    (route) => route.documentId === formSearchResult[dayIndex].routes.id
-  );
+  const findCompany = data && data[0].company;
 
   const servicesByLocation = useMemo(() => {
-    const selectedRoute = data?.find(
-      (route) => route.documentId === formSearchResult[dayIndex].routes.id
-    );
-
     const serviceCompaniesData =
-      selectedRoute?.company?.service_companies?.flatMap((item) => ({
+      findCompany?.service_companies?.flatMap((item) => ({
         ...item,
         type: "company",
       })) || [];
 
+    const findLocation =
+      data &&
+      data[0].company.locations.find(
+        (location) =>
+          location.documentId === formSearchResult[dayIndex].routes.id
+      );
+
     const serviceRoutesData =
-      selectedRoute?.service_routes?.map((item) => ({
+      findLocation?.service_routes?.map((item) => ({
         ...item,
         type: "route",
       })) || [];
@@ -69,7 +68,7 @@ export const ServicesRow = ({
   };
 
   const priceAfterMarkup = (price: number, type: "company" | "route") => {
-    const mark_service = findCompany?.company?.mark_service_com ?? 1;
+    const mark_service = findCompany?.mark_service_com ?? 1;
 
     return type === "company" ? price * mark_service : price;
   };
@@ -93,7 +92,7 @@ export const ServicesRow = ({
       dayIndex,
       rowIndex,
       "mark_service_com",
-      findCompany?.company?.mark_service_com ?? 1
+      findCompany?.mark_service_com ?? 1
     );
   };
 
@@ -115,7 +114,7 @@ export const ServicesRow = ({
       dayIndex,
       rowIndex,
       "mark_service_com",
-      findCompany?.company?.mark_service_com ?? 1
+      findCompany?.mark_service_com ?? 1
     );
   };
 
@@ -124,8 +123,7 @@ export const ServicesRow = ({
     if (
       !isInitialized &&
       formSearchResult[dayIndex]?.services &&
-      formSearchResult[dayIndex]?.services?.length > 0 &&
-      dataRoute
+      formSearchResult[dayIndex]?.services?.length > 0
     ) {
       const services = formSearchResult[dayIndex].services;
 
@@ -169,7 +167,7 @@ export const ServicesRow = ({
                   type: selectedService.type,
                   desc: selectedService.service_desc,
                 },
-                mark_service_com: findCompany?.company?.mark_service_com ?? 1,
+                mark_service_com: findCompany?.mark_service_com ?? 1,
                 price,
               };
             }
@@ -182,13 +180,12 @@ export const ServicesRow = ({
       setIsInitialized(true);
     }
   }, [
-    dataRoute,
     dayIndex,
     formSearchResult,
     isInitialized,
     setForm,
     servicesByLocation,
-    findCompany?.company?.mark_service_com,
+    findCompany?.mark_service_com,
     calculatePrice,
     priceAfterMarkup,
   ]);

@@ -7,17 +7,19 @@ export interface PriceHotel {
   name: string;
   createdAt: string;
   updatedAt: string;
-  publishedAt: string;
+  publishedAt: string | null;
+  desc_relation: string | null;
 }
 
 export interface HotelType {
   id: number;
-  documentId?: string;
+  documentId: string;
   name: string;
   price_default: number;
-  createdAt?: string;
-  updatedAt?: string;
-  publishedAt?: string;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string | null;
+  desc_relation: string;
   price_hotels: PriceHotel[];
 }
 
@@ -26,23 +28,55 @@ export interface Hotel {
   documentId: string;
   hotel_code: string;
   room_price: number;
-  extra_price: number | null;
+  extra_price: number;
   hotel_name: string;
   expire_date: string | null;
   createdAt: string;
   updatedAt: string;
-  publishedAt: string;
+  publishedAt: string | null;
   rank: number;
+  desc_relation: string;
   hotel_types: HotelType[];
 }
 
+export interface TransportationPrice {
+  id: number;
+  documentId: string;
+  seats: string;
+  price: string;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string | null;
+  desc: string;
+  desc_relation: string;
+}
+
 export interface Cars {
-  car_code?: string;
-  car_price: number;
-  documentId?: string;
-  id: string;
+  id: number;
+  documentId: string;
   type_car: string;
+  car_price: number;
+  car_code: string;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string | null;
+  id_car: string;
+  name: string | null;
+  km: string | null;
+  desc_relation: string;
   transportation_prices: TransportationPrice[];
+}
+
+export interface ServiceCompany {
+  id: number;
+  documentId: string;
+  service_code: string;
+  service_desc: string;
+  service_price: number;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string | null;
+  desc_relation: string;
 }
 
 export interface ServiceRoute {
@@ -53,35 +87,25 @@ export interface ServiceRoute {
   service_price: number;
   createdAt: string;
   updatedAt: string;
-  publishedAt: string;
+  publishedAt: string | null;
+  desc_relation: string;
 }
 
 export interface Company {
   id: number;
   documentId: string;
+  company_code: string;
   mark_up: number;
-  mark_hotel: number | null;
-  mark_service_com: number | null;
-  mark_tranfer: number | null;
-  service_companies: {
-    id: number;
-    documentId: string;
-    service_code: string;
-    service_price: number;
-  }[];
-}
-
-export interface Location {
-  id: number;
-  documentId: string;
-  location_name: string;
+  company_desc: string;
   createdAt: string;
   updatedAt: string;
-  publishedAt: string;
-  hotels: Hotel[];
-  company: Company;
-  service_routes: ServiceRoute[];
-  cars: Cars[];
+  publishedAt: string | null;
+  mark_hotel: number;
+  mark_tranfer: number;
+  mark_service_com: number;
+  desc_relation: string;
+  locations: Location[];
+  service_companies: ServiceCompany[];
 }
 
 export interface Route {
@@ -89,17 +113,12 @@ export interface Route {
   documentId: string;
   createdAt: string;
   updatedAt: string;
-  publishedAt: string;
+  publishedAt: string | null;
   code: string;
   name: string;
   desc: string;
-  description: string | null;
-}
-
-export interface Image {
-  id: number;
-  documentId: string;
-  url: string;
+  description: string;
+  desc_relation: string;
 }
 
 export interface Location {
@@ -108,34 +127,26 @@ export interface Location {
   location_name: string;
   createdAt: string;
   updatedAt: string;
-  publishedAt: string;
-  routes: Route[];
+  publishedAt: string | null;
+  desc_relation: string;
   hotels: Hotel[];
-  company: Company;
-  service_routes: ServiceRoute[];
+  routes: Route[];
   cars: Cars[];
-  images: Image[];
+  service_routes: ServiceRoute[];
 }
 
-export interface LocationsResponse {
-  data: Location[];
-  meta: {
-    pagination: {
-      page: number;
-      pageSize: number;
-      pageCount: number;
-      total: number;
-    };
-  };
-}
-
-// Trong file types/route.ts
-export type TransportationPrice = {
+export interface User {
+  id: number;
   documentId: string;
-  seats: string;
-  price: string;
-  desc: string;
+  username: string;
+  email: string;
+  provider: string;
+  confirmed: boolean;
+  blocked: boolean;
   createdAt: string;
   updatedAt: string;
   publishedAt: string;
-};
+  company: Company;
+}
+
+export type LocationsResponse = User[];

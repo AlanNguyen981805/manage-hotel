@@ -40,6 +40,7 @@ const ResultSearchBooking = memo(() => {
   );
 
   const { data } = useLocationsStore();
+
   const [dayRoutes, setDayRoutes] = useState<Record<string, ICity[]>>({});
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -102,9 +103,9 @@ const ResultSearchBooking = memo(() => {
   };
 
   const transformListLocationOptions = () => {
-    if (!data) return [];
+    if (!data || !data[0]?.company?.locations) return [];
 
-    return data.map((location) => ({
+    return data[0].company.locations.map((location) => ({
       id: location.documentId,
       name: location.location_name,
     }));
@@ -119,9 +120,12 @@ const ResultSearchBooking = memo(() => {
       },
     }));
 
-    const findLocation = data?.find(
-      (location) => location.documentId === option.id
-    );
+    const findLocation =
+      data &&
+      data[0].company.locations.find(
+        (location) => location.documentId === option.id
+      );
+
     if (findLocation && findLocation.routes) {
       const transformListRoutes = findLocation.routes.map((route) => ({
         id: String(route.documentId),
@@ -151,9 +155,11 @@ const ResultSearchBooking = memo(() => {
         Object.keys(resultSearchBooking).forEach((dayIndex) => {
           const routeId = resultSearchBooking[dayIndex]?.routes?.id;
           if (routeId) {
-            const findLocation = data.find(
-              (location) => location.documentId === routeId
-            );
+            const findLocation =
+              data &&
+              data[0].company.locations.find(
+                (location) => location.documentId === routeId
+              );
 
             if (findLocation && findLocation.routes) {
               const transformListRoutes = findLocation.routes.map((route) => ({

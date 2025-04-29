@@ -15,11 +15,13 @@ import useToastStore from "@/store/useToastStore";
 import { HistoryData } from "@/components/features/home/history-booking";
 import { IFormSearchResult } from "@/components/features/home/result-search-booking/defination";
 import { useVendorStore } from "@/store/useVendorStore";
+import useUserStore from "@/store/useUserStore";
 
 const BookRoomForm = () => {
   const { setOpenDialog } = useDialogStore();
   const { addToast } = useToastStore();
   const { vendors } = useVendorStore();
+  const { user } = useUserStore();
 
   const {
     getNumberOfDays,
@@ -56,13 +58,15 @@ const BookRoomForm = () => {
 
     setLoading(true);
     try {
-      const query = `?populate[routes][populate]=images&populate[hotels][populate][hotel_types][populate][price_hotels][filters][$or][0][start_date][$lte]=${formatDate(
+      const query = `?filters[username][$eq]=${
+        user?.username
+      }&populate[company][populate][locations][populate][hotels][populate][hotel_types][populate][price_hotels][filters][$or][0][start_date][$lte]=${formatDate(
         checkOut
-      )}&populate[hotels][populate][hotel_types][populate][price_hotels][filters][$or][0][end_date][$gte]=${formatDate(
+      )}&populate[company][populate][locations][populate][hotels][populate][hotel_types][populate][price_hotels][filters][$or][0][end_date][$gte]=${formatDate(
         checkIn
-      )}&populate[service_routes][populate]&populate[cars][populate][transportation_prices][populate]&populate[company][populate][service_companies][populate]`;
+      )}&populate[company][populate][locations][populate][routes][populate]&populate[company][populate][locations][populate][cars][populate][transportation_prices][populate]&populate[company][populate][service_companies][populate]&populate[company][populate][locations][populate][service_routes][populate]`;
       const response = await apiClient.get<LocationsResponse>(
-        `${API_ENDPOINTS.LOCATION}${query}`
+        `${API_ENDPOINTS.USERS}${query}`
       );
 
       if (response.data) {
