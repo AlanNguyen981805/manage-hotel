@@ -9,11 +9,7 @@ import {
   ImageRun,
   Packer,
   Paragraph,
-  Table,
-  TableCell,
-  TableRow,
   TextRun,
-  VerticalAlign,
 } from "docx";
 import { saveAs } from "file-saver";
 import { convertHtmlToDocx, convertImageToDocx } from "./data-mock";
@@ -25,11 +21,43 @@ export const generateWordDocument = async (
   resultSearchBooking,
   numberOfPeople,
   totals,
-  numberOfDays
+  numberOfDays,
+  lastestHistory
 ) => {
-  const imageResponse = await fetch("/logo.png").then((res) => res.blob());
+  const images = [
+    {
+      path: "/logo.png",
+      name: "header",
+    },
+    {
+      path: "/vietnam-best-places-to-visit-ho-chi-minh-city.jpg",
+      name: "header2",
+    },
+    {
+      path: "/vietnam-halong-bay.jpg",
+      name: "header3",
+    },
+    {
+      path: "/vietnam-hue-imperial-palace-gate.jpg",
+      name: "header4",
+    },
+  ];
 
-  const imageBufferHeader = await imageResponse.arrayBuffer();
+  const imageBuffers = await Promise.all(
+    images.map(async (image) => {
+      const response = await fetch(image.path);
+      const blob = await response.blob();
+      const buffer = await blob.arrayBuffer();
+      return { name: image.name, buffer };
+    })
+  );
+
+  const [
+    { buffer: imageBufferHeader },
+    { buffer: imageBufferHeader2 },
+    { buffer: imageBufferHeader3 },
+    { buffer: imageBufferHeader4 },
+  ] = imageBuffers;
 
   const doc = new Document({
     styles: {
@@ -69,324 +97,117 @@ export const generateWordDocument = async (
                   new ImageRun({
                     data: imageBufferHeader,
                     transformation: {
-                      width: 150,
-                      height: 150,
+                      width: 80,
+                      height: 80,
+                    },
+                  }),
+                  new TextRun({
+                    text: " ".repeat(2),
+                  }),
+                  new ImageRun({
+                    data: imageBufferHeader2,
+                    transformation: {
+                      width: 80,
+                      height: 80,
+                    },
+                  }),
+                  new TextRun({
+                    text: " ".repeat(2),
+                  }),
+                  new ImageRun({
+                    data: imageBufferHeader3,
+                    transformation: {
+                      width: 80,
+                      height: 80,
+                    },
+                  }),
+                  new TextRun({
+                    text: " ".repeat(2),
+                  }),
+                  new ImageRun({
+                    data: imageBufferHeader4,
+                    transformation: {
+                      width: 80,
+                      height: 80,
                     },
                   }),
                 ],
-              }),
-              new Paragraph({
-                alignment: AlignmentType.CENTER,
-                children: [
-                  new TextRun({
-                    text: "The Authentic Travel Company",
-                    color: "38bdf8",
-                    bold: true,
-                    size: 28,
-                    font: "Verdana",
-                  }),
-                ],
-                border: {
-                  bottom: {
-                    color: "38bdf8",
-                    size: 1,
-                    space: 10,
-                    style: "dashed",
-                  },
-                },
               }),
             ],
           }),
         },
         children: [
-          new Table({
-            width: {
-              size: 100,
-              type: "pct",
-            },
-            rows: [
-              new TableRow({
-                children: [
-                  new TableCell({
-                    children: [
-                      new Paragraph({
-                        alignment: AlignmentType.LEFT,
-                        children: [
-                          new TextRun({
-                            text: "Proposal to:",
-                            font: "Verdana",
-                          }),
-                        ],
-                      }),
-                    ],
-                    width: {
-                      size: 30,
-                      type: "pct",
-                    },
-                    margins: {
-                      top: 2,
-                      bottom: 2,
-                      left: 120,
-                      right: 120,
-                    },
-                    verticalAlign: "center",
-                  }),
-                  new TableCell({
-                    children: [
-                      new Paragraph({
-                        alignment: AlignmentType.LEFT,
-                        children: [
-                          new TextRun({
-                            text: vendor?.name || "",
-                            bold: true,
-                            font: "Verdana",
-                          }),
-                        ],
-                      }),
-                    ],
-                    width: {
-                      size: 70,
-                      type: "pct",
-                    },
-                    margins: {
-                      top: 2,
-                      bottom: 2,
-                      left: 120,
-                      right: 120,
-                    },
-                    verticalAlign: "center",
-                  }),
-                ],
-                height: {
-                  value: 400,
-                  rule: "atLeast",
-                },
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: "Request code",
+                font: "Verdana",
+                bold: true,
               }),
-              new TableRow({
-                children: [
-                  new TableCell({
-                    children: [
-                      new Paragraph({
-                        alignment: AlignmentType.LEFT,
-                        children: [
-                          new TextRun({
-                            text: "Travelling period:",
-                            font: "Verdana",
-                          }),
-                        ],
-                      }),
-                    ],
-                    width: {
-                      size: 30,
-                      type: "pct",
-                    },
-                    margins: {
-                      top: 2,
-                      bottom: 2,
-                      left: 120,
-                      right: 120,
-                    },
-                    verticalAlign: "center",
-                  }),
-                  new TableCell({
-                    children: [
-                      new Paragraph({
-                        alignment: AlignmentType.LEFT,
-                        children: [
-                          new TextRun({
-                            text: formatDate(dateCheckIn),
-                            font: "Verdana",
-                          }),
-                        ],
-                      }),
-                    ],
-                    width: {
-                      size: 70,
-                      type: "pct",
-                    },
-                    margins: {
-                      top: 2,
-                      bottom: 2,
-                      left: 120,
-                      right: 120,
-                    },
-                    verticalAlign: "center",
-                  }),
-                ],
-                height: {
-                  value: 400,
-                  rule: "atLeast",
-                },
-              }),
-              new TableRow({
-                children: [
-                  new TableCell({
-                    children: [
-                      new Paragraph({
-                        alignment: AlignmentType.LEFT,
-                        children: [
-                          new TextRun({
-                            text: "Destination(s):",
-                            font: "Verdana",
-                          }),
-                        ],
-                      }),
-                    ],
-                    width: {
-                      size: 30,
-                      type: "pct",
-                    },
-                    margins: {
-                      top: 2,
-                      bottom: 2,
-                      left: 120,
-                      right: 120,
-                    },
-                    verticalAlign: VerticalAlign.CENTER,
-                  }),
-                  new TableCell({
-                    children: [
-                      new Paragraph({
-                        alignment: AlignmentType.LEFT,
-                        children: [
-                          new TextRun({
-                            text: "Vietnam",
-                            font: "Verdana",
-                          }),
-                        ],
-                      }),
-                    ],
-                    width: {
-                      size: 70,
-                      type: "pct",
-                    },
-                    margins: {
-                      top: 2,
-                      bottom: 2,
-                      left: 120,
-                      right: 120,
-                    },
-                    verticalAlign: VerticalAlign.CENTER,
-                  }),
-                ],
-                height: {
-                  value: 400,
-                  rule: "atLeast",
-                },
-              }),
-              new TableRow({
-                children: [
-                  new TableCell({
-                    children: [
-                      new Paragraph({
-                        alignment: AlignmentType.LEFT,
-                        children: [
-                          new TextRun({
-                            text: "Number of pax",
-                            font: "Verdana",
-                          }),
-                        ],
-                      }),
-                    ],
-                    width: {
-                      size: 30,
-                      type: "pct",
-                    },
-                    margins: {
-                      top: 2,
-                      bottom: 2,
-                      left: 120,
-                      right: 120,
-                    },
-                    verticalAlign: "center",
-                  }),
-                  new TableCell({
-                    children: [
-                      new Paragraph({
-                        alignment: AlignmentType.LEFT,
-                        children: [
-                          new TextRun({
-                            text: `${numberOfPeople} pax`,
-                            font: "Verdana",
-                          }),
-                        ],
-                      }),
-                    ],
-                    width: {
-                      size: 70,
-                      type: "pct",
-                    },
-                    margins: {
-                      top: 2,
-                      bottom: 2,
-                      left: 120,
-                      right: 120,
-                    },
-                    verticalAlign: "center",
-                  }),
-                ],
-                height: {
-                  value: 400,
-                  rule: "atLeast",
-                },
-              }),
-              new TableRow({
-                children: [
-                  new TableCell({
-                    children: [
-                      new Paragraph({
-                        alignment: AlignmentType.LEFT,
-                        children: [
-                          new TextRun({
-                            text: "Nationality:",
-                            font: "Verdana",
-                          }),
-                        ],
-                      }),
-                    ],
-                    width: {
-                      size: 30,
-                      type: "pct",
-                    },
-                    margins: {
-                      top: 2,
-                      bottom: 2,
-                      left: 120,
-                      right: 120,
-                    },
-                    verticalAlign: "center",
-                  }),
-                  new TableCell({
-                    children: [
-                      new Paragraph({
-                        alignment: AlignmentType.LEFT,
-                        children: [
-                          new TextRun({
-                            text: vendor?.address || "",
-                            font: "Verdana",
-                          }),
-                        ],
-                      }),
-                    ],
-                    width: {
-                      size: 70,
-                      type: "pct",
-                    },
-                    margins: {
-                      top: 2,
-                      bottom: 2,
-                      left: 120,
-                      right: 120,
-                    },
-                    verticalAlign: "center",
-                  }),
-                ],
-                height: {
-                  value: 400,
-                  rule: "atLeast",
-                },
+              new TextRun({
+                text: `: ${lastestHistory?.code}`,
+                font: "Verdana",
               }),
             ],
+            spacing: {
+              before: 200,
+              after: 100,
+            },
+          }),
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: "Proposal to",
+                font: "Verdana",
+                bold: true,
+              }),
+              new TextRun({
+                text: `: ${vendor?.name ?? ""} - ${vendor?.phone ?? ""} - ${
+                  vendor?.email ?? ""
+                } - ${vendor?.company ?? ""}`,
+                font: "Verdana",
+              }),
+            ],
+            spacing: {
+              before: 100,
+              after: 100,
+            },
+          }),
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: "Travel period",
+                font: "Verdana",
+                bold: true,
+              }),
+              new TextRun({
+                text: `: ${formatDate(dateCheckIn)} - ${formatDate(
+                  dateCheckOut
+                )}`,
+                font: "Verdana",
+              }),
+            ],
+            spacing: {
+              before: 100,
+              after: 100,
+            },
+          }),
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: "Number of pax",
+                font: "Verdana",
+                bold: true,
+              }),
+              new TextRun({
+                text: `: ${numberOfPeople} people`,
+                font: "Verdana",
+              }),
+            ],
+            spacing: {
+              before: 100,
+              after: 200,
+            },
           }),
 
           ...(
@@ -447,70 +268,12 @@ export const generateWordDocument = async (
                             ],
                           }),
                         ]),
-                    // Accommodation details for each day
-                    ...(dayData?.hotels && dayData.hotels.length > 0
-                      ? [
-                          new Paragraph({
-                            spacing: {
-                              before: 200,
-                            },
-                            children: [
-                              new TextRun({
-                                text: "Accommodation: ",
-                                font: "Verdana",
-                              }),
-                              ...(() => {
-                                // Filter out duplicate hotels based on hotel_name
-                                const uniqueHotels = (
-                                  dayData?.hotels || []
-                                ).reduce((unique, hotel) => {
-                                  const hotelName =
-                                    hotel?.hotelName?.hotel_name || "";
-                                  if (
-                                    hotelName &&
-                                    !unique.some(
-                                      (h) =>
-                                        h?.hotelName?.hotel_name === hotelName
-                                    )
-                                  ) {
-                                    unique.push(hotel);
-                                  }
-                                  return unique;
-                                }, []);
-
-                                return uniqueHotels.reduce(
-                                  (acc: TextRun[], hotel, idx, arr) => {
-                                    // Add hotel name
-                                    acc.push(
-                                      new TextRun({
-                                        text:
-                                          hotel?.hotelName?.hotel_name || "",
-                                        font: "Verdana",
-                                      })
-                                    );
-
-                                    // Add separator if not the last hotel
-                                    if (idx < arr.length - 1) {
-                                      acc.push(
-                                        new TextRun({
-                                          text: " / ",
-                                          font: "Verdana",
-                                        })
-                                      );
-                                    }
-
-                                    return acc;
-                                  },
-                                  []
-                                );
-                              })(),
-                            ],
-                          }),
-                        ]
-                      : []),
-                    ...(dayData?.services?.some(
+                    // Services section
+                    ...((dayData?.hotels && dayData.hotels.length > 0) ||
+                    dayData?.services?.some(
                       (service) => service?.serviceType?.type === "company"
-                    )
+                    ) ||
+                    dayData?.transportation?.length > 0
                       ? [
                           new Paragraph({
                             spacing: {
@@ -518,93 +281,128 @@ export const generateWordDocument = async (
                             },
                             children: [
                               new TextRun({
-                                text: "Service included:",
+                                text: "Services include:",
                                 font: "Verdana",
+                                bold: true,
                               }),
-                              ...(() => {
-                                // Filter services with type = company
-                                const companyServices = (
-                                  dayData?.services || []
-                                ).filter(
-                                  (service) =>
-                                    service?.serviceType?.type === "company"
-                                );
-
-                                return companyServices.reduce(
-                                  (acc: TextRun[], service, idx, arr) => {
-                                    // Add service name
-                                    acc.push(
-                                      new TextRun({
-                                        text: ` ${
-                                          service?.serviceType?.desc || ""
-                                        }`,
-                                        font: "Verdana",
-                                      })
-                                    );
-
-                                    // Add separator if not the last service
-                                    if (idx < arr.length - 1) {
-                                      acc.push(
-                                        new TextRun({
-                                          text: " / ",
-                                          font: "Verdana",
-                                        })
-                                      );
-                                    }
-
-                                    return acc;
+                            ],
+                          }),
+                          // Accommodation
+                          ...(dayData?.hotels && dayData.hotels.length > 0
+                            ? [
+                                new Paragraph({
+                                  spacing: {
+                                    before: 100,
                                   },
-                                  []
-                                );
-                              })(),
-                            ],
-                          }),
-                        ]
-                      : []),
-                    ...(dayData?.services?.some(
-                      (service) => service?.serviceType?.type === "route"
-                    ) || dayData?.transportation?.length > 0
-                      ? [
-                          new Paragraph({
-                            spacing: {
-                              before: 100,
-                            },
-                            children: [
-                              new TextRun({
-                                text: `Transfer: ${
-                                  dayData?.transportation?.length > 0
-                                    ? dayData?.transportation[0]
-                                        ?.transportationPrice?.desc
-                                    : ""
-                                }`,
-                                font: "Verdana",
-                              }),
-                            ],
-                          }),
-                        ]
-                      : []),
+                                  bullet: {
+                                    level: 0,
+                                  },
+                                  children: [
+                                    new TextRun({
+                                      text: `Accommodation: ${(() => {
+                                        const uniqueHotels = (
+                                          dayData?.hotels || []
+                                        ).reduce((unique: any[], hotel) => {
+                                          const hotelName =
+                                            hotel?.hotelName?.hotel_name || "";
+                                          if (
+                                            hotelName &&
+                                            !unique.some(
+                                              (h) =>
+                                                h?.hotelName?.hotel_name ===
+                                                hotelName
+                                            )
+                                          ) {
+                                            unique.push(hotel);
+                                          }
+                                          return unique;
+                                        }, []);
 
-                    ...(dayData?.services || [])
-                      .filter(
-                        (service) => service?.serviceType?.type === "route"
-                      )
-                      .map((service) => {
-                        return new Paragraph({
-                          spacing: {
-                            before: 100,
-                          },
-                          children: [
-                            new TextRun({
-                              text: `- ${service?.serviceType?.desc || ""}`,
-                              font: "Verdana",
-                            }),
-                          ],
-                        });
-                      }),
+                                        return uniqueHotels
+                                          .map(
+                                            (hotel) =>
+                                              hotel?.hotelName?.hotel_name || ""
+                                          )
+                                          .join(" / ");
+                                      })()}`,
+                                      font: "Verdana",
+                                    }),
+                                  ],
+                                }),
+                              ]
+                            : []),
+                          // Transportation
+                          ...(dayData?.transportation?.length > 0
+                            ? [
+                                new Paragraph({
+                                  spacing: {
+                                    before: 100,
+                                  },
+                                  bullet: {
+                                    level: 0,
+                                  },
+                                  children: [
+                                    new TextRun({
+                                      text: `Transportation: ${dayData.transportation
+                                        .map((t) => t.transportationType.name)
+                                        .join(" / ")}`,
+                                      font: "Verdana",
+                                    }),
+                                  ],
+                                }),
+                              ]
+                            : []),
+                          // Services
+                          ...(dayData?.services?.length > 0
+                            ? [
+                                new Paragraph({
+                                  spacing: {
+                                    before: 100,
+                                  },
+                                  bullet: {
+                                    level: 0,
+                                  },
+                                  children: [
+                                    new TextRun({
+                                      text: `Services: ${dayData.services
+                                        .map((s) => s.serviceType.name)
+                                        .join(" / ")}`,
+                                      font: "Verdana",
+                                    }),
+                                  ],
+                                }),
+                              ]
+                            : []),
+                        ]
+                      : []),
                   ];
                 })
             )
           ).flat(),
+
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: `THE PROPOSAL IN US DOLLAR PER PERSON VALID WITHIN 7 DAYS`,
+                color: "FF0000",
+                bold: true,
+                font: "Verdana",
+              }),
+            ],
+            spacing: {
+              before: 200,
+            },
+          }),
+
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: "─────────────────────────────────────────────────────────────────────",
+                font: "Verdana",
+              }),
+            ],
+            alignment: AlignmentType.LEFT,
+          }),
 
           new Paragraph({
             children: [
@@ -624,8 +422,19 @@ export const generateWordDocument = async (
           new Paragraph({
             children: [
               new TextRun({
-                text: "Children from 6 - 11 years 50% of tour cost (without extra bed) & 75% of tour cost (with extra bed)",
-                size: 16,
+                text: "Services excluded",
+                bold: true,
+                font: "Verdana",
+              }),
+            ],
+            spacing: {
+              before: 200,
+            },
+          }),
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: "All domestic and international flights, other meals, tips, drinks, international airport tax, single room supplements, peak season surcharges, personal expenses, travel insurance, visas, any optional additional tours or activities during free time, early check in/late check-out at your hotel, Covid test and anything related to covid",
                 font: "Verdana",
               }),
             ],
@@ -634,7 +443,7 @@ export const generateWordDocument = async (
           new Paragraph({
             children: [
               new TextRun({
-                text: "Surcharge upon request",
+                text: "SURCHARGE UPON REQUEST",
                 size: 20,
                 bold: true,
                 font: "Verdana",
@@ -644,6 +453,19 @@ export const generateWordDocument = async (
               before: 200,
             },
           }),
+
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: "─────────────────────────────────────────────────────────────────────",
+                font: "Verdana",
+              }),
+            ],
+            spacing: {
+              after: 0,
+            },
+          }),
+
           new Paragraph({
             children: [
               new TextRun({
@@ -1780,7 +1602,8 @@ export const generateWordDocument = async (
       },
     ],
   });
+
   Packer.toBlob(doc).then((blob) => {
-    saveAs(blob, "document.docx");
+    saveAs(blob, `${lastestHistory?.code}.docx`);
   });
 };

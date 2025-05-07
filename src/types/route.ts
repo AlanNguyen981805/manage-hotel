@@ -119,6 +119,7 @@ export interface Route {
   desc: string;
   description: string;
   desc_relation: string;
+  priority?: number;
 }
 
 export interface Location {
@@ -133,6 +134,7 @@ export interface Location {
   routes: Route[];
   cars: Cars[];
   service_routes: ServiceRoute[];
+  priority?: number;
 }
 
 export interface User {

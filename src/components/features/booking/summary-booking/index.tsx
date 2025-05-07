@@ -4,6 +4,11 @@ import { IFormSearchResult } from "@/components/features/home/result-search-book
 import { Price } from "@/components/ui/price";
 import { useTranslation } from "@/hooks/useTranslation";
 import { generateWordDocument } from "./booking-info-doc";
+import { useEffect, useState } from "react";
+import { apiClient } from "@/lib/api/client";
+import { HistoryData } from "../../home/history-booking";
+import { API_ENDPOINTS } from "@/lib/api/config";
+import useUserStore from "@/store/useUserStore";
 
 interface VendorInfo {
   name: string;
@@ -30,6 +35,10 @@ export const SummaryBooking = ({
   numberOfDays,
 }: SummaryBookingProps) => {
   const { t } = useTranslation();
+  const { user } = useUserStore();
+  const [lastestHistory, setLastestHistory] = useState<HistoryData | null>(
+    null
+  );
 
   const calculateTotals = () => {
     let hotelTotal = 0;
@@ -73,6 +82,24 @@ export const SummaryBooking = ({
 
   const totals = calculateTotals();
 
+  useEffect(() => {
+    const fetchLatestHistory = async () => {
+      try {
+        // Get only the latest record by sorting descending and limiting to 1
+        const queryParams = `?filters[users_permissions_user][company][id][$eq]=${user?.company?.id}&populate=users_permissions_user.company&sort=createdAt:desc&pagination[pageSize]=1&pagination[page]=1`;
+
+        const response = await apiClient.get<{ data: HistoryData[] }>(
+          `${API_ENDPOINTS.HISTORIES}${queryParams}`
+        );
+
+        setLastestHistory(response.data.data?.[0] || null);
+      } catch (error) {
+        console.error("Error fetching latest history:", error);
+      }
+    };
+
+    fetchLatestHistory();
+  }, [totals]);
   return (
     <div className="bg-white rounded-lg shadow p-6">
       <div className="flex flex-col gap-6">
@@ -144,7 +171,8 @@ export const SummaryBooking = ({
                 resultSearchBooking,
                 numberOfPeople,
                 totals,
-                numberOfDays
+                numberOfDays,
+                lastestHistory
               )
             }
           >

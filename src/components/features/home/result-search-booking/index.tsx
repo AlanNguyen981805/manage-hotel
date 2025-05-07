@@ -132,7 +132,6 @@ const ResultSearchBooking = memo(() => {
         documentId: String(route.documentId),
         name: route.name,
         desc: route.description,
-        images: route.images,
       }));
 
       // Store routes for this specific day
