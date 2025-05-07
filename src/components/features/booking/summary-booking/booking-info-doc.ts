@@ -556,97 +556,7 @@ export const generateWordDocument = async (
             ],
           }),
 
-          // new Paragraph({
-          //   children: [
-          //     new TextRun({
-          //       text: "INCLUDED IN THE PRICE:",
-          //       bold: true,
-          //       size: 18,
-          //       color: "0070C0",
-          //       font: "Verdana",
-          //     }),
-          //   ],
-          //   spacing: {
-          //     before: 200,
-          //   },
-          // }),
-          // new Paragraph({
-          //   text: "Transportation in private vehicle with driver",
-          //   indent: {
-          //     left: 620,
-          //   },
-          //   bullet: {
-          //     level: 0,
-          //   },
-          // }),
-          // new Paragraph({
-          //   text: "Hotel at mentioned or similar in Double/ Twin room or triple",
-          //   indent: {
-          //     left: 620,
-          //   },
-          //   bullet: {
-          //     level: 0,
-          //   },
-          // }),
-          // new Paragraph({
-          //   text: "Meal as mentioned in the program (B=breakfast, L=lunch, D=dinner)",
-          //   indent: {
-          //     left: 620,
-          //   },
-          //   bullet: {
-          //     level: 0,
-          //   },
-          // }),
-          // new Paragraph({
-          //   text: "Entrance fee to indicated sights",
-          //   indent: {
-          //     left: 620,
-          //   },
-          //   bullet: {
-          //     level: 0,
-          //   },
-          // }),
-          // new Paragraph({
-          //   text: "English speaking guide",
-          //   indent: {
-          //     left: 620,
-          //   },
-          //   bullet: {
-          //     level: 0,
-          //   },
-          // }),
-          // new Paragraph({
-          //   text: "02 bottles of mineral water during tour",
-          //   indent: {
-          //     left: 620,
-          //   },
-          //   bullet: {
-          //     level: 0,
-          //   },
-          // }),
-          // new Paragraph({
-          //   children: [
-          //     new TextRun({
-          //       text: "EXCLUSIVE:",
-          //       bold: true,
-          //       size: 18,
-          //       color: "0070C0",
-          //       font: "Verdana",
-          //     }),
-          //   ],
-          //   spacing: {
-          //     before: 200,
-          //   },
-          // }),
-          // new Paragraph({
-          //   text: "Domestic and international flights, other meals, tips, drinks, international airport tax, single room supplements, peak season surcharges, personal expenses, travel insurance, visas, any optional additional tours or activities during free time, check in/check out at your hotel, Covid tests and anything related to covid",
-          //   spacing: {
-          //     after: 200,
-          //   },
-          // }),
-
           new Paragraph({
-            heading: "Heading5",
             alignment: AlignmentType.LEFT,
             spacing: {
               before: 400,
@@ -660,60 +570,77 @@ export const generateWordDocument = async (
             ],
           }),
           new Paragraph({
-            text: "Bank transfer to Jewel Tours, the bank fee charge $25 to the total invoice",
-            spacing: {
-              before: 100,
-            },
-            bullet: {
-              level: 0,
-            },
-          }),
-          new Paragraph({
-            text: "Pay 15% by bank transfer and balance on arrival, the bank fee charge $25 to the total invoice",
-            bullet: {
-              level: 0,
-            },
-          }),
-          new Paragraph({
-            bullet: {
-              level: 0,
-            },
             children: [
+              new TextRun({
+                text: "─────────────────────────────────────────────────────────────────────",
+                font: "Verdana",
+              }),
+            ],
+            spacing: {
+              after: 0,
+            },
+          }),
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: "❖ ",
+                font: "Verdana",
+              }),
+              new TextRun({
+                text: "Bank transfer to Jewel Tours, the bank fee charge $25 to the total invoice",
+                font: "Verdana",
+              }),
+            ],
+          }),
+
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: "❖ ",
+                font: "Verdana",
+              }),
+              new TextRun({
+                text: "Pay 15% by bank transfer and balance on arrival, the bank fee charge $25 to the total invoice",
+                font: "Verdana",
+              }),
+            ],
+          }),
+
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: "❖ ",
+                font: "Verdana",
+              }),
               new TextRun({
                 text: "Online credit card payment - 3.5% fee will apply (Arrival Payment amount Refund upon receive full payment) - ",
               }),
 
               new ExternalHyperlink({
-                children: [
-                  new TextRun({
-                    text: "https://portal.vietcombank.com.vn/en-Us/Personal/TG/Pages/exchange-rate.aspx",
-                    color: "0000FF",
-                    underline: {},
-                    style: "Hyperlink",
-                  }),
-                ],
+                child: new TextRun({
+                  text: "https://portal.vietcombank.com.vn/en-Us/Personal/TG/Pages/exchange-rate.aspx",
+                  color: "0000FF",
+                  underline: {},
+                  style: "Hyperlink",
+                }),
                 link: "https://portal.vietcombank.com.vn/en-Us/Personal/TG/Pages/exchange-rate.aspx",
               }),
 
               new TextRun({
                 text: " UAZMRMSHSATN4ATNA - Payment must be in VND apply at rate from this link: ",
               }),
-
               new ExternalHyperlink({
-                children: [
-                  new TextRun({
-                    text: "https://portal.vietcombank.com.vn/en-Us/Corporate/TG/Pages/exchange-rate.aspx",
-                    color: "0000FF",
-                    underline: {},
-                    style: "Hyperlink",
-                  }),
-                ],
+                child: new TextRun({
+                  text: "https://portal.vietcombank.com.vn/en-Us/Corporate/TG/Pages/exchange-rate.aspx",
+                  color: "0000FF",
+                  underline: {},
+                  style: "Hyperlink",
+                }),
                 link: "https://portal.vietcombank.com.vn/en-Us/Corporate/TG/Pages/exchange-rate.aspx",
               }),
             ],
           }),
           new Paragraph({
-            heading: "Heading1",
             alignment: AlignmentType.CENTER,
             spacing: {
               before: 400,
@@ -721,7 +648,6 @@ export const generateWordDocument = async (
             children: [
               new TextRun({
                 text: "GENERAL BOOKING CONDITION",
-                color: "0070C0",
                 bold: true,
                 size: 28,
                 font: "Verdana",
@@ -846,6 +772,10 @@ export const generateWordDocument = async (
           new Paragraph({
             children: [
               new TextRun({
+                text: "❖ ",
+                font: "Verdana",
+              }),
+              new TextRun({
                 text: "Option 1",
                 bold: true,
                 font: "Verdana",
@@ -854,9 +784,6 @@ export const generateWordDocument = async (
             ],
             spacing: {
               before: 100,
-            },
-            bullet: {
-              level: 0,
             },
           }),
           new Paragraph({
@@ -880,6 +807,10 @@ export const generateWordDocument = async (
           new Paragraph({
             children: [
               new TextRun({
+                text: "❖ ",
+                font: "Verdana",
+              }),
+              new TextRun({
                 text: "Option 2",
                 bold: true,
                 font: "Verdana",
@@ -888,9 +819,6 @@ export const generateWordDocument = async (
             ],
             spacing: {
               before: 100,
-            },
-            bullet: {
-              level: 0,
             },
           }),
           new Paragraph({
@@ -949,6 +877,10 @@ export const generateWordDocument = async (
           new Paragraph({
             children: [
               new TextRun({
+                text: "❖ ",
+                font: "Verdana",
+              }),
+              new TextRun({
                 text: "Pay for accommodation, payment term is attached to the booking",
                 font: "Verdana",
                 size: 18,
@@ -956,9 +888,6 @@ export const generateWordDocument = async (
             ],
             spacing: {
               before: 100,
-            },
-            bullet: {
-              level: 0,
             },
           }),
           new Paragraph({
@@ -976,15 +905,16 @@ export const generateWordDocument = async (
           new Paragraph({
             children: [
               new TextRun({
+                text: "❖ ",
+                font: "Verdana",
+              }),
+              new TextRun({
                 text: "2.1 Payment by money transfer",
                 bold: true,
                 font: "Verdana",
                 size: 18,
               }),
             ],
-            spacing: {
-              before: 100,
-            },
           }),
           new Paragraph({
             children: [
@@ -1007,7 +937,7 @@ export const generateWordDocument = async (
           new Paragraph({
             children: [
               new TextRun({
-                text: "Address: No. 442 Doi Can, Ba Dinh, Ha Ba Trung, Hanoi, Vietnam",
+                text: "Address:          No. 442 Doi Can, Ba Dinh, Ha Ba Trung, Hanoi, Vietnam",
                 size: 18,
                 font: "Verdana",
               }),
@@ -1016,7 +946,7 @@ export const generateWordDocument = async (
           new Paragraph({
             children: [
               new TextRun({
-                text: "Beneficiary: EVIS TOUR JSC",
+                text: "Account name: EVIS TOUR JSC",
                 size: 18,
                 font: "Verdana",
               }),
@@ -1034,7 +964,7 @@ export const generateWordDocument = async (
           new Paragraph({
             children: [
               new TextRun({
-                text: "USD: 15453459 | EUR: 60466249",
+                text: "                       AUD: 113606059 | SGD: 113605319 | GBP: 113739979",
                 size: 18,
                 font: "Verdana",
               }),
@@ -1043,7 +973,7 @@ export const generateWordDocument = async (
           new Paragraph({
             children: [
               new TextRun({
-                text: "Swift code: ASCBVNVX | ACBV VIETNAM",
+                text: "Swift code:       ASCBVNVX | ACBV VIETNAM",
                 size: 18,
                 font: "Verdana",
               }),
@@ -1125,9 +1055,6 @@ export const generateWordDocument = async (
                 font: "Verdana",
               }),
             ],
-            spacing: {
-              before: 100,
-            },
           }),
           new Paragraph({
             children: [
@@ -1139,9 +1066,6 @@ export const generateWordDocument = async (
             ],
           }),
           new Paragraph({
-            spacing: {
-              before: 200,
-            },
             children: [
               new TextRun({
                 text: "3. BOOKING AMENDMENT",
@@ -1162,7 +1086,7 @@ export const generateWordDocument = async (
           }),
           new Paragraph({
             spacing: {
-              before: 200,
+              before: 50,
             },
             children: [
               new TextRun({
@@ -1183,7 +1107,7 @@ export const generateWordDocument = async (
               }),
             ],
             spacing: {
-              before: 100,
+              before: 50,
             },
           }),
           new Paragraph({
@@ -1205,7 +1129,7 @@ export const generateWordDocument = async (
               }),
             ],
             spacing: {
-              before: 400,
+              before: 200,
             },
           }),
           new Paragraph({
@@ -1573,51 +1497,106 @@ export const generateWordDocument = async (
             },
           }),
         ],
+        // footers: {
+        //   default: new Footer({
+        //     children: [
+        //       new Paragraph({
+        //         border: {
+        //           top: {
+        //             color: "38bdf8",
+        //             size: 1,
+        //             space: 10,
+        //             style: "dashed",
+        //           },
+        //         },
+        //         alignment: AlignmentType.CENTER,
+        //         children: [
+        //           new TextRun({
+        //             text: "Add: 18th floor, VTC Online building, 18 Tam Trinh, Hai Ba Trung, Viet Nam",
+        //           }),
+        //         ],
+        //       }),
+        //       new Paragraph({
+        //         alignment: AlignmentType.CENTER,
+        //         children: [
+        //           new TextRun({
+        //             text: "Trading license: 0103007908 | Internatinal license: 01 -043/2014/TCDL-GPLHQT",
+        //           }),
+        //         ],
+        //       }),
+        //       new Paragraph({
+        //         alignment: AlignmentType.CENTER,
+        //         children: [
+        //           new TextRun({
+        //             text: "Phone: +84 243 3974 6373 | Email: ",
+        //           }),
+        //           new TextRun({
+        //             text: "info@jeweltours.com",
+        //             color: "38bdf8",
+        //           }),
+        //           new TextRun({
+        //             text: " | Website: ",
+        //           }),
+        //           new TextRun({
+        //             text: "www.jeweltours.com",
+        //             color: "38bdf8",
+        //           }),
+        //         ],
+        //       }),
+        //     ],
+        //   }),
+        // },
+
         footers: {
           default: new Footer({
             children: [
               new Paragraph({
-                border: {
-                  top: {
-                    color: "38bdf8",
-                    size: 1,
-                    space: 10,
-                    style: "dashed",
-                  },
-                },
-                alignment: AlignmentType.CENTER,
                 children: [
                   new TextRun({
-                    text: "Add: 18th floor, VTC Online building, 18 Tam Trinh, Hai Ba Trung, Viet Nam",
+                    text: "", // Đường kẻ ngang
+                    border: {
+                      top: {
+                        color: "000000",
+                        size: 6,
+                        style: "single",
+                      },
+                    },
                   }),
                 ],
               }),
               new Paragraph({
-                alignment: AlignmentType.CENTER,
                 children: [
+                  new ImageRun({
+                    data: imageBufferHeader,
+                    transformation: {
+                      width: 50,
+                      height: 50,
+                    },
+                  }),
                   new TextRun({
-                    text: "Trading license: 0103007908 | Internatinal license: 01 -043/2014/TCDL-GPLHQT",
+                    text: "   Add: 18th floor, VTC Online building, 18 Tam Trinh, Hai Ba Trung, Hanoi, Vietnam",
                   }),
                 ],
+                alignment: AlignmentType.LEFT,
               }),
               new Paragraph({
-                alignment: AlignmentType.CENTER,
+                text: "Trading license: 0103009708 | International license: 01-043/2014/TCDL-GPLHQT",
+                alignment: AlignmentType.LEFT,
+              }),
+              new Paragraph({
                 children: [
-                  new TextRun({
-                    text: "Phone: +84 243 3974 6373 | Email: ",
-                  }),
+                  new TextRun("Phone: +84 243 3974 6373 | Email: "),
                   new TextRun({
                     text: "info@jeweltours.com",
-                    color: "38bdf8",
+                    color: "0000FF",
                   }),
-                  new TextRun({
-                    text: " | Website: ",
-                  }),
+                  new TextRun(" | Website: "),
                   new TextRun({
                     text: "www.jeweltours.com",
-                    color: "38bdf8",
+                    color: "0000FF",
                   }),
                 ],
+                alignment: AlignmentType.LEFT,
               }),
             ],
           }),
