@@ -490,7 +490,6 @@ export const generateWordDocument = async (
               new TextRun({
                 text: "CONDITION FOR ASIAN MARKET",
                 bold: true,
-                color: "FF0000",
                 font: "Verdana",
               }),
             ],
@@ -501,125 +500,150 @@ export const generateWordDocument = async (
           new Paragraph({
             children: [
               new TextRun({
-                text: "Compulsory tips: US$ 3 per person per day to tour guide and driver (Group from 5 – 15 pax)",
-                size: 18,
+                text: "❖ ",
+                font: "Verdana",
+              }),
+              new TextRun({
+                text: "Compulsory tips: US$ 4 per person per day to tour guide and driver (Group from 2 - 4 pax up)",
                 font: "Verdana",
               }),
             ],
-            indent: {
-              left: 420,
-            },
           }),
           new Paragraph({
             children: [
+              new TextRun({
+                text: "❖ ",
+                font: "Verdana",
+              }),
+              new TextRun({
+                text: "Compulsory tips: US$ 3 per person per day to tour guide and driver (Group from 5 – 15 pax)",
+                font: "Verdana",
+              }),
+            ],
+          }),
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: "❖ ",
+                font: "Verdana",
+              }),
+              new TextRun({
+                text: "Compulsory tips: US$ 2 per person per day to tour guide and driver (Group from 16 - 20 pax)",
+                font: "Verdana",
+              }),
+            ],
+          }),
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: "❖ ",
+                font: "Verdana",
+              }),
               new TextRun({
                 text: "Payment by bank transfer charge: US$ 25 bank fees (Apply for any group less than 10 pax)",
                 size: 18,
                 font: "Verdana",
               }),
             ],
-            indent: {
-              left: 420,
-            },
           }),
           new Paragraph({
             children: [
               new TextRun({
+                italics: true,
                 text: "*Our guide will collect tips upon arrival in cash",
-                color: "FF0000",
                 font: "Verdana",
               }),
             ],
           }),
 
-          new Paragraph({
-            children: [
-              new TextRun({
-                text: "INCLUDED IN THE PRICE:",
-                bold: true,
-                size: 18,
-                color: "0070C0",
-                font: "Verdana",
-              }),
-            ],
-            spacing: {
-              before: 200,
-            },
-          }),
-          new Paragraph({
-            text: "Transportation in private vehicle with driver",
-            indent: {
-              left: 620,
-            },
-            bullet: {
-              level: 0,
-            },
-          }),
-          new Paragraph({
-            text: "Hotel at mentioned or similar in Double/ Twin room or triple",
-            indent: {
-              left: 620,
-            },
-            bullet: {
-              level: 0,
-            },
-          }),
-          new Paragraph({
-            text: "Meal as mentioned in the program (B=breakfast, L=lunch, D=dinner)",
-            indent: {
-              left: 620,
-            },
-            bullet: {
-              level: 0,
-            },
-          }),
-          new Paragraph({
-            text: "Entrance fee to indicated sights",
-            indent: {
-              left: 620,
-            },
-            bullet: {
-              level: 0,
-            },
-          }),
-          new Paragraph({
-            text: "English speaking guide",
-            indent: {
-              left: 620,
-            },
-            bullet: {
-              level: 0,
-            },
-          }),
-          new Paragraph({
-            text: "02 bottles of mineral water during tour",
-            indent: {
-              left: 620,
-            },
-            bullet: {
-              level: 0,
-            },
-          }),
-          new Paragraph({
-            children: [
-              new TextRun({
-                text: "EXCLUSIVE:",
-                bold: true,
-                size: 18,
-                color: "0070C0",
-                font: "Verdana",
-              }),
-            ],
-            spacing: {
-              before: 200,
-            },
-          }),
-          new Paragraph({
-            text: "Domestic and international flights, other meals, tips, drinks, international airport tax, single room supplements, peak season surcharges, personal expenses, travel insurance, visas, any optional additional tours or activities during free time, check in/check out at your hotel, Covid tests and anything related to covid",
-            spacing: {
-              after: 200,
-            },
-          }),
+          // new Paragraph({
+          //   children: [
+          //     new TextRun({
+          //       text: "INCLUDED IN THE PRICE:",
+          //       bold: true,
+          //       size: 18,
+          //       color: "0070C0",
+          //       font: "Verdana",
+          //     }),
+          //   ],
+          //   spacing: {
+          //     before: 200,
+          //   },
+          // }),
+          // new Paragraph({
+          //   text: "Transportation in private vehicle with driver",
+          //   indent: {
+          //     left: 620,
+          //   },
+          //   bullet: {
+          //     level: 0,
+          //   },
+          // }),
+          // new Paragraph({
+          //   text: "Hotel at mentioned or similar in Double/ Twin room or triple",
+          //   indent: {
+          //     left: 620,
+          //   },
+          //   bullet: {
+          //     level: 0,
+          //   },
+          // }),
+          // new Paragraph({
+          //   text: "Meal as mentioned in the program (B=breakfast, L=lunch, D=dinner)",
+          //   indent: {
+          //     left: 620,
+          //   },
+          //   bullet: {
+          //     level: 0,
+          //   },
+          // }),
+          // new Paragraph({
+          //   text: "Entrance fee to indicated sights",
+          //   indent: {
+          //     left: 620,
+          //   },
+          //   bullet: {
+          //     level: 0,
+          //   },
+          // }),
+          // new Paragraph({
+          //   text: "English speaking guide",
+          //   indent: {
+          //     left: 620,
+          //   },
+          //   bullet: {
+          //     level: 0,
+          //   },
+          // }),
+          // new Paragraph({
+          //   text: "02 bottles of mineral water during tour",
+          //   indent: {
+          //     left: 620,
+          //   },
+          //   bullet: {
+          //     level: 0,
+          //   },
+          // }),
+          // new Paragraph({
+          //   children: [
+          //     new TextRun({
+          //       text: "EXCLUSIVE:",
+          //       bold: true,
+          //       size: 18,
+          //       color: "0070C0",
+          //       font: "Verdana",
+          //     }),
+          //   ],
+          //   spacing: {
+          //     before: 200,
+          //   },
+          // }),
+          // new Paragraph({
+          //   text: "Domestic and international flights, other meals, tips, drinks, international airport tax, single room supplements, peak season surcharges, personal expenses, travel insurance, visas, any optional additional tours or activities during free time, check in/check out at your hotel, Covid tests and anything related to covid",
+          //   spacing: {
+          //     after: 200,
+          //   },
+          // }),
 
           new Paragraph({
             heading: "Heading5",
@@ -630,7 +654,6 @@ export const generateWordDocument = async (
             children: [
               new TextRun({
                 text: "HOW TO MAKE PAYMENT",
-                color: "FF0000",
                 bold: true,
                 font: "Verdana",
               }),
