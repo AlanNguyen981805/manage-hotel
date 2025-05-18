@@ -15,6 +15,7 @@ interface Vendor {
   phone: string;
   email: string;
   documentId: string;
+  company: string;
 }
 
 interface CreateVendorForm {
@@ -22,6 +23,7 @@ interface CreateVendorForm {
   address: string;
   phone: string;
   email: string;
+  company: string;
 }
 
 interface VendorSearchProps {
@@ -37,6 +39,7 @@ const VendorSearch = ({ onSelectVendor }: VendorSearchProps) => {
     address: "",
     phone: "",
     email: "",
+    company: "",
   });
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingVendor, setEditingVendor] = useState<Vendor | null>(null);
@@ -45,6 +48,7 @@ const VendorSearch = ({ onSelectVendor }: VendorSearchProps) => {
     address: "",
     phone: "",
     email: "",
+    company: "",
   });
 
   // Zustand stores
@@ -122,7 +126,7 @@ const VendorSearch = ({ onSelectVendor }: VendorSearchProps) => {
 
     try {
       await createVendor(formData);
-      setFormData({ name: "", address: "", phone: "", email: "" });
+      setFormData({ name: "", address: "", phone: "", email: "", company: "" });
       setIsCreateModalOpen(false);
       addToast("Vendor created successfully", "success");
     } catch (error) {
@@ -165,6 +169,7 @@ const VendorSearch = ({ onSelectVendor }: VendorSearchProps) => {
       address: vendor.address,
       phone: vendor.phone,
       email: vendor.email,
+      company: vendor.company,
     });
     setIsEditModalOpen(true);
     setIsDropdownVisible(false);
@@ -218,6 +223,7 @@ const VendorSearch = ({ onSelectVendor }: VendorSearchProps) => {
               <div>{selectedVendor.address}</div>
               <div>Phone: {selectedVendor.phone}</div>
               <div>Email: {selectedVendor.email}</div>
+              <div>Company: {selectedVendor.company}</div>
             </div>
           </div>
         )}
@@ -346,6 +352,21 @@ const VendorSearch = ({ onSelectVendor }: VendorSearchProps) => {
                       }
                     />
                   </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Company
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
+                      value={formData.company}
+                      onChange={(e) =>
+                        setFormData({ ...formData, company: e.target.value })
+                      }
+                    />
+                  </div>
                 </div>
 
                 <div className="mt-6 flex justify-end space-x-3">
@@ -456,6 +477,24 @@ const VendorSearch = ({ onSelectVendor }: VendorSearchProps) => {
                         setEditFormData({
                           ...editFormData,
                           email: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Company
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-accent focus:outline-none focus:ring-accent"
+                      value={editFormData.company}
+                      onChange={(e) =>
+                        setEditFormData({
+                          ...editFormData,
+                          company: e.target.value,
                         })
                       }
                     />

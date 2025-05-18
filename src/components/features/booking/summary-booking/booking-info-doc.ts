@@ -354,24 +354,23 @@ export const generateWordDocument = async (
                             : []),
                           // Services
                           ...(dayData?.services?.length > 0
-                            ? [
-                                new Paragraph({
-                                  spacing: {
-                                    before: 100,
-                                  },
-                                  bullet: {
-                                    level: 0,
-                                  },
-                                  children: [
-                                    new TextRun({
-                                      text: `Services: ${dayData.services
-                                        .map((s) => s.serviceType.name)
-                                        .join(" / ")}`,
-                                      font: "Verdana",
-                                    }),
-                                  ],
-                                }),
-                              ]
+                            ? dayData.services.map(
+                                (service) =>
+                                  new Paragraph({
+                                    spacing: {
+                                      before: 100,
+                                    },
+                                    bullet: {
+                                      level: 0,
+                                    },
+                                    children: [
+                                      new TextRun({
+                                        text: service.serviceType.name,
+                                        font: "Verdana",
+                                      }),
+                                    ],
+                                  })
+                              )
                             : []),
                         ]
                       : []),

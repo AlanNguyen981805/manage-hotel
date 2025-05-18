@@ -15,6 +15,7 @@ interface VendorInfo {
   address?: string;
   phone?: string;
   email?: string;
+  company?: string;
 }
 
 interface SummaryBookingProps {
@@ -125,6 +126,11 @@ export const SummaryBooking = ({
               {vendor.email && (
                 <p>
                   <span className="font-medium">Email:</span> {vendor.email}
+                </p>
+              )}
+              {vendor.company && (
+                <p>
+                  <span className="font-medium">Company:</span> {vendor.company}
                 </p>
               )}
             </div>

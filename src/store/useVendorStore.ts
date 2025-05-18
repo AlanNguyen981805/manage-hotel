@@ -10,6 +10,7 @@ interface Vendor {
   phone: string;
   email: string;
   documentId: string;
+  company: string;
 }
 
 interface CreateVendorForm {
@@ -17,6 +18,7 @@ interface CreateVendorForm {
   address: string;
   phone: string;
   email: string;
+  company: string;
 }
 
 interface VendorState {

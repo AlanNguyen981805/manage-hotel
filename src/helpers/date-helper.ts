@@ -16,13 +16,16 @@ export const formatDate = (date: Date) => {
 };
 
 export const formatDateNoUtc = (date: Date | string) => {
-  // Chuyển đổi sang Date mà không bị lệch múi giờ
+  console.log("date :>> ", date);
   const dateObj = new Date(date);
 
-  // Lấy thông tin ngày tháng năm theo UTC để tránh bị lệch
-  const year = dateObj.getUTCFullYear();
-  const month = String(dateObj.getUTCMonth() + 1).padStart(2, "0");
-  const day = String(dateObj.getUTCDate()).padStart(2, "0");
+  // Lấy ngày theo múi giờ Việt Nam (UTC+7)
+  const vnDate = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Ho_Chi_Minh",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(dateObj);
 
-  return `${year}-${month}-${day}`;
+  return vnDate; // Trả về dạng YYYY-MM-DD
 };
