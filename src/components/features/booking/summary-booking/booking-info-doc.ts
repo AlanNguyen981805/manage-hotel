@@ -24,21 +24,22 @@ export const generateWordDocument = async (
   numberOfDays,
   lastestHistory
 ) => {
+  console.log("resultSearchBooking :>> ", resultSearchBooking);
   const images = [
     {
       path: "/logo.png",
       name: "header",
     },
     {
-      path: "/vietnam-best-places-to-visit-ho-chi-minh-city.jpg",
+      path: "/_MG_6558.jpg",
       name: "header2",
     },
     {
-      path: "/vietnam-halong-bay.jpg",
+      path: "/_MG_9963.jpg",
       name: "header3",
     },
     {
-      path: "/vietnam-hue-imperial-palace-gate.jpg",
+      path: "/_MG_8281.jpg",
       name: "header4",
     },
   ];
@@ -97,8 +98,8 @@ export const generateWordDocument = async (
                   new ImageRun({
                     data: imageBufferHeader,
                     transformation: {
-                      width: 80,
-                      height: 80,
+                      width: 100,
+                      height: 100,
                     },
                   }),
                   new TextRun({
@@ -107,8 +108,8 @@ export const generateWordDocument = async (
                   new ImageRun({
                     data: imageBufferHeader2,
                     transformation: {
-                      width: 80,
-                      height: 80,
+                      width: 160,
+                      height: 100,
                     },
                   }),
                   new TextRun({
@@ -117,8 +118,8 @@ export const generateWordDocument = async (
                   new ImageRun({
                     data: imageBufferHeader3,
                     transformation: {
-                      width: 80,
-                      height: 80,
+                      width: 200,
+                      height: 100,
                     },
                   }),
                   new TextRun({
@@ -127,8 +128,8 @@ export const generateWordDocument = async (
                   new ImageRun({
                     data: imageBufferHeader4,
                     transformation: {
-                      width: 80,
-                      height: 80,
+                      width: 180,
+                      height: 100,
                     },
                   }),
                 ],
@@ -269,7 +270,30 @@ export const generateWordDocument = async (
                           }),
                         ]),
                     // Services section
-                    ...((dayData?.hotels && dayData.hotels.length > 0) ||
+
+                    // Services
+                    ...(dayData?.services?.length > 0
+                      ? dayData.services.map(
+                          (service) =>
+                            service?.serviceType?.type === "route" &&
+                            new Paragraph({
+                              spacing: {
+                                before: 100,
+                              },
+                              bullet: {
+                                level: 0,
+                              },
+                              children: [
+                                new TextRun({
+                                  text: service.serviceType.desc,
+                                  font: "Verdana",
+                                }),
+                              ],
+                            })
+                        )
+                      : []),
+
+                    ...((dayData?.hotels && dayData.hotels.length >= 1) ||
                     dayData?.services?.some(
                       (service) => service?.serviceType?.type === "company"
                     ) ||
@@ -288,7 +312,7 @@ export const generateWordDocument = async (
                             ],
                           }),
                           // Accommodation
-                          ...(dayData?.hotels && dayData.hotels.length > 0
+                          ...(dayData?.hotels && dayData.hotels.length >= 1
                             ? [
                                 new Paragraph({
                                   spacing: {
@@ -343,19 +367,22 @@ export const generateWordDocument = async (
                                   },
                                   children: [
                                     new TextRun({
-                                      text: `Transportation: ${dayData.transportation
-                                        .map((t) => t.transportationType.name)
-                                        .join(" / ")}`,
+                                      text: `Transportation: ${dayData.transportation.map(
+                                        (t) =>
+                                          `${t.transportationType.name} - ${t.transportationPrice.desc}`
+                                      )}`,
                                       font: "Verdana",
                                     }),
                                   ],
                                 }),
                               ]
                             : []),
+
                           // Services
                           ...(dayData?.services?.length > 0
                             ? dayData.services.map(
                                 (service) =>
+                                  service?.serviceType?.type === "company" &&
                                   new Paragraph({
                                     spacing: {
                                       before: 100,
@@ -365,7 +392,7 @@ export const generateWordDocument = async (
                                     },
                                     children: [
                                       new TextRun({
-                                        text: service.serviceType.name,
+                                        text: service.serviceType.desc,
                                         font: "Verdana",
                                       }),
                                     ],

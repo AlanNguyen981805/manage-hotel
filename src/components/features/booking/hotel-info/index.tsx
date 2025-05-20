@@ -3,6 +3,7 @@
 import { Price } from "@/components/ui/price";
 import { IHotel } from "../../home/result-search-booking/defination";
 import { useTranslation } from "@/hooks/useTranslation";
+import { formatDate } from "@/helpers/date-helper";
 
 interface HotelInfoProps {
   hotels: IHotel[];
@@ -10,6 +11,7 @@ interface HotelInfoProps {
 
 export const HotelInfo = ({ hotels }: HotelInfoProps) => {
   const { t } = useTranslation();
+  console.log("hotels :>> ", hotels);
 
   return (
     <>
@@ -43,7 +45,15 @@ export const HotelInfo = ({ hotels }: HotelInfoProps) => {
                   <span className="text-gray-600">
                     {t("booking.timeAvailable")}:
                   </span>
-                  <span>{hotel.timeAvailable || ""}</span>
+                  <span>
+                    {hotel.roomType?.price_hotels?.[0]?.start_date
+                      ? `${formatDate(
+                          new Date(hotel.roomType.price_hotels[0].start_date)
+                        )} - ${formatDate(
+                          new Date(hotel.roomType.price_hotels[0].end_date)
+                        )}`
+                      : ""}
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">

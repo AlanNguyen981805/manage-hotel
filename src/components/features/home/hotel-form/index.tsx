@@ -429,7 +429,7 @@ export const HotelRow = ({
               </div>
 
               <NumberInput
-                label="Number of rooms"
+                label="Rooms"
                 value={hotelRow?.quantityRoom || 1}
                 onChange={(value) =>
                   handleQuantityChange(
@@ -447,7 +447,7 @@ export const HotelRow = ({
               />
 
               <NumberInput
-                label="Number of extra beds"
+                label="Extra beds"
                 value={hotelRow?.additionalBeds || 0}
                 onChange={(value) =>
                   handleQuantityChange(
