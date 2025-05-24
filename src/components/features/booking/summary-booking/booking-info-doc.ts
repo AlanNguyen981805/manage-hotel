@@ -271,33 +271,36 @@ export const generateWordDocument = async (
                         ]),
                     // Services section
 
-                    // Services
-                    ...(dayData?.services?.length > 0
-                      ? dayData.services.map(
-                          (service) =>
-                            service?.serviceType?.type === "route" &&
-                            new Paragraph({
-                              spacing: {
-                                before: 100,
-                              },
-                              bullet: {
-                                level: 0,
-                              },
-                              children: [
-                                new TextRun({
-                                  text: service.serviceType.desc,
-                                  font: "Verdana",
-                                }),
-                              ],
-                            })
-                        )
+                    ...(dayData?.services && dayData.services.length > 0
+                      ? dayData.services
+                          .filter(
+                            (service) => service?.serviceType?.type === "route"
+                          )
+                          .map(
+                            (service) =>
+                              new Paragraph({
+                                spacing: {
+                                  before: 100,
+                                },
+                                bullet: {
+                                  level: 0,
+                                },
+                                children: [
+                                  new TextRun({
+                                    text: service.serviceType.desc,
+                                    font: "Verdana",
+                                  }),
+                                ],
+                              })
+                          )
                       : []),
 
+                    // Services
                     ...((dayData?.hotels && dayData.hotels.length >= 1) ||
-                    dayData?.services?.some(
+                    (dayData?.services?.some(
                       (service) => service?.serviceType?.type === "company"
-                    ) ||
-                    dayData?.transportation?.length > 0
+                    ) &&
+                      dayData?.transportation?.length > 0)
                       ? [
                           new Paragraph({
                             spacing: {
@@ -311,8 +314,8 @@ export const generateWordDocument = async (
                               }),
                             ],
                           }),
-                          // Accommodation
-                          ...(dayData?.hotels && dayData.hotels.length >= 1
+                          // Accommodation - hiển thị nếu có hotels
+                          ...(dayData?.hotels && dayData.hotels.length > 0
                             ? [
                                 new Paragraph({
                                   spacing: {
@@ -355,8 +358,10 @@ export const generateWordDocument = async (
                                 }),
                               ]
                             : []),
-                          // Transportation
-                          ...(dayData?.transportation?.length > 0
+
+                          // Transportation - hiển thị nếu có transportation
+                          ...(dayData?.transportation &&
+                          dayData.transportation.length > 0
                             ? [
                                 new Paragraph({
                                   spacing: {
@@ -367,10 +372,12 @@ export const generateWordDocument = async (
                                   },
                                   children: [
                                     new TextRun({
-                                      text: `Transportation: ${dayData.transportation.map(
-                                        (t) =>
-                                          `${t.transportationType.name} - ${t.transportationPrice.desc}`
-                                      )}`,
+                                      text: `Transportation: ${dayData.transportation
+                                        .map(
+                                          (t) =>
+                                            `${t.transportationType.name} - ${t.transportationPrice.desc}`
+                                        )
+                                        .join(", ")}`,
                                       font: "Verdana",
                                     }),
                                   ],
@@ -378,26 +385,30 @@ export const generateWordDocument = async (
                               ]
                             : []),
 
-                          // Services
-                          ...(dayData?.services?.length > 0
-                            ? dayData.services.map(
-                                (service) =>
-                                  service?.serviceType?.type === "company" &&
-                                  new Paragraph({
-                                    spacing: {
-                                      before: 100,
-                                    },
-                                    bullet: {
-                                      level: 0,
-                                    },
-                                    children: [
-                                      new TextRun({
-                                        text: service.serviceType.desc,
-                                        font: "Verdana",
-                                      }),
-                                    ],
-                                  })
-                              )
+                          // Services - hiển thị tất cả services có type là company
+                          ...(dayData?.services && dayData.services.length > 0
+                            ? dayData.services
+                                .filter(
+                                  (service) =>
+                                    service?.serviceType?.type === "company"
+                                )
+                                .map(
+                                  (service) =>
+                                    new Paragraph({
+                                      spacing: {
+                                        before: 100,
+                                      },
+                                      bullet: {
+                                        level: 0,
+                                      },
+                                      children: [
+                                        new TextRun({
+                                          text: service.serviceType.desc,
+                                          font: "Verdana",
+                                        }),
+                                      ],
+                                    })
+                                )
                             : []),
                         ]
                       : []),
