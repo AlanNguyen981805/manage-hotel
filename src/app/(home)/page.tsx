@@ -10,7 +10,7 @@ function Posts() {
       <div className="relative">
         <HeroSlider />
 
-        <div className="p-4 lg:absolute lg:left-0 lg:right-0 lg:p-0 bottom-16 lg:z-30">
+        <div className="p-4 lg:absolute lg:left-0 lg:right-0 lg:p-0 bottom-64 lg:z-30">
           <BookRoomForm />
         </div>
       </div>

@@ -41,10 +41,6 @@ export const TransportationRow = ({
     handleRemoveRow(rowIndex);
   };
 
-  const visible =
-    formSearchResult[dayIndex]?.transportation &&
-    formSearchResult[dayIndex]?.transportation?.length < 1;
-
   const calculatePrice = (transportationPrice: number) => {
     const mark_tranfer = findCompany?.mark_tranfer ?? 1;
     return transportationPrice * mark_tranfer;
@@ -176,11 +172,7 @@ export const TransportationRow = ({
 
   return (
     <div>
-      <BtnAddRow
-        name="Transportation"
-        onAddRow={handleAddRow}
-        visible={visible}
-      />
+      <BtnAddRow name="Transportation" onAddRow={handleAddRow} visible={true} />
 
       <div className="w-full border-b-2 flex flex-col justify-between items-center px-2">
         {formSearchResult[dayIndex].transportation?.map((_, rowIndex) => {

@@ -28,9 +28,7 @@ const Footer = () => (
         </div> */}
 
         <div className="flex flex-col items-center md:items-end">
-          <p className="text-gray-500 text-sm">
-            © {new Date().getFullYear()} Booking. All Rights Reserved
-          </p>
+          {/* <p className="text-gray-500 text-sm">{new Date().getFullYear()}</p> */}
         </div>
       </div>
     </div>

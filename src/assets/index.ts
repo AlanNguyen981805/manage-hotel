@@ -15,9 +15,9 @@ import Room6ImgLg from "./img/rooms/6-lg.png";
 import Room7ImgLg from "./img/rooms/7-lg.png";
 import Room8ImgLg from "./img/rooms/8-lg.png";
 
-import Slider1 from "./img/heroSlider/1.jpg";
-import Slider2 from "./img/heroSlider/2.jpg";
-import Slider3 from "./img/heroSlider/3.jpg";
+import Slider1 from "./img/home.jpg";
+import Slider2 from "./img/home.jpg";
+import Slider3 from "./img/home.jpg";
 
 const images = {
   Slider1,

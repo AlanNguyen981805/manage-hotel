@@ -159,7 +159,7 @@ const BookRoomForm = () => {
 
   return (
     <div className="h-[260px] px-4 rounded-md flex flex-col justify-center items-center">
-      <h1 className="text-4xl font-medium mb-9 text-accent">BOOKING NOW</h1>
+      <h1 className="text-4xl font-medium mb-9 text-white">BOOKING NOW</h1>
 
       <form className="h-[300px] lg:h-[70px] w-full">
         <div className="flex flex-col w-full h-full lg:flex-row">

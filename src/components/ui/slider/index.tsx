@@ -23,7 +23,7 @@ const HeroSlider = () => {
           key={id}
         >
           <div className="absolute top-0 w-full h-full">
-            <Image className="object-cover h-full w-full" src={bg} alt="logo" />
+            <Image className="object-fill h-full w-full" src={bg} alt="logo" />
           </div>
         </SwiperSlide>
       ))}
