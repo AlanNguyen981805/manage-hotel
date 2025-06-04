@@ -64,7 +64,8 @@ const BookRoomForm = () => {
         checkOut
       )}&populate[company][populate][locations][populate][hotels][populate][hotel_types][populate][price_hotels][filters][$or][0][end_date][$gte]=${formatDate(
         checkIn
-      )}&populate[company][populate][locations][populate][routes][populate]&populate[company][populate][locations][populate][cars][populate][transportation_prices][populate]&populate[company][populate][service_companies][populate]&populate[company][populate][locations][populate][service_routes][populate]`;
+      )}&populate[company][populate][locations][populate][hotels][sort][0]=hotel_name:asc&populate[company][populate][locations][populate][routes][populate]&populate[company][populate][locations][populate][cars][populate][transportation_prices][populate]&populate[company][populate][service_companies][sort][0]=service_code:asc&populate[company][populate][locations][populate][service_routes][sort][0]=service_code:asc`;
+
       const response = await apiClient.get<LocationsResponse>(
         `${API_ENDPOINTS.USERS}${query}`
       );

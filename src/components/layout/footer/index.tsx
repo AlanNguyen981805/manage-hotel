@@ -3,11 +3,14 @@
 import Link from "next/link";
 
 const Footer = () => (
-  <footer className="bg-white shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
+  <footer className="absolute bottom-0 left-0 right-0 z-10">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
       <div className="flex flex-col md:flex-row justify-between items-center gap-4">
         <div className="flex-shrink-0">
-          <Link href="/" className="text-xl font-bold text-indigo-600">
+          <Link
+            href="/"
+            className="text-xl font-bold text-white hover:text-accent transition-colors"
+          >
             Booking
           </Link>
         </div>

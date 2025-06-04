@@ -215,13 +215,22 @@ export const ServicesRow = ({
                 <Dropdown
                   options={[
                     { id: 0, name: "Please select", price: 0 },
-                    ...servicesByLocation?.map((service) => ({
-                      id: service.documentId,
-                      name: service.service_code,
-                      price: service.service_price,
-                      type: service.type,
-                      desc: service.service_desc,
-                    })),
+                    ...(Array.isArray(servicesByLocation)
+                      ? servicesByLocation.slice()
+                      : []
+                    )
+                      .sort((a, b) => {
+                        const codeA = (a.service_code || "").toLowerCase();
+                        const codeB = (b.service_code || "").toLowerCase();
+                        return codeA.localeCompare(codeB);
+                      })
+                      .map((service) => ({
+                        id: service.documentId,
+                        name: service.service_code,
+                        price: service.service_price,
+                        type: service.type,
+                        desc: service.service_desc,
+                      })),
                   ]}
                   name={`service-type-${dayIndex}-${rowIndex}`}
                   value={

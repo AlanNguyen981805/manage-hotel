@@ -12,12 +12,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
+      <body className="relative min-h-screen">
         <AuthProvider>
-          <Navbar />
-          <main>{children}</main>
-          <GlobalAuthDialog />
-          <Footer />
+          <div className="relative z-10">
+            <Navbar />
+            <main>{children}</main>
+            <GlobalAuthDialog />
+            <Footer />
+          </div>
           <ToastContainer />
         </AuthProvider>
       </body>

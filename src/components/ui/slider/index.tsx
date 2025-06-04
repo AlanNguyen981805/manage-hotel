@@ -15,7 +15,7 @@ const HeroSlider = () => {
         delay: 3000,
         disableOnInteraction: false,
       }}
-      className="heroSlider h-[500px] lg:h-[650px]"
+      className="heroSlider fixed top-0 left-0 w-full h-screen -z-50"
     >
       {sliderData.map(({ id, bg }) => (
         <SwiperSlide
@@ -23,7 +23,15 @@ const HeroSlider = () => {
           key={id}
         >
           <div className="absolute top-0 w-full h-full">
-            <Image className="object-fill h-full w-full" src={bg} alt="logo" />
+            <Image
+              className="object-cover"
+              src={bg}
+              alt="logo"
+              fill
+              priority
+              sizes="100vw"
+              quality={100}
+            />
           </div>
         </SwiperSlide>
       ))}

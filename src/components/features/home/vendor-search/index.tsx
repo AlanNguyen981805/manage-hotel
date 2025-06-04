@@ -81,9 +81,16 @@ const VendorSearch = ({ onSelectVendor }: VendorSearchProps) => {
   useEffect(() => {
     if (searchTerm) {
       setIsDropdownVisible(true);
-      const filtered = vendors.filter((vendor: Vendor) =>
-        vendor.name.toLowerCase().includes(searchTerm.toLowerCase())
-      );
+      const filtered = vendors.filter((vendor: Vendor) => {
+        const searchTermLower = searchTerm.toLowerCase();
+        return (
+          (vendor.name?.toLowerCase() || "").includes(searchTermLower) ||
+          (vendor.address?.toLowerCase() || "").includes(searchTermLower) ||
+          (vendor.phone?.toLowerCase() || "").includes(searchTermLower) ||
+          (vendor.email?.toLowerCase() || "").includes(searchTermLower) ||
+          (vendor.company?.toLowerCase() || "").includes(searchTermLower)
+        );
+      });
       setFilteredVendors(filtered);
     } else {
       setIsDropdownVisible(false);
