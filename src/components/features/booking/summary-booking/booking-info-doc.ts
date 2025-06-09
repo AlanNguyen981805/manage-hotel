@@ -287,10 +287,11 @@ export const generateWordDocument = async (
                                 spacing: {
                                   before: 300,
                                 },
-                                bullet: {
-                                  level: 0,
-                                },
                                 children: [
+                                  new TextRun({
+                                    text: "     - ",
+                                    font: "Verdana",
+                                  }),
                                   new TextRun({
                                     text: service.serviceType.desc,
                                     font: "Verdana",
@@ -326,10 +327,13 @@ export const generateWordDocument = async (
                                   spacing: {
                                     before: 100,
                                   },
-                                  bullet: {
-                                    level: 0,
-                                  },
                                   children: [
+                                    new TextRun({
+                                      text: "     ✔️ ",
+                                      font: "Verdana",
+                                      size: 16,
+                                      bold: true,
+                                    }),
                                     new TextRun({
                                       text: `Accommodation: ${(() => {
                                         const uniqueHotels = (
@@ -372,18 +376,23 @@ export const generateWordDocument = async (
                                   spacing: {
                                     before: 100,
                                   },
-                                  bullet: {
-                                    level: 0,
-                                  },
                                   children: [
+                                    new TextRun({
+                                      text: "     ✔️ ",
+                                      font: "Verdana",
+                                      size: 16,
+                                      bold: true,
+                                    }),
                                     new TextRun({
                                       text: `Transportation: ${dayData.transportation
                                         .map(
                                           (t) =>
+                                            t.transportationType?.name &&
                                             `${
                                               t.transportationType?.name +
                                               " - " +
-                                              t.transportationPrice?.desc
+                                              (t?.transportationPrice?.desc ??
+                                                "")
                                             }`
                                         )
                                         .join(", ")}`,
@@ -407,10 +416,13 @@ export const generateWordDocument = async (
                                       spacing: {
                                         before: 100,
                                       },
-                                      bullet: {
-                                        level: 0,
-                                      },
                                       children: [
+                                        new TextRun({
+                                          text: "     ✔️ ",
+                                          font: "Verdana",
+                                          size: 16,
+                                          bold: true,
+                                        }),
                                         new TextRun({
                                           text: service.serviceType.desc,
                                           font: "Verdana",

@@ -16,6 +16,7 @@ import { HistoryData } from "@/components/features/home/history-booking";
 import { IFormSearchResult } from "@/components/features/home/result-search-booking/defination";
 import { useVendorStore } from "@/store/useVendorStore";
 import useUserStore from "@/store/useUserStore";
+import Image from "next/image";
 
 const BookRoomForm = () => {
   const { setOpenDialog } = useDialogStore();
@@ -160,7 +161,13 @@ const BookRoomForm = () => {
 
   return (
     <div className="h-[260px] px-4 rounded-md flex flex-col justify-center items-center">
-      <h1 className="text-4xl font-medium mb-9 text-white">BOOKING NOW</h1>
+      <Image
+        src={"/logo.png"}
+        width={130}
+        height={100}
+        alt="logo"
+        className="mb-3"
+      />
 
       <form className="h-[300px] lg:h-[70px] w-full">
         <div className="flex flex-col w-full h-full lg:flex-row">
