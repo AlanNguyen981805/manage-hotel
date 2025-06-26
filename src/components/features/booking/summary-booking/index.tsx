@@ -84,23 +84,25 @@ export const SummaryBooking = ({
   const totals = calculateTotals();
 
   useEffect(() => {
-    const fetchLatestHistory = async () => {
-      try {
-        // Get only the latest record by sorting descending and limiting to 1
-        const queryParams = `?filters[users_permissions_user][company][id][$eq]=${user?.company?.id}&populate=users_permissions_user.company&sort=createdAt:desc&pagination[pageSize]=1&pagination[page]=1`;
+    if (!lastestHistory) {
+      const fetchLatestHistory = async () => {
+        try {
+          // Get only the latest record by sorting descending and limiting to 1
+          const queryParams = `?filters[users_permissions_user][company][id][$eq]=${user?.company?.id}&populate=users_permissions_user.company&sort=createdAt:desc&pagination[pageSize]=1&pagination[page]=1`;
 
-        const response = await apiClient.get<{ data: HistoryData[] }>(
-          `${API_ENDPOINTS.HISTORIES}${queryParams}`
-        );
+          const response = await apiClient.get<{ data: HistoryData[] }>(
+            `${API_ENDPOINTS.HISTORIES}${queryParams}`
+          );
 
-        setLastestHistory(response.data.data?.[0] || null);
-      } catch (error) {
-        console.error("Error fetching latest history:", error);
-      }
-    };
+          setLastestHistory(response.data.data?.[0] || null);
+        } catch (error) {
+          console.error("Error fetching latest history:", error);
+        }
+      };
 
-    fetchLatestHistory();
-  }, [totals]);
+      fetchLatestHistory();
+    }
+  }, []);
   return (
     <div className="bg-white rounded-lg shadow p-6">
       <div className="flex flex-col gap-6">
