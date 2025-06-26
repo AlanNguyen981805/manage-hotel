@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const apiClient = axios.create({
-  baseURL: "http://139.84.135.204:1337/api",
+  baseURL: process.env.NEXT_PUBLIC_STRAPI_URL,
 });
 
 // Request interceptor

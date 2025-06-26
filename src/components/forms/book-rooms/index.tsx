@@ -58,6 +58,7 @@ const BookRoomForm = () => {
     setResultSearchBooking({});
 
     setLoading(true);
+
     try {
       const query = `?filters[username][$eq]=${
         user?.username
